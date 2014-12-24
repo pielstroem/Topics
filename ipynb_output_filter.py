@@ -48,6 +48,13 @@ Add an extra line so that the metadata now looks like:
 
 You may need to "touch" the notebooks for git to actually register a change, if
 your notebooks are already under version control.
+
+Notes
+=====
+
+This script is inspired by http://stackoverflow.com/a/20844506/827862, but 
+lets the user specify whether the ouptut of a notebook should be suppressed
+in the notebook's metadata, and works for IPython v3.0.
 """
 
 import sys

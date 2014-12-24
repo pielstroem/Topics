@@ -4,3 +4,5 @@ This gist lets you keep IPython notebooks in git repositories. It tells git to i
 To use the script, follow the instructions given in the script's docstring.
 
 For further details, read {{ blogpost }}.
+
+The procedure outlined here is inspired by [this answer](http://stackoverflow.com/a/20844506/827862) on Stack Overflow.
