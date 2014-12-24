@@ -6,29 +6,31 @@ Suppress output and prompt numbers in git version control.
 This script will tell git to ignore prompt numbers and cell output
 when looking at ipynb files if their metadata contains:
 
-    "vc" : { "suppress_output" : true }
+    "git" : { "suppress_output" : true }
 
 The notebooks themselves are not changed.
+
+See also {{ blogpost }}.
 
 Usage instructions
 ==================
 
 1. Put this script in a directory that is on the system's path.
-2. Make sure it is executable by typing 
-   `cd /location/of/script && chmod +x ipynb_output_filter.py`
-   in a terminal.
+   For future reference, I will assume you saved it in 
+   `~/scripts/ipynb_drop_output`.
+2. Make sure it is executable by typing the command
+   `chmod +x ~/scripts/ipynb_drop_output`.
 3. Register a filter for ipython notebooks by
-   creating a `.gitattributes` file in your home directory
-   containing the line:
-   `*.ipynb  filter=dropoutput_ipynb`
+   putting the following line in `~/.config/git/attributes`:
+   `*.ipynb  filter=clean_ipynb`
 4. Connect this script to the filter by running the following 
    git commands:
 
-   git config --global core.attributesfile ~/.gitattributes
-   git config --global filter.dropoutput_ipynb.clean /path/to/script/ipynb_output_filter.py
-   git config --global filter.dropoutput_ipynb.smudge cat
+   git config --global filter.clean_ipynb.clean ~/scripts/ipynb_drop_output
+   git config --global filter.clean_ipynb.smudge cat
 
-To enable this, open the notebook's metadata (Edit > Edit Notebook Metadata). A
+To tell git to ignore the output and prompts for a notebook,
+open the notebook's metadata (Edit > Edit Notebook Metadata). A
 panel should open containing the lines:
 
     {
@@ -41,11 +43,11 @@ Add an extra line so that the metadata now looks like:
     {
         "name" : "",
         "signature" : "don't change the hash, but add a comma at the end of the line",
-        "vc" : { "suppress_outputs" : true }
+        "git" : { "suppress_outputs" : true }
     }
 
-You may need to "touch" the notebooks for git to actually register a change.
-
+You may need to "touch" the notebooks for git to actually register a change, if
+your notebooks are already under version control.
 """
 
 import sys
@@ -56,8 +58,8 @@ nb = sys.stdin.read()
 json_in = json.loads(nb)
 nb_metadata = json_in["metadata"]
 suppress_output = False
-if "vc" in nb_metadata:
-    if "suppress_outputs" in nb_metadata["vc"] and nb_metadata["vc"]["suppress_outputs"]:
+if "git" in nb_metadata:
+    if "suppress_outputs" in nb_metadata["git"] and nb_metadata["git"]["suppress_outputs"]:
         suppress_output = True
 if not suppress_output:
     sys.stdout.write(nb)
