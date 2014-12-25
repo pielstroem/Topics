@@ -26,7 +26,7 @@ Usage instructions
 4. Connect this script to the filter by running the following 
    git commands:
 
-   git config --global filter.clean_ipynb.clean ~/scripts/ipynb_drop_output
+   git config --global filter.clean_ipynb.clean ipynb_drop_output
    git config --global filter.clean_ipynb.smudge cat
 
 To tell git to ignore the output and prompts for a notebook,
