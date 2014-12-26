@@ -10,7 +10,7 @@ when looking at ipynb files if their metadata contains:
 
 The notebooks themselves are not changed.
 
-See also {{ blogpost }}.
+See also this blogpost: http://pascalbugnion.net/blog/ipython-notebooks-and-git.html.
 
 Usage instructions
 ==================
