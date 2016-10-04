@@ -29,11 +29,9 @@ Globale Variablen - Kommandozeilenparameter (Arg.path)
 
 - Counter schneller als Series?, Counter als Series ausgeben?
 
-- Funktion aufteilen in:
-
-	removeStopwords()
-
-	remove Hapax ()
+- Funktion aufteilen/Umorganisieren:
+	- HapaxLeg() :  Finde die Hapax Legomena und gebe sie aus, um sie ggf. an die Stopwordlist zu hängen
+	- RemoveTypes() :  Entferne Types, die in einer Stopword List stehen (in der sich ggf. auch die Hapax Legomena finden)
 
 #### splitFiles(): -> Philip
 
