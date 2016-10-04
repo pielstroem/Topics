@@ -27,7 +27,15 @@ import re
 import os
 import csv
 import glob
+import logging
 
+log = logging.getLogger('cophi_toolbox.dariah.topics')
+log.addHandler(logging.NullHandler())
+
+# To enable logger, uncomment the following three lines.
+#logging.basicConfig(level=logging.INFO,
+#                    format='%(asctime)s %(levelname)s %(name)s: %(message)s',
+#                    datefmt='%d-%b-%Y %H:%M:%S')
 
 ########################################################################
 # input generally needed
@@ -115,12 +123,12 @@ def preprocessing(path, columns, pos_tags, doc_size, doc_split, stopwordlist):
     doc_labels = []
     stopwords = ""
 	
-    print("\n reading files ...\n")
+    log.info('reading files ...')
 
     try:
         with open(stopwordlist, 'r') as f: stopwords = f.read()
     except OSError:
-        print("\n stopwordlist could not be read ...\n")
+        log.error("stopwordlist could not be read ...")
         pass
     stopwords = sorted(set(stopwords.split("\n")))
 
@@ -167,7 +175,7 @@ def preprocessing(path, columns, pos_tags, doc_size, doc_split, stopwordlist):
             with open(swpath, 'w', encoding = "utf-8") as text:
                 text.write(" ".join(word for word in doc['Lemma'].values.astype(str) if word not in stopwords))
 
-    print("\n stopwords removed ...\n")
+    log.info('stopwords removed ...')
 
 	#read processed corpus
     for file in glob.glob(swpath):
@@ -181,10 +189,10 @@ def preprocessing(path, columns, pos_tags, doc_size, doc_split, stopwordlist):
             f.write(" ".join(texts))
             f.truncate()
 			
-    print("\n hapax legomena removed ...\n")
+    log.info('hapax legomena removed ...')
 	
     
-    print("\n writing processed corpus ...\n")
+    log.info('writing processed corpus ...')
 
     mastercorpus = os.path.join(os.getcwd(), 'mycorpus.txt')
     
@@ -241,22 +249,22 @@ mm = MmCorpus(corpusPath)
 
 doc_labels = makeDocLabels(path)
 
-print("fitting the model ...\n")
+log.info('fitting the model ...')
 
 # fitting the model
 model = LdaModel(corpus=mm, id2word=dictionary, num_topics=no_of_topics, passes=no_of_passes,
                  eval_every=eval, chunksize=chunk, alpha=alpha, eta=eta)
 
-print(" generated topics...\n")
+log.info('generated topics...')
 
 # print topics
 topics = model.show_topics(num_topics=no_of_topics)
 
 for item, i in zip(topics, enumerate(topics)):
-    print("topic #"+str(i[0])+": "+str(item)+"\n")
+    log.info('topic #%s: %s', i[0], item)
 
 
-print("saving results...\n")
+log.info('saving results...')
 
 # create output folder
 if not os.path.exists("out"): os.makedirs("out")
@@ -276,4 +284,4 @@ dictionary.save(os.path.join(os.path.join(os.getcwd(), "out"), '.'.join([foldern
 # save model for further use
 model.save(os.path.join(os.path.join(os.getcwd(), "out"), '.'.join([foldername, 'lda'])))
 
-print("\n topic modeling finished \n")
+log.info('topic modeling finished')
