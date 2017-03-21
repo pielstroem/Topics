@@ -1,0 +1,26 @@
+Collecting matplotlib
+  Downloading matplotlib-2.0.0-1-cp27-cp27mu-manylinux1_x86_64.whl (14.6MB)
+Collecting numpy>=1.7.1 (from matplotlib)
+  Downloading numpy-1.12.1-cp27-cp27mu-manylinux1_x86_64.whl (16.5MB)
+Collecting cycler>=0.10 (from matplotlib)
+  Downloading cycler-0.10.0-py2.py3-none-any.whl
+Collecting python-dateutil (from matplotlib)
+  Downloading python_dateutil-2.6.0-py2.py3-none-any.whl (194kB)
+Collecting functools32 (from matplotlib)
+  Downloading functools32-3.2.3-2.zip
+Collecting six>=1.10 (from matplotlib)
+  Downloading six-1.10.0-py2.py3-none-any.whl
+Collecting pytz (from matplotlib)
+  Downloading pytz-2016.10-py2.py3-none-any.whl (483kB)
+Collecting pyparsing!=2.0.0,!=2.0.4,!=2.1.2,!=2.1.6,>=1.5.6 (from matplotlib)
+  Downloading pyparsing-2.2.0-py2.py3-none-any.whl (56kB)
+Collecting subprocess32 (from matplotlib)
+  Downloading subprocess32-3.2.7.tar.gz (54kB)
+Building wheels for collected packages: functools32, subprocess32
+  Stored in directory: /home/sina/.cache/pip/wheels/3c/d0/09/cd78d0ff4d6cfecfbd730782a7815a4571cd2cd4d2ed6e69d9
+  Stored in directory: /home/sina/.cache/pip/wheels/7d/4c/a4/ce9ceb463dae01f4b95e670abd9afc8d65a45f38012f8030cc
+Successfully built functools32 subprocess32
+Installing collected packages: numpy, six, cycler, python-dateutil, functools32, pytz, pyparsing, subprocess32, matplotlib
+Successfully installed cycler functools32 matplotlib numpy pyparsing python-dateutil pytz six-1.10.0 subprocess32
+You are using pip version 8.1.1, however version 9.0.1 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
