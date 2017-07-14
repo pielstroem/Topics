@@ -17,7 +17,7 @@ At the moment, there are three Jupyter notebooks containing three different LDA 
 2.  Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 3.  Open the **WinPython PowerShell Prompt.exe** in your **WinPython** folder and type `git clone https://github.com/DARIAH-DE/Topics.git` to clone **Topics** into your WinPython folder.
 4.  Type `cd .\Topics` in **WinPython PowerShell** to navigate to the **Topics** folder. 
-5a. Either: Type `pip install .` in **Winpython PowerShell** to install packages required by **Topics** 
+5a. Either: Type `pip install .` in **WinPython PowerShell** to install packages required by **Topics** 
 5b. Or: Type `pip install -r requirements.txt` in **Winpython PowerShell** to install **Topics** with additional development packages.
 6.  Type `jupyter notebook` in **WinPython PowerShell** to open Jupyter, select one of the files with suffix `.ipynb` and follow the instructions.
 7.  **Note**: For the development packages the Python module **future** is needed. Depending in your WinPython and your Windows version you might have to install **future** manually.
