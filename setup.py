@@ -24,7 +24,8 @@ setup(
         'matplotlib>=1.5.3',
         'numpy>=1.3',
         'scipy>=0.7',
-        'bokeh>=0.12.6'
+        'bokeh>=0.12.6',
+        'lxml>=3.6.4'
     ],
     # pip install -e .[demonstrator,vis,evaluation]
     extras_require={
@@ -34,10 +35,6 @@ setup(
         'vis': [
             #'wordcloud>=1.3.1',
             #'pyLDAvis>=2.0.0',    # to feature 'pyldavis'
-        ],
-        'evaluation': [
-            'wikipedia>=1.4.0',
-            'lxml>=3.6.4'
         ]
     }
 )
