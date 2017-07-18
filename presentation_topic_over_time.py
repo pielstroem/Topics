@@ -267,7 +267,7 @@ binary = "tutorial_supplementals/mallet_output/binary.mallet"
 # In[59]:
 
 
-get_ipython().run_cell_magic('time', '', '\nmallet_binary = mallet.create_mallet_binary(path_to_mallet=path_to_mallet,\n                                            path_to_corpus=path_to_corpus,\n                                            output_file=binary) ')
+mallet_binary = mallet.create_mallet_binary(path_to_mallet=path_to_mallet, path_to_corpus=path_to_corpus, output_file=binary)
 
 
 # ## 2. Model creation
@@ -279,56 +279,4 @@ get_ipython().run_cell_magic('time', '', '\nmallet_binary = mallet.create_mallet
 # In[60]:
 
 
-get_ipython().run_cell_magic('time', '', '\nmallet.create_mallet_model(path_to_mallet=path_to_mallet, \n                           path_to_binary=mallet_binary, \n                           folder_for_output=outfolder,\n                           num_iterations=5000,\n                           num_topics=20,\n                           output_model=True)')
-
-
-# ### 2.4. Create document-topic matrix
-#
-# The generated model object can now be translated into a human-readable document-topic matrix (that is a actually a pandas data frame) that constitutes our principle exchange format for topic modeling results. For generating the matrix from a Gensim model, we can use the following function:
-
-# In[61]:
-
-
-doc_topic = mallet.show_doc_topic_matrix(outfolder)
-doc_topic
-
-
-# ## 3. Visualization
-
-# Now we can see the topics in the model with the following function:
-#
-# **Hint:** Depending on the number of topics chosen in step 2, you might have to adjust *num_topics* in this step accordingly.
-
-# In[63]:
-
-
-mallet.show_topics_keys("tutorial_supplementals/mallet_output", num_topics=20)
-
-
-# ### 3.1. Distribution of topics
-
-# #### Distribution of topics over all documents
-#
-# The distribution of topics over all documents can now be visualized in a heat map:
-
-# In[64]:
-
-
-heatmap = visualization.doc_topic_heatmap(doc_topic)
-heatmap.show()
-
-
-# #### Distribution of topics in a single documents
-#
-# To take closer look on the topics in a single text, we can use the follwing function that shows all the topics in a text and their respective proportions. To select the document, we have to give its index to the function.
-
-#
-#     Example:
-#         >>> doc_labels = ['examplefile']
-#         >>> doc_tokens_cleaned = [['short', 'example', 'text']]
-#         >>> create_mallet_import(doc_tokens_cleaned, doc_labels)
-#         >>> outpath = os.path.join('tutorial_supplementals', 'mallet_input')
-#         >>> os.path.isfile(os.path.join(outpath, 'examplefile.txt'))
-#         True
-
-# In[ ]:
+mallet.create_mallet_model(path_to_mallet=path_to_mallet, path_to_binary=mallet_binary, folder_for_output=outfolder, num_iterations=5000, num_topics=20, output_model=True)
