@@ -25,7 +25,7 @@ import logging
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-#from wordcloud import WordCloud
+from wordcloud import WordCloud
 import numpy as np
 import os
 import pandas as pd
@@ -362,7 +362,7 @@ def get_topicRank(topic, topicRanksFile):
 def read_mallet_word_weights(word_weights_file):
     """Reads Mallet output (topics with words and word weights) into dataframe."""
     word_scores = pd.read_table(word_weights_file, header=None, sep="\t")
-    word_scores = word_scores.sort_values(columns=[0,2], axis=0, ascending=[True, False])
+    word_scores = word_scores.sort(columns=[0,2], axis=0, ascending=[True, False])
     word_scores_grouped = word_scores.groupby(0)
     return word_scores_grouped
 
@@ -371,16 +371,16 @@ def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
     topic_word_scores = word_scores_grouped.get_group(topic_nr)
     top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
     topic_words = top_topic_word_scores.loc[:,1].tolist()
-    print(topic_words)
+    #print(topic_words)
     word_scores = top_topic_word_scores.loc[:,2].tolist()
-    print(word_scores)
+    #print(word_scores)
     wordlewords = ""
     j = 0
     for word in topic_words:
         word = word
         score = word_scores[j]
         j += 1
-        wordlewords = wordlewords + ((word + " ") + str(score))
+        wordlewords = wordlewords + ((word + " "))
     return wordlewords
 
 def plot_wordle_from_mallet(word_weights_file,
