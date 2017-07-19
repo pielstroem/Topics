@@ -378,7 +378,7 @@ def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
     j = 0
     for word in topic_words:
         word = word
-        score = word_scores[j]
+        #score = word_scores[j]
         j += 1
         wordlewords = wordlewords + ((word + " "))
     return wordlewords
@@ -428,3 +428,68 @@ def doc_topic_heatmap_interactive(doc_topics):
       'Score':   score
     }
     return HeatMap(data, x='Topic', y='Document',values='Score', stat=None, legend=False)
+    
+def doc_topic_heatmap_interactive2(doc_topic):
+    from math import pi
+    from bokeh.io import show
+    from bokeh.plotting import figure
+    
+    from bokeh.models import (
+        ColumnDataSource,
+        HoverTool,
+        LinearColorMapper,
+        BasicTicker,
+        ColorBar
+    )
+    
+    
+    documents = list(doc_topic.columns)
+    topics = doc_topic.index
+    
+    score = []
+    for x in doc_topic.apply(tuple):
+        score.extend(x)
+        data = {
+          'Topic': list(doc_topic.index) * len(doc_topic.columns),
+          'Document':  [item for item in list(doc_topic.columns) for i in range(len(doc_topic.index))],
+          'Score':   score
+        }
+    
+    df = doc_topic.from_dict(data)
+    
+    colors = ["#75968f", "#a5bab7", "#c9d9d3", "#e2e2e2", "#dfccce", "#ddb7b1", "#cc7878", "#933b41", "#550b1d"]
+    mapper = LinearColorMapper(palette=colors, low=df.Score.min(), high=df.Score.max())
+    
+    source = ColumnDataSource(df)
+    
+    TOOLS = "hover,save,pan,box_zoom,reset"
+    
+    p = figure(title="Grenzbote",
+               x_range=documents, y_range=list(reversed(topics)),
+               x_axis_location="above", plot_width=1024, plot_height=768,
+               tools=TOOLS, toolbar_location='below')
+    
+    p.grid.grid_line_color = None
+    p.axis.axis_line_color = None
+    p.axis.major_tick_line_color = None
+    p.axis.major_label_text_font_size = "5pt"
+    p.axis.major_label_standoff = 0
+    p.xaxis.major_label_orientation = pi / 3
+    
+    p.rect(x="Document", y="Topic", width=1, height=1,
+           source=source,
+           fill_color={'field': 'Score', 'transform': mapper},
+           line_color=None)
+    
+    
+    color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
+                         ticker=BasicTicker(desired_num_ticks=len(colors)),
+                         label_standoff=6, border_line_color=None, location=(0, 0))
+    p.add_layout(color_bar, 'right')
+    
+    p.select_one(HoverTool).tooltips = [
+         ('Document', '@Document'),
+         ('Topic', '@Topic'),
+         ('Score', '@Score')
+    ]
+    show(p)
