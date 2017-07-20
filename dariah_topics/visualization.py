@@ -20,7 +20,6 @@ __version__ = "0.1"
 __date__ = "2017-01-20"
 
 
-from bokeh.charts import HeatMap
 import logging
 import matplotlib
 matplotlib.use('Agg')
@@ -417,19 +416,23 @@ def plot_wordle_from_lda(model, vocab, topic_nr, words, height, width):
         token_value.update({token: value})
     return WordCloud(background_color='white', height=height, width=width).fit_words(token_value)
 
-
-def doc_topic_heatmap_interactive(doc_topics):
-    score = []
-    for x in doc_topics.apply(tuple):
-        score.extend(x)
-    data = {
-      'Topic': list(doc_topics.index) * len(doc_topics.columns),
-      'Document':  [item for item in list(doc_topics.columns) for i in range(len(doc_topics.index))],
-      'Score':   score
-    }
-    return HeatMap(data, x='Topic', y='Document',values='Score', stat=None, legend=False)
     
-def doc_topic_heatmap_interactive2(doc_topic):
+def doc_topic_heatmap_interactive(doc_topic, title):
+    """Plot interactive doc_topic_heatmap 
+    
+    Description:
+        With this function you can plot an interactive doc_topic matrix.
+
+    Args:
+        doc_topic: Doc_topic matrix in a DataFrame
+        title(str): Title shown in the plot.
+        
+
+    Note: 
+
+    ToDo:
+
+    """
     from math import pi
     from bokeh.io import show
     from bokeh.plotting import figure
@@ -464,7 +467,7 @@ def doc_topic_heatmap_interactive2(doc_topic):
     
     TOOLS = "hover,save,pan,box_zoom,reset"
     
-    p = figure(title="Grenzbote",
+    p = figure(title=title,
                x_range=documents, y_range=list(reversed(topics)),
                x_axis_location="above", plot_width=1024, plot_height=768,
                tools=TOOLS, toolbar_location='below')
