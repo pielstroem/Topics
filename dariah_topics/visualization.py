@@ -460,7 +460,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
     
     df = doc_topic.from_dict(data)
     
-    colors = ["#75968f", "#a5bab7", "#c9d9d3", "#e2e2e2", "#dfccce", "#ddb7b1", "#cc7878", "#933b41", "#550b1d"]
+    colors = ["#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]
     mapper = LinearColorMapper(palette=colors, low=df.Score.min(), high=df.Score.max())
     
     source = ColumnDataSource(df)
