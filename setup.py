@@ -21,10 +21,9 @@ setup(
         'pandas>=0.19.2',
         'regex>=2017.01.14',
         'gensim>=0.13.2',
-        'matplotlib>=1.5.3',
+        'lda>=1.0.5',
         'numpy>=1.3',
         'scipy>=0.7',
-        'bokeh>=0.12.6',
         'lxml>=3.6.4'
     ],
     # pip install -e .[demonstrator,vis,evaluation]
@@ -33,6 +32,8 @@ setup(
             'flask>=0.11.1'
         ],
         'vis': [
+            'matplotlib>=1.5.3',
+            'bokeh>=0.12.6'
             #'wordcloud>=1.3.1',
             #'pyLDAvis>=2.0.0',    # to feature 'pyldavis'
         ]
