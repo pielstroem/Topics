@@ -427,16 +427,17 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         doc_topic: Doc_topic matrix in a DataFrame
         title(str): Title shown in the plot.
         
+    Returns: bokeh plot        
 
     Note: 
 
     ToDo:
 
     """
-    from math import pi
-    from bokeh.io import show
+    #from ipywidgets import interact
+    from bokeh.io import push_notebook, show, output_notebook
     from bokeh.plotting import figure
-    
+    from math import pi
     from bokeh.models import (
         ColumnDataSource,
         HoverTool,
@@ -444,6 +445,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         BasicTicker,
         ColorBar
     )
+    output_notebook()
     
     
     documents = list(doc_topic.columns)
@@ -495,4 +497,5 @@ def doc_topic_heatmap_interactive(doc_topic, title):
          ('Topic', '@Topic'),
          ('Score', '@Score')
     ]
-    show(p)
+    plot = show(p, notebook_handle = True)
+    return plot
