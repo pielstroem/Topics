@@ -236,7 +236,11 @@ def create_doc_topic(corpus, model, doc_labels):
         Gensim model object.
         List of document labels.
 
-    Returns:
+    Returns: Doc_topic DataFrame
+    
+    ToDo:
+        Rewrite the first loop to get rid of the necessity to transpose the 
+        data frame.'visualization' is not the proper place for this function!
 
     """
     no_of_topics = model.num_topics
@@ -255,9 +259,6 @@ def create_doc_topic(corpus, model, doc_labels):
 
     doc_topic = pd.DataFrame(doc_topic, index = doc_labels, columns = topic_labels)
     doc_topic = doc_topic.transpose()
-    # TODO: Stupid construction grown out of quick code adaptations: rewrite the first loop to
-    # get rid of the necessity to transpose the data frame!!!
-    # TODO: 'visualization' is not the proper place for this function!
 
     return doc_topic
 
@@ -268,7 +269,10 @@ def doc_topic_heatmap(data_frame):
     Args:
         Document-topic data frame.
 
-    Returns:
+    Returns: Plot with Heatmap
+    
+    ToDo:
+        Recode to get rid of transpose in the beginning
 
     """
     data_frame = data_frame.transpose().sort_index()
@@ -283,8 +287,6 @@ def doc_topic_heatmap(data_frame):
 
     #plt.savefig(path+"/"+corpusname+"_heatmap.png") #, dpi=80)
     return plt
-
-    # TODO: recode to get rid of transpose in the beginning
 
 
 def plot_doc_topics(doc_topic, document_index):
@@ -359,20 +361,49 @@ def get_topicRank(topic, topicRanksFile):
         return rank
 
 def read_mallet_word_weights(word_weights_file):
-    """Reads Mallet output (topics with words and word weights) into dataframe."""
+    """Read Mallet word_weigths file
+    
+    Description:
+        Reads Mallet word_weigths into pandas DataFrame.
+
+    Args:
+        word_weigts_file: Word_weights_file created with Mallet
+        
+    Returns: Pandas DataFrame      
+
+    Note: 
+
+    ToDo:
+
+    """
     word_scores = pd.read_table(word_weights_file, header=None, sep="\t")
     word_scores = word_scores.sort(columns=[0,2], axis=0, ascending=[True, False])
     word_scores_grouped = word_scores.groupby(0)
     return word_scores_grouped
 
 def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
-    """Transform Mallet output for wordle generation."""
+    """Transform Mallet output for wordle generation.
+    
+    Description:
+        Get words for wordle. 
+
+    Args:
+        word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get 
+            grouped word scores.
+        topic_nr(int): Topic the wordle should be generated for
+        number_of_top_words(int): Number of top words that should be considered
+
+    Returns: Words for wordle.  
+
+    Note: 
+
+    ToDo:
+
+    """
     topic_word_scores = word_scores_grouped.get_group(topic_nr)
     top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
     topic_words = top_topic_word_scores.loc[:,1].tolist()
-    #print(topic_words)
-    word_scores = top_topic_word_scores.loc[:,2].tolist()
-    #print(word_scores)
+    #word_scores = top_topic_word_scores.loc[:,2].tolist()
     wordlewords = ""
     j = 0
     for word in topic_words:
@@ -387,11 +418,31 @@ def plot_wordle_from_mallet(word_weights_file,
                             number_of_top_words,
                             outfolder,
                             dpi):
-    """Generate wordles from Mallet output, using the wordcloud module."""
+    """Generate wordles from Mallet output.
+    
+    Description:
+        This function does use the wordcloud module to plot wordles.
+        Uses read_mallet_word_weigths() and get_wordlewords() to get
+        word_scores and words for wordle.
+
+    Args:
+        word_weigts_file: Word_weights_file created with Mallet
+        topic_nr(int): Topic the wordle should be generated for
+        number_of_top_words(int): Number of top words that should be considered
+            for the wordle
+        outfolder(str): Specify path to safe wordle.
+        dpi(int): Set resolution for wordle.
+        
+    Returns: Plot      
+
+    Note: 
+
+    ToDo:
+
+    """
 
     word_scores_grouped = read_mallet_word_weights(word_weights_file)
     text = get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr)
-    #print(text)
     wordcloud = WordCloud(width=600, height=400, background_color="white", margin=4).generate(text)
     default_colors = wordcloud.to_array()
     figure_title = "topic "+ str(topic_nr)
@@ -435,7 +486,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
 
     """
     #from ipywidgets import interact
-    from bokeh.io import push_notebook, show, output_notebook
+    from bokeh.io import show, output_notebook
     from bokeh.plotting import figure
     from math import pi
     from bokeh.models import (
