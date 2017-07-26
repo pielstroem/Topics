@@ -237,9 +237,9 @@ def create_doc_topic(corpus, model, doc_labels):
         List of document labels.
 
     Returns: Doc_topic DataFrame
-    
+
     ToDo:
-        Rewrite the first loop to get rid of the necessity to transpose the 
+        Rewrite the first loop to get rid of the necessity to transpose the
         data frame.'visualization' is not the proper place for this function!
 
     """
@@ -270,7 +270,7 @@ def doc_topic_heatmap(data_frame):
         Document-topic data frame.
 
     Returns: Plot with Heatmap
-    
+
     ToDo:
         Recode to get rid of transpose in the beginning
 
@@ -362,16 +362,16 @@ def get_topicRank(topic, topicRanksFile):
 
 def read_mallet_word_weights(word_weights_file):
     """Read Mallet word_weigths file
-    
+
     Description:
         Reads Mallet word_weigths into pandas DataFrame.
 
     Args:
         word_weigts_file: Word_weights_file created with Mallet
-        
-    Returns: Pandas DataFrame      
 
-    Note: 
+    Returns: Pandas DataFrame
+
+    Note:
 
     ToDo:
 
@@ -383,19 +383,19 @@ def read_mallet_word_weights(word_weights_file):
 
 def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
     """Transform Mallet output for wordle generation.
-    
+
     Description:
-        Get words for wordle. 
+        Get words for wordle.
 
     Args:
-        word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get 
+        word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get
             grouped word scores.
         topic_nr(int): Topic the wordle should be generated for
         number_of_top_words(int): Number of top words that should be considered
 
-    Returns: Words for wordle.  
+    Returns: Words for wordle.
 
-    Note: 
+    Note:
 
     ToDo:
 
@@ -419,7 +419,7 @@ def plot_wordle_from_mallet(word_weights_file,
                             outfolder,
                             dpi):
     """Generate wordles from Mallet output.
-    
+
     Description:
         This function does use the wordcloud module to plot wordles.
         Uses read_mallet_word_weigths() and get_wordlewords() to get
@@ -432,10 +432,10 @@ def plot_wordle_from_mallet(word_weights_file,
             for the wordle
         outfolder(str): Specify path to safe wordle.
         dpi(int): Set resolution for wordle.
-        
-    Returns: Plot      
 
-    Note: 
+    Returns: Plot
+
+    Note:
 
     ToDo:
 
@@ -467,20 +467,20 @@ def plot_wordle_from_lda(model, vocab, topic_nr, words, height, width):
         token_value.update({token: value})
     return WordCloud(background_color='white', height=height, width=width).fit_words(token_value)
 
-    
+
 def doc_topic_heatmap_interactive(doc_topic, title):
-    """Plot interactive doc_topic_heatmap 
-    
+    """Plot interactive doc_topic_heatmap
+
     Description:
         With this function you can plot an interactive doc_topic matrix.
 
     Args:
         doc_topic: Doc_topic matrix in a DataFrame
         title(str): Title shown in the plot.
-        
-    Returns: bokeh plot        
 
-    Note: 
+    Returns: bokeh plot
+
+    Note:
 
     ToDo:
 
@@ -497,11 +497,11 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         ColorBar
     )
     output_notebook()
-    
-    
+
+
     documents = list(doc_topic.columns)
     topics = doc_topic.index
-    
+
     score = []
     for x in doc_topic.apply(tuple):
         score.extend(x)
@@ -510,43 +510,42 @@ def doc_topic_heatmap_interactive(doc_topic, title):
           'Document':  [item for item in list(doc_topic.columns) for i in range(len(doc_topic.index))],
           'Score':   score
         }
-    
+
     df = doc_topic.from_dict(data)
-    
+
     colors = ["#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]
     mapper = LinearColorMapper(palette=colors, low=df.Score.min(), high=df.Score.max())
-    
+
     source = ColumnDataSource(df)
-    
+
     TOOLS = "hover,save,pan,box_zoom,reset"
-    
+
     p = figure(title=title,
                x_range=documents, y_range=list(reversed(topics)),
                x_axis_location="above", plot_width=1024, plot_height=768,
                tools=TOOLS, toolbar_location='below')
-    
+
     p.grid.grid_line_color = None
     p.axis.axis_line_color = None
     p.axis.major_tick_line_color = None
     p.axis.major_label_text_font_size = "5pt"
     p.axis.major_label_standoff = 0
     p.xaxis.major_label_orientation = pi / 3
-    
+
     p.rect(x="Document", y="Topic", width=1, height=1,
            source=source,
            fill_color={'field': 'Score', 'transform': mapper},
            line_color=None)
-    
-    
+
+
     color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          label_standoff=6, border_line_color=None, location=(0, 0))
     p.add_layout(color_bar, 'right')
-    
+
     p.select_one(HoverTool).tooltips = [
          ('Document', '@Document'),
          ('Topic', '@Topic'),
          ('Score', '@Score')
     ]
-    plot = show(p, notebook_handle = True)
-    return plot
+    return p
