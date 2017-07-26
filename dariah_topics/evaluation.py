@@ -85,7 +85,7 @@ class Measures(Preparation):
         k1 = occurences[str(pair[0])]
         k2 = occurences[str(pair[1])]
         k1k2 = k1.intersection(k2)
-        numerator = len(k1k2) + e / n
+        numerator = (len(k1k2) + e) / n
         denominator = ((len(k1) + e) / n) * ((len(k2) + e) / n)
         if normalize:
             return np.log(numerator / denominator) / -np.log(numerator)
@@ -98,8 +98,8 @@ class Measures(Preparation):
         k1 = occurences[str(pair[0])]
         k2 = occurences[str(pair[1])]
         k1k2 = k1.intersection(k2)
-        numerator = len(k1k2) + e / n
-        denominator = len(k2) + e / n
+        numerator = (len(k1k2) + e) / n
+        denominator = (len(k2) + e) / n
         return np.log(numerator / denominator)
 
 
