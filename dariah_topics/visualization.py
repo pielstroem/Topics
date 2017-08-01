@@ -518,17 +518,17 @@ def doc_topic_heatmap_interactive(doc_topic, title):
 
     source = ColumnDataSource(df)
 
-    TOOLS = "hover,save,pan,box_zoom,reset"
+    TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
 
     p = figure(title=title,
                x_range=documents, y_range=list(reversed(topics)),
                x_axis_location="above", plot_width=1024, plot_height=768,
-               tools=TOOLS, toolbar_location='below')
+               tools=TOOLS, toolbar_location='below', responsive=True)
 
     p.grid.grid_line_color = None
     p.axis.axis_line_color = None
     p.axis.major_tick_line_color = None
-    p.axis.major_label_text_font_size = "5pt"
+    p.axis.major_label_text_font_size = "9pt"
     p.axis.major_label_standoff = 0
     p.xaxis.major_label_orientation = pi / 3
 
