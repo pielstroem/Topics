@@ -410,13 +410,10 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
             d[year[0]]+=1
         for year in years:
             topic_over_threshold_per_year.append(d[str(year)])
-        #print("years: ", years, " topic_over_threshold_per_year: ", topic_over_threshold_per_year)
         plt.plot(years, topic_over_threshold_per_year, label=label)
                    
     plt.xlabel('Year')
     plt.ylabel('count topics over threshold')
-    #nicht notwendig
-    #plt.xlim = (range(starttime,endtime))
     plt.legend()
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
