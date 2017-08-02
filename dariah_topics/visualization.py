@@ -306,60 +306,60 @@ def doc_topic_heatmap_interactive(doc_topic, title):
             BasicTicker,
             ColorBar
             )
-    except:
-        log.info("Bokeh could not be imported now using mathplotlib")
-        doc_topic_heatmap(doc_topic)
-              
-    output_notebook()
+        
+        output_notebook()
 
+        documents = list(doc_topic.columns)
+        topics = doc_topic.index
 
-    documents = list(doc_topic.columns)
-    topics = doc_topic.index
+        score = []
+        for x in doc_topic.apply(tuple):
+            score.extend(x)
+            data = {
+            'Topic': list(doc_topic.index) * len(doc_topic.columns),
+            'Document':  [item for item in list(doc_topic.columns) for i in range(len(doc_topic.index))],
+            'Score':   score
+            }
 
-    score = []
-    for x in doc_topic.apply(tuple):
-        score.extend(x)
-        data = {
-          'Topic': list(doc_topic.index) * len(doc_topic.columns),
-          'Document':  [item for item in list(doc_topic.columns) for i in range(len(doc_topic.index))],
-          'Score':   score
-        }
+        df = doc_topic.from_dict(data)
 
-    df = doc_topic.from_dict(data)
+        colors = ["#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]
+        mapper = LinearColorMapper(palette=colors, low=df.Score.min(), high=df.Score.max())
 
-    colors = ["#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]
-    mapper = LinearColorMapper(palette=colors, low=df.Score.min(), high=df.Score.max())
+        source = ColumnDataSource(df)
 
-    source = ColumnDataSource(df)
+        TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
 
-    TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
-
-    p = figure(title=title,
+        p = figure(title=title,
                x_range=documents, y_range=list(reversed(topics)),
                x_axis_location="above", plot_width=1024, plot_height=768,
                tools=TOOLS, toolbar_location='below', responsive=True)
 
-    p.grid.grid_line_color = None
-    p.axis.axis_line_color = None
-    p.axis.major_tick_line_color = None
-    p.axis.major_label_text_font_size = "9pt"
-    p.axis.major_label_standoff = 0
-    p.xaxis.major_label_orientation = pi / 3
+        p.grid.grid_line_color = None
+        p.axis.axis_line_color = None
+        p.axis.major_tick_line_color = None
+        p.axis.major_label_text_font_size = "9pt"
+        p.axis.major_label_standoff = 0
+        p.xaxis.major_label_orientation = pi / 3
 
-    p.rect(x="Document", y="Topic", width=1, height=1,
+        p.rect(x="Document", y="Topic", width=1, height=1,
            source=source,
            fill_color={'field': 'Score', 'transform': mapper},
            line_color=None)
 
 
-    color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
+        color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          label_standoff=6, border_line_color=None, location=(0, 0))
-    p.add_layout(color_bar, 'right')
+        p.add_layout(color_bar, 'right')
 
-    p.select_one(HoverTool).tooltips = [
-         ('Document', '@Document'),
-         ('Topic', '@Topic'),
-         ('Score', '@Score')
-    ]
-    return p
+        p.select_one(HoverTool).tooltips = [
+             ('Document', '@Document'),
+             ('Topic', '@Topic'),
+             ('Score', '@Score')
+             ]
+        return p
+        
+    except:
+        log.info("Bokeh could not be imported now using mathplotlib")
+        #doc_topic_heatmap(doc_topic)
