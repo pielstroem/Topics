@@ -501,7 +501,7 @@ def show_doc_topic_matrix(output_folder, doc_topics='doc_topics.txt', topic_keys
                                       columns=topicLabels[0:])
     return doc_topic_matrix.T
 
-def show_topics_keys(output_folder, topicsKeyFile="topic_keys.txt", num_topics=10):
+def show_topics_keys(output_folder, topicsKeyFile="topic_keys.txt", num_topics=10, key_per_topic=10):
     """Show topic-key-mapping.
 
     Args:
@@ -537,5 +537,5 @@ def show_topics_keys(output_folder, topicsKeyFile="topic_keys.txt", num_topics=1
 
     topicKeysMatrix=pd.DataFrame(topic_keys)
     topicKeysMatrix.index=['Topic ' + str(x + 1) for x in range(num_topics)]
-    topicKeysMatrix.columns=['Key ' + str(x + 1) for x in range(10)]
+    topicKeysMatrix.columns=['Key ' + str(x + 1) for x in range(key_per_topic)]
     return topicKeysMatrix
