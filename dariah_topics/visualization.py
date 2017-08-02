@@ -29,6 +29,7 @@ import numpy as np
 import os
 import pandas as pd
 import regex
+from collections import defaultdict
 
 log = logging.getLogger('visualization')
 log.addHandler(logging.NullHandler())
@@ -351,6 +352,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          label_standoff=6, border_line_color=None, location=(0, 0))
+<<<<<<< HEAD
         p.add_layout(color_bar, 'right')
 
         p.select_one(HoverTool).tooltips = [
@@ -363,3 +365,63 @@ def doc_topic_heatmap_interactive(doc_topic, title):
     except:
         log.info("Bokeh could not be imported now using mathplotlib")
         #doc_topic_heatmap(doc_topic)
+=======
+    p.add_layout(color_bar, 'right')
+
+    p.select_one(HoverTool).tooltips = [
+         ('Document', '@Document'),
+         ('Topic', '@Topic'),
+         ('Score', '@Score')
+    ]
+    return p
+
+
+
+def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung preußen partei', 'dichter goethe kunst'], threshold=0.1, starttime=1841, endtime=1920):
+    """Plot interactive doc_topic_heatmap
+
+    Description:
+        With this function you can plot topics over time.
+
+    Args:
+        labels:
+        threshold:
+        starttime:
+        endtime: 
+        doc_topic: Doc_topic matrix in a DataFrame
+        
+
+    Returns: bokeh plot
+
+    Note:
+
+    ToDo:
+
+    """       
+    dictList=[]
+    years=list(range(starttime,endtime))
+    doc_topicT = doc_topic.T
+    for label in labels:
+        topic_over_threshold_per_year =[]
+        df = doc_topicT.loc[doc_topicT[label] >  threshold]
+        d = defaultdict(int)
+        for item in df.index.values:
+            year = item.split('_')
+            d[year[0]]+=1
+        for year in years:
+            topic_over_threshold_per_year.append(d[str(year)])
+        #print("years: ", years, " topic_over_threshold_per_year: ", topic_over_threshold_per_year)
+        plt.plot(years, topic_over_threshold_per_year, label=label)
+                   
+    plt.xlabel('Year')
+    plt.ylabel('count topics over threshold')
+    #nicht notwendig
+    #plt.xlim = (range(starttime,endtime))
+    plt.legend()
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    plt.show()
+    
+
+    
+>>>>>>> added additional argument key_per_topic to mallet.show_topic_keys; added show_topic_over_time to visualization. todo: adjust default values to already existing examples
