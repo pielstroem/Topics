@@ -16,17 +16,12 @@ __email__ = "pielstroem@biozentrum.uni-wuerzburg.de"
 
 from collections import Counter, defaultdict
 import csv
-import glob
 from itertools import chain
 import logging
 from lxml import etree
 import numpy as np
 import os
 import pandas as pd
-from pathlib import Path
-from itertools import zip_longest
-from abc import abstractmethod, abstractproperty
-from copy import deepcopy
 import regex
 
 
