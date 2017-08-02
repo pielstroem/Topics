@@ -352,7 +352,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="10pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          label_standoff=6, border_line_color=None, location=(0, 0))
-<<<<<<< HEAD
+
         p.add_layout(color_bar, 'right')
 
         p.select_one(HoverTool).tooltips = [
@@ -364,8 +364,8 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         
     except:
         log.info("Bokeh could not be imported now using mathplotlib")
-        #doc_topic_heatmap(doc_topic)
-=======
+        doc_topic_heatmap(doc_topic)
+
     p.add_layout(color_bar, 'right')
 
     p.select_one(HoverTool).tooltips = [
@@ -424,4 +424,4 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
     
 
     
->>>>>>> added additional argument key_per_topic to mallet.show_topic_keys; added show_topic_over_time to visualization. todo: adjust default values to already existing examples
+
