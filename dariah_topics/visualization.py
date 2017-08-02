@@ -384,7 +384,7 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
         With this function you can plot topics over time.
 
     Args:
-        labels:
+        labels: 
         threshold:
         starttime:
         endtime: 
