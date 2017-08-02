@@ -30,7 +30,6 @@ import os
 import pandas as pd
 import regex
 
-
 log = logging.getLogger('visualization')
 log.addHandler(logging.NullHandler())
 logging.basicConfig(level = logging.ERROR,
@@ -294,17 +293,23 @@ def doc_topic_heatmap_interactive(doc_topic, title):
     ToDo:
 
     """
-    #from ipywidgets import interact
-    from bokeh.io import show, output_notebook
-    from bokeh.plotting import figure
-    from math import pi
-    from bokeh.models import (
-        ColumnDataSource,
-        HoverTool,
-        LinearColorMapper,
-        BasicTicker,
-        ColorBar
-    )
+    log.info("Importing functions from bokeh ...")
+    try:    
+        #from ipywidgets import interact
+        from bokeh.io import output_notebook
+        from bokeh.plotting import figure
+        from math import pi
+        from bokeh.models import (
+            ColumnDataSource,
+            HoverTool,
+            LinearColorMapper,
+            BasicTicker,
+            ColorBar
+            )
+    except:
+        log.info("Bokeh could not be imported now using mathplotlib")
+        doc_topic_heatmap(doc_topic)
+              
     output_notebook()
 
 
