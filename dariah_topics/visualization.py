@@ -378,27 +378,29 @@ def doc_topic_heatmap_interactive(doc_topic, title):
 
 
 def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung preußen partei', 'dichter goethe kunst'], threshold=0.1, starttime=1841, endtime=1920):
-    """Plot interactive doc_topic_heatmap
+    """Creates a visualization that shows topics over time
 
     Description:
-        With this function you can plot topics over time.
+        With this function you can plot topics over time using metadata stored in the documents name.
+        Only works with mallet output.
 
     Args:
-        labels:
-        threshold:
-        starttime:
-        endtime: 
-        doc_topic: Doc_topic matrix in a DataFrame
+        doc_topic: doc-topic matrix created by mallet.show_doc_topic_matrix
+        labels(list[str]): first three keys in a topic to select
+        threshold(float): threshold set to define if a topic in a document is viable
+        starttime(int): sets starting point for visualization
+        endtime(int): sets ending point for visualization
         
 
-    Returns: bokeh plot
+    Returns: matplotlib plot
 
-    Note:
+    Note: this function is created for a corpus with filenames that looks like:
+            1866_ArticleName.txt
 
-    ToDo:
+    ToDo: make it compatible with gensim output
 
     """       
-    dictList=[]
+
     years=list(range(starttime,endtime))
     doc_topicT = doc_topic.T
     for label in labels:
@@ -410,13 +412,10 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
             d[year[0]]+=1
         for year in years:
             topic_over_threshold_per_year.append(d[str(year)])
-        #print("years: ", years, " topic_over_threshold_per_year: ", topic_over_threshold_per_year)
         plt.plot(years, topic_over_threshold_per_year, label=label)
                    
     plt.xlabel('Year')
     plt.ylabel('count topics over threshold')
-    #nicht notwendig
-    #plt.xlim = (range(starttime,endtime))
     plt.legend()
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
