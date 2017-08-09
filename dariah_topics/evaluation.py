@@ -33,9 +33,8 @@ def read_sparse_bow(path):
     Returns:
         DataFrame.
     """
-    sparse_bow = pd.read_csv(path, header=None)
-    sparse_bow.columns = ['doc_id', 'token_id', 0]
-    sparse_bow.set_index(['doc_id', 'token_id'])
+    sparse_bow = pd.read_csv(path)
+    sparse_bow = sparse_bow.set_index(['doc_id', 'token_id'])
     return sparse_bow
 
 
