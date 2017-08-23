@@ -876,23 +876,6 @@ def gensim2dataframe(model, num_keys=10):
     return topics_df
 
 
-def doctopic2dataframe(model, doc2bow_list, doc2id):
-    """Use only for testing purposes, not working properly
-
-    Note:
-
-    Args:
-
-    Returns:
-
-    ToDo: 
-    """
-    df = pd.DataFrame()
-    for idx, doc in enumerate(doc2bow_list, 1):
-        df[doc2id[idx]] = pd.Series(
-            [value[1] for value in model.get_document_topics(doc)])
-    return df.fillna(0)
-
 def lda_doc_topic(model, topics, doc_labels):
     """Creates a doc_topic_matrix for lda output.
     
