@@ -821,14 +821,23 @@ def lda2dataframe(model, vocab, num_keys=10):
     Note:
 
     Args:
-        model: Gensim LDA model.
-        vocab: 
+        model: LDA model.
+        vocab (list[str]): List of strings containing corpus vocabulary. 
         num_keys (int): Number of top keywords for topic
         
     Returns:
         DataFrame
 
-    ToDo:
+    Example:
+        >>> import lda
+        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
+        >>> doc_term_matrix = create_doc_term_matrix(corpus, ['doc1', 'doc2'])
+        >>> vocab = doc_term_matrix.columns
+        >>> model = lda.LDA(n_topics=1, n_iter=1)
+        >>> model.fit(doc_term_matrix.as_matrix().astype(int))
+        >>> df = lda2dataframe(model, vocab, num_keys=1)
+        >>> len(df) == 1
+        True
     """
     topics = []
     topic_word = model.topic_word_
@@ -894,7 +903,17 @@ def lda_doc_topic(model, topics, doc_labels):
     Returns:
         DataFrame
 
-    ToDo:
+    Example:
+        >>> import lda
+        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
+        >>> doc_term_matrix = create_doc_term_matrix(corpus, ['doc1', 'doc2'])
+        >>> vocab = doc_term_matrix.columns
+        >>> model = lda.LDA(n_topics=1, n_iter=1)
+        >>> model.fit(doc_term_matrix.as_matrix().astype(int))
+        >>> topics = lda2dataframe(model, vocab)
+        >>> doc_topic = lda_doc_topic(model, vocab, ['doc1', 'doc2'])
+        >>> len(doc_topic.T) == 2
+        True
     """
     topic_labels = []
     topic_terms = [x[:3] for x in topics.values.tolist()]
