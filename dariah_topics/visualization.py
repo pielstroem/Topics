@@ -24,7 +24,6 @@ import logging
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 import numpy as np
 import os
 import pandas as pd
@@ -119,159 +118,166 @@ def plot_doc_topics(doc_topic, document_index):
     plt.tight_layout()
     return plt
 
-#
-# Work in progress following
-#
-def topicwords_in_df(model):
-    pattern = regex.compile(r'\p{L}+\p{P}?\p{L}+')
-    topics = []
-    index = []
-    for n, topic in enumerate(model.show_topics()):
-        topics.append(pattern.findall(topic[1]))
-        index.append("Topic " + str(n+1))
-    df = pd.DataFrame(topics, index=index, columns=["Key " + str(x+1) for x in range(len(topics))])
-    return df
 
-def show_wordle_for_topic(model, topic_nr, words):
-    """Plot wordle for a specific topic
+try:
+    from wordcloud import WordCloud
 
-    Args:
-        model: Gensim LDA model
-        topic_nr(int): Choose topic
-        words (int): Number of words to show
+    #
+    # Work in progress following
+    #
+    def topicwords_in_df(model):
+        pattern = regex.compile(r'\p{L}+\p{P}?\p{L}+')
+        topics = []
+        index = []
+        for n, topic in enumerate(model.show_topics()):
+            topics.append(pattern.findall(topic[1]))
+            index.append("Topic " + str(n+1))
+        df = pd.DataFrame(topics, index=index, columns=["Key " + str(x+1) for x in range(len(topics))])
+        return df
 
-    Note: Function does use wordcloud package -> https://pypi.python.org/pypi/wordcloud
-         pip install wordcloud
+    def show_wordle_for_topic(model, topic_nr, words):
+        """Plot wordle for a specific topic
 
-    ToDo: Check if this function should be implemented
+        Args:
+            model: Gensim LDA model
+            topic_nr(int): Choose topic
+            words (int): Number of words to show
 
-    """
-    plt.figure()
-    plt.imshow(WordCloud().fit_words(dict(model.show_topic(topic_nr, words))))
-    plt.axis("off")
-    plt.title("Topic #" + str(topic_nr + 1))
-    return plt
+        Note: Function does use wordcloud package -> https://pypi.python.org/pypi/wordcloud
+            pip install wordcloud
+
+        ToDo: Check if this function should be implemented
+
+        """
+        plt.figure()
+        plt.imshow(WordCloud().fit_words(dict(model.show_topic(topic_nr, words))))
+        plt.axis("off")
+        plt.title("Topic #" + str(topic_nr + 1))
+        return plt
 
 
-def get_color_scale(word, font_size, position, orientation, font_path, random_state=None):
-    """ Create color scheme for wordle."""
-    return "hsl(245, 58%, 25%)" # Default. Uniform dark blue.
-    #return "hsl(0, 00%, %d%%)" % random.randint(80, 100) # Greys for black background.
-    #return "hsl(221, 65%%, %d%%)" % random.randint(30, 35) # Dark blues for white background
+    def get_color_scale(word, font_size, position, orientation, font_path, random_state=None):
+        """ Create color scheme for wordle."""
+        return "hsl(245, 58%, 25%)" # Default. Uniform dark blue.
+        #return "hsl(0, 00%, %d%%)" % random.randint(80, 100) # Greys for black background.
+        #return "hsl(221, 65%%, %d%%)" % random.randint(30, 35) # Dark blues for white background
 
-def get_topicRank(topic, topicRanksFile):
-    #print("getting topic rank.")
-    with open(topicRanksFile, "r") as infile:
-        topicRanks = pd.read_csv(infile, sep=",", index_col=0)
-        rank = int(topicRanks.iloc[topic]["Rank"])
-        return rank
+    def get_topicRank(topic, topicRanksFile):
+        #print("getting topic rank.")
+        with open(topicRanksFile, "r") as infile:
+            topicRanks = pd.read_csv(infile, sep=",", index_col=0)
+            rank = int(topicRanks.iloc[topic]["Rank"])
+            return rank
 
-def read_mallet_word_weights(word_weights_file):
-    """Read Mallet word_weigths file
+    def read_mallet_word_weights(word_weights_file):
+        """Read Mallet word_weigths file
 
-    Description:
-        Reads Mallet word_weigths into pandas DataFrame.
+        Description:
+            Reads Mallet word_weigths into pandas DataFrame.
 
-    Args:
-        word_weigts_file: Word_weights_file created with Mallet
+        Args:
+            word_weigts_file: Word_weights_file created with Mallet
 
-    Returns: Pandas DataFrame
+        Returns: Pandas DataFrame
 
-    Note:
+        Note:
 
-    ToDo:
+        ToDo:
 
-    """
-    word_scores = pd.read_table(word_weights_file, header=None, sep="\t")
-    word_scores = word_scores.sort(columns=[0,2], axis=0, ascending=[True, False])
-    word_scores_grouped = word_scores.groupby(0)
-    return word_scores_grouped
+        """
+        word_scores = pd.read_table(word_weights_file, header=None, sep="\t")
+        word_scores = word_scores.sort(columns=[0,2], axis=0, ascending=[True, False])
+        word_scores_grouped = word_scores.groupby(0)
+        return word_scores_grouped
 
-def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
-    """Transform Mallet output for wordle generation.
+    def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
+        """Transform Mallet output for wordle generation.
 
-    Description:
-        Get words for wordle.
+        Description:
+            Get words for wordle.
 
-    Args:
-        word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get
-            grouped word scores.
-        topic_nr(int): Topic the wordle should be generated for
-        number_of_top_words(int): Number of top words that should be considered
+        Args:
+            word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get
+                grouped word scores.
+            topic_nr(int): Topic the wordle should be generated for
+            number_of_top_words(int): Number of top words that should be considered
 
-    Returns: Words for wordle.
+        Returns: Words for wordle.
 
-    Note:
+        Note:
 
-    ToDo:
+        ToDo:
 
-    """
-    topic_word_scores = word_scores_grouped.get_group(topic_nr)
-    top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
-    topic_words = top_topic_word_scores.loc[:,1].tolist()
-    #word_scores = top_topic_word_scores.loc[:,2].tolist()
-    wordlewords = ""
-    j = 0
-    for word in topic_words:
-        word = word
-        #score = word_scores[j]
-        j += 1
-        wordlewords = wordlewords + ((word + " "))
-    return wordlewords
+        """
+        topic_word_scores = word_scores_grouped.get_group(topic_nr)
+        top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
+        topic_words = top_topic_word_scores.loc[:,1].tolist()
+        #word_scores = top_topic_word_scores.loc[:,2].tolist()
+        wordlewords = ""
+        j = 0
+        for word in topic_words:
+            word = word
+            #score = word_scores[j]
+            j += 1
+            wordlewords = wordlewords + ((word + " "))
+        return wordlewords
 
-def plot_wordle_from_mallet(word_weights_file,
-                            topic_nr,
-                            number_of_top_words,
-                            outfolder,
-                            dpi):
-    """Generate wordles from Mallet output.
+    def plot_wordle_from_mallet(word_weights_file,
+                                topic_nr,
+                                number_of_top_words,
+                                outfolder,
+                                dpi):
+        """Generate wordles from Mallet output.
 
-    Description:
-        This function does use the wordcloud module to plot wordles.
-        Uses read_mallet_word_weigths() and get_wordlewords() to get
-        word_scores and words for wordle.
+        Description:
+            This function does use the wordcloud module to plot wordles.
+            Uses read_mallet_word_weigths() and get_wordlewords() to get
+            word_scores and words for wordle.
 
-    Args:
-        word_weigts_file: Word_weights_file created with Mallet
-        topic_nr(int): Topic the wordle should be generated for
-        number_of_top_words(int): Number of top words that should be considered
-            for the wordle
-        outfolder(str): Specify path to safe wordle.
-        dpi(int): Set resolution for wordle.
+        Args:
+            word_weigts_file: Word_weights_file created with Mallet
+            topic_nr(int): Topic the wordle should be generated for
+            number_of_top_words(int): Number of top words that should be considered
+                for the wordle
+            outfolder(str): Specify path to safe wordle.
+            dpi(int): Set resolution for wordle.
 
-    Returns: Plot
+        Returns: Plot
 
-    Note:
+        Note:
 
-    ToDo:
+        ToDo:
 
-    """
+        """
 
-    word_scores_grouped = read_mallet_word_weights(word_weights_file)
-    text = get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr)
-    wordcloud = WordCloud(width=600, height=400, background_color="white", margin=4).generate(text)
-    default_colors = wordcloud.to_array()
-    figure_title = "topic "+ str(topic_nr)
-    plt.imshow(default_colors)
-    plt.imshow(wordcloud)
-    plt.title(figure_title, fontsize=30)
-    plt.axis("off")
+        word_scores_grouped = read_mallet_word_weights(word_weights_file)
+        text = get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr)
+        wordcloud = WordCloud(width=600, height=400, background_color="white", margin=4).generate(text)
+        default_colors = wordcloud.to_array()
+        figure_title = "topic "+ str(topic_nr)
+        plt.imshow(default_colors)
+        plt.imshow(wordcloud)
+        plt.title(figure_title, fontsize=30)
+        plt.axis("off")
 
-    ## Saving the image file.
-    if not os.path.exists(outfolder):
-        os.makedirs(outfolder)
+        ## Saving the image file.
+        if not os.path.exists(outfolder):
+            os.makedirs(outfolder)
 
-    figure_filename = "wordle_tp"+"{:03d}".format(topic_nr) + ".png"
-    plt.savefig(outfolder + figure_filename, dpi=dpi)
-    return plt
+        figure_filename = "wordle_tp"+"{:03d}".format(topic_nr) + ".png"
+        plt.savefig(outfolder + figure_filename, dpi=dpi)
+        return plt
 
-def plot_wordle_from_lda(model, vocab, topic_nr, words, height, width):
-    topic_dist = model.topic_word_[topic_nr]
-    topic_words = np.array(vocab)[np.argsort(topic_dist)][:-words:-1]
-    token_value = {}
-    for token, value in zip(topic_words, topic_dist[:-words:-1]):
-        token_value.update({token: value})
-    return WordCloud(background_color='white', height=height, width=width).fit_words(token_value)
+    def plot_wordle_from_lda(model, vocab, topic_nr, words, height, width):
+        topic_dist = model.topic_word_[topic_nr]
+        topic_words = np.array(vocab)[np.argsort(topic_dist)][:-words:-1]
+        token_value = {}
+        for token, value in zip(topic_words, topic_dist[:-words:-1]):
+            token_value.update({token: value})
+        return WordCloud(background_color='white', height=height, width=width).fit_words(token_value)
+
+except ImportError as e:
+    log.info('WordCloud functions not available, they require the wordcloud module')
 
 
 def doc_topic_heatmap_interactive(doc_topic, title):
@@ -292,7 +298,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
 
     """
     log.info("Importing functions from bokeh ...")
-    try:    
+    try:
         #from ipywidgets import interact
         from bokeh.io import output_notebook
         from bokeh.plotting import figure
@@ -304,7 +310,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
             BasicTicker,
             ColorBar
             )
-        
+
         output_notebook()
 
         documents = list(doc_topic.columns)
@@ -358,7 +364,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
              ('Score', '@Score')
              ]
         return p
-        
+
     except:
         log.info("Bokeh could not be imported now using mathplotlib")
         doc_topic_heatmap(doc_topic)
@@ -387,7 +393,7 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
         threshold(float): threshold set to define if a topic in a document is viable
         starttime(int): sets starting point for visualization
         endtime(int): sets ending point for visualization
-        
+
 
     Returns: matplotlib plot
 
@@ -396,7 +402,7 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
 
     ToDo: make it compatible with gensim output
 
-    """       
+    """
 
     years=list(range(starttime,endtime))
     doc_topicT = doc_topic.T
@@ -410,14 +416,14 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
         for year in years:
             topic_over_threshold_per_year.append(d[str(year)])
         plt.plot(years, topic_over_threshold_per_year, label=label)
-                   
+
     plt.xlabel('Year')
     plt.ylabel('count topics over threshold')
     plt.legend()
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
     plt.show()
-    
 
-    
+
+
 
