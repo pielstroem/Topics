@@ -812,6 +812,24 @@ def make_doc2bow_list(sparse_bow):
 
 
 def lda2dataframe(model, vocab, num_keys=10):
+    """Converts lda output to a DataFrame
+    
+    Description:
+        With this function you can convert lda output to a DataFrame, 
+        a more convenient datastructure.
+        
+    Note:
+
+    Args:
+        model: Gensim LDA model.
+        vocab: 
+        num_keys (int): Number of top keywords for topic
+        
+    Returns:
+        DataFrame
+
+    ToDo:
+    """
     topics = []
     topic_word = model.topic_word_
     for i, topic_dist in enumerate(topic_word):
@@ -867,7 +885,7 @@ def doctopic2dataframe(model, doc2bow_list, doc2id):
 
     Returns:
 
-    ToDo: make it work
+    ToDo: 
     """
     df = pd.DataFrame()
     for idx, doc in enumerate(doc2bow_list, 1):
@@ -876,15 +894,24 @@ def doctopic2dataframe(model, doc2bow_list, doc2id):
     return df.fillna(0)
 
 def lda_doc_topic(model, topics, doc_labels):
-    """Use only for testing purposes, not working properly
-
+    """Creates a doc_topic_matrix for lda output.
+    
+    Description:
+        With this function you can convert lda output to a DataFrame, 
+        a more convenient datastructure.
+        Use 'lda2DataFrame()' to get topics.
+        
     Note:
 
     Args:
+        model: Gensim LDA model.
+        topics: DataFrame.
+        doc_labels (list[str]): List of doc labels as string.
 
     Returns:
+        DataFrame
 
-    ToDo: make it work
+    ToDo:
     """
     topic_labels = []
     topic_terms = [x[:3] for x in topics.values.tolist()]
