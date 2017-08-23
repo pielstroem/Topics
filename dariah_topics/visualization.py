@@ -48,26 +48,23 @@ def create_doc_topic(corpus, model, doc_labels):
     Returns: Doc_topic DataFrame
 
     ToDo:
-        Rewrite the first loop to get rid of the necessity to transpose the
-        data frame.'visualization' is not the proper place for this function!
 
     """
     no_of_topics = model.num_topics
     no_of_docs = len(doc_labels)
-    doc_topic = np.zeros((no_of_docs, no_of_topics))
+    doc_topic = np.zeros((no_of_topics, no_of_docs))
 
     for doc, i in zip(corpus, range(no_of_docs)):       # use document bow from corpus
-        topic_dist = model.__getitem__(doc)             # to get topic distribution froom model
+        topic_dist = model.__getitem__(doc)             # to get topic distribution from model
         for topic in topic_dist:                        # topic_dist is a list of tuples
-            doc_topic[i][topic[0]] = topic[1]           # save topic probability
+            doc_topic[topic[0]][i] = topic[1]           # save topic probability
 
     topic_labels = []
     for i in range(no_of_topics):
         topic_terms = [x[0] for x in model.show_topic(i, topn=3)]  # show_topic() returns tuples (word_prob, word)
         topic_labels.append(" ".join(topic_terms))
 
-    doc_topic = pd.DataFrame(doc_topic, index = doc_labels, columns = topic_labels)
-    doc_topic = doc_topic.transpose()
+    doc_topic = pd.DataFrame(doc_topic, index = topic_labels, columns = doc_labels)
 
     return doc_topic
 
@@ -81,10 +78,10 @@ def doc_topic_heatmap(data_frame):
     Returns: Plot with Heatmap
 
     ToDo:
-        Recode to get rid of transpose in the beginning
+        
 
     """
-    data_frame = data_frame.transpose().sort_index()
+    data_frame = data_frame.sort_index()
     doc_labels = list(data_frame.index)
     topic_labels = list(data_frame)
     if len(doc_labels) > 20 or len(topic_labels) > 20: plt.figure(figsize=(20,20))    # if many items, enlarge figure
