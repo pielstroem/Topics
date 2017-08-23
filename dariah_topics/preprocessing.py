@@ -418,14 +418,53 @@ def create_mallet_import(doc_tokens_cleaned, doc_labels, outpath = os.path.join(
         with open(os.path.join(outpath,label+'.txt'), 'w', encoding="utf-8") as f:
             for token in tokens:
                 f.write(' '.join(token))
-
+                
 
 def create_doc_term_matrix(tokens, doc_labels):
-    df = pd.DataFrame([wordcounts(doc, label) for doc, label in zip(tokens, doc_labels)])
+    """Creates a document-term matrix
+
+    Description:
+        With this function you can create a document-term matrix
+        where rows correspond to documents in the collection and columns 
+        correspond to terms.
+        Use the function `tokenize()` to tokenize your text files and
+        Use the function `_wordcounts()` to generate the wordcounts
+    Args:
+        doc_labels (list[str]): List of doc labels as string
+        tokens (list): List of tokens.
+
+    Returns:
+        DataFrame.
+
+    Example:
+        >>> example = create_doc_term_matrix('example', 'label')
+        >>> print(isinstance(example, pd.DataFrame))
+        >>> True
+    """
+    df = pd.DataFrame([_wordcounts(doc, label) for doc, label in zip(tokens, doc_labels)])
     df = df.fillna(0)
     return df.loc[:, df.sum().sort_values(ascending=False).index]
 
-def wordcounts(doc, label):
+def _wordcounts(doc, label):
+    """Creates a Series with wordcounts
+
+    Description:
+        Only the function 'create_doc_term_matrix() uses this private 
+        function. 
+
+    Args:
+        doc (list[tokens]): List of tokens
+        label (String): String with document_label.
+
+    Returns:
+        Pandas Series.
+        
+    ToDo:
+        Complete documetation
+        
+    Example:
+
+    """
     s = pd.Series(Counter(doc))
     s.name = label
     return s
@@ -806,15 +845,6 @@ def gensim2dataframe(model, num_keys=10):
         >>> isinstance(gensim2dataframe(model, 4), pd.DataFrame)
         True
     """
-#    num_topics = model.num_topics
-#    topics_df = pd.DataFrame(index=range(num_topics), columns=range(num_keys))
-#    topics = model.show_topics(
-#        num_topics=num_topics, log=False, formatted=False)
-#    for topic in topics:
-#        idx = topic[0]
-#        temp = topic[1]
-#        topics_df.loc[idx] = temp
-
     num_topics = model.num_topics
     topics_df = pd.DataFrame(index = range(num_topics),
                                  columns= range(num_keys))
@@ -846,6 +876,16 @@ def doctopic2dataframe(model, doc2bow_list, doc2id):
     return df.fillna(0)
 
 def lda_doc_topic(model, topics, doc_labels):
+    """Use only for testing purposes, not working properly
+
+    Note:
+
+    Args:
+
+    Returns:
+
+    ToDo: make it work
+    """
     topic_labels = []
     topic_terms = [x[:3] for x in topics.values.tolist()]
     for topic in topic_terms:
