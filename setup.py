@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='dariah_topics',
-    version='0.2.0dev0',
+    version='0.3.0dev0',
     description='DARIAH Topic Modelling',
     # url
     author="DARIAH-DE Wuerzburg Group",
