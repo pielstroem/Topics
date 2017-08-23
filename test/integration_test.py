@@ -6,17 +6,13 @@ import re
 
 project_path = Path(__file__).absolute().parent.parent
 
-
-def jupyter_integration_test():
-    """
-    Integration test notebook (via Jupyter)
-    """
+def run_notebook(notebook_name):
     try:
         check_output(["jupyter-nbconvert", "--execute",
                      "--log-level=ERROR",
                      "--ExecutePreprocessor.iopub_timeout=30",
                       "--ExecutePreprocessor.timeout=None",
-                    str(Path(project_path, "IntegrationTest_v01.ipynb"))],
+                    str(Path(project_path, notebook_name))],
                      stderr=STDOUT, universal_newlines=True)
     except FileNotFoundError as e:
         raise SkipTest("jupyter-nbconvert not found. Cannot run integration test. "
@@ -28,4 +24,13 @@ def jupyter_integration_test():
         if cellinfo:
             message = cellinfo.group(1)
         logging.error(message)
-        raise
+
+@SkipTest
+def jupyter_lda_test():
+    run_notebook("Introducing_lda.ipynb")
+
+def jupyter_gensim_test():
+    run_notebook("Introducing_gensim.ipynb")
+
+def jupyter_MALLET_test():
+    run_notebook("Introducing_MALLET.ipynb")
