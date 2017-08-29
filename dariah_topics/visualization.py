@@ -47,7 +47,18 @@ def create_doc_topic(corpus, model, doc_labels):
     Returns: Doc_topic DataFrame
 
     ToDo:
-
+    
+    Example:
+        >>> import gensim
+        >>> corpus = [[(1, 0.5)], []]
+        >>> gensim.corpora.MmCorpus.serialize('/tmp/corpus.mm', corpus)
+        >>> mm = gensim.corpora.MmCorpus('/tmp/corpus.mm')
+        >>> type2id = {0 : "test", 1 : "corpus"}
+        >>> doc_labels = ['doc1', 'doc2']
+        >>> model = gensim.models.LdaModel(corpus=mm, id2word=type2id, num_topics=1)
+        >>> doc_topic = visualization.create_doc_topic(corpus, model, doc_labels)
+        >>> len(doc_topic.T) == 2
+        >>> True
     """
     no_of_topics = model.num_topics
     no_of_docs = len(doc_labels)
