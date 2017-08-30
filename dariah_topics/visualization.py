@@ -40,13 +40,13 @@ def create_doc_topic(corpus, model, doc_labels):
     """Creates a document-topic-matrix.
     
     Description:
-        With this function you can create a doc-topic-maxtrix for a gensim 
-        model
+        With this function you can create a doc-topic-maxtrix for gensim 
+        output. 
 
     Args:
-        Gensim corpus.
-        Gensim model object.
-        List of document labels.
+        corpus (mmCorpus): Gensim corpus.
+        model: Gensim LDA model
+        doc_labels (list): List of document labels.
 
     Returns: 
         Doc_topic-matrix as DataFrame
@@ -91,7 +91,7 @@ def doc_topic_heatmap(data_frame):
         Use create_doc_topic() to generate a doc-topic
 
     Args:
-        Document-topic-matrix.
+        data_frame (DataFrame): Document-topic-matrix.
 
     Returns: 
         Plot with Heatmap
@@ -127,12 +127,16 @@ def doc_topic_heatmap(data_frame):
 
 def plot_doc_topics(doc_topic, document_index):
     """Plot topic disctribution in a document.
+    
+    Description:
+        
 
     Args:
         Document-topic data frame.
         Index of the document to be shown.
 
     Returns:
+        Plot.
 
     """
     data = doc_topic[list(doc_topic)[document_index]].copy()
@@ -318,8 +322,8 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         With this function you can plot an interactive doc_topic matrix.
 
     Args:
-        doc_topic: Doc_topic matrix in a DataFrame
-        title(str): Title shown in the plot.
+        doc_topic (DataFrame): Doc_topic matrix in a DataFrame
+        title (str): Title shown in the plot.
 
     Returns: bokeh plot
 
