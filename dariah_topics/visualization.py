@@ -190,19 +190,19 @@ try:
         word_scores_grouped = word_scores.groupby(0)
         return word_scores_grouped
 
-    def get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr):
-        """Transform Mallet output for wordle generation.
+    def _get_wordcloudwords(word_scores_grouped, number_of_top_words, topic_nr):
+        """Transform Mallet output for wordcloud generation.
 
         Description:
-            Get words for wordle.
+            Get words for wordcloud.
 
         Args:
             word_scores_grouped(DataFrame): Uses read_mallet_word_weights() to get
                 grouped word scores.
-            topic_nr(int): Topic the wordle should be generated for
+            topic_nr(int): Topic the wordcloud should be generated for
             number_of_top_words(int): Number of top words that should be considered
 
-        Returns: Words for wordle.
+        Returns: Words for wordcloud.
 
         Note:
 
@@ -213,34 +213,34 @@ try:
         top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
         topic_words = top_topic_word_scores.loc[:,1].tolist()
         #word_scores = top_topic_word_scores.loc[:,2].tolist()
-        wordlewords = ""
+        wordcloudwords = ""
         j = 0
         for word in topic_words:
             word = word
             #score = word_scores[j]
             j += 1
-            wordlewords = wordlewords + ((word + " "))
-        return wordlewords
+            wordcloudwords = wordcloudwords + ((word + " "))
+        return wordcloudwords
 
-    def plot_wordle_from_mallet(word_weights_file,
+    def plot_wordcloud_from_mallet(word_weights_file,
                                 topic_nr,
                                 number_of_top_words,
                                 outfolder,
                                 dpi):
-        """Generate wordles from Mallet output.
+        """Generate wordclouds from Mallet output.
 
         Description:
-            This function does use the wordcloud module to plot wordles.
+            This function does use the wordcloud module to plot wordclouds.
             Uses read_mallet_word_weigths() and get_wordlewords() to get
-            word_scores and words for wordle.
+            word_scores and words for wordclouds.
 
         Args:
             word_weigts_file: Word_weights_file created with Mallet
-            topic_nr(int): Topic the wordle should be generated for
+            topic_nr(int): Topic the wordclouds should be generated for
             number_of_top_words(int): Number of top words that should be considered
-                for the wordle
-            outfolder(str): Specify path to safe wordle.
-            dpi(int): Set resolution for wordle.
+                for the wordclouds
+            outfolder(str): Specify path to safe wordclouds.
+            dpi(int): Set resolution for wordclouds.
 
         Returns: Plot
 
@@ -251,7 +251,7 @@ try:
         """
 
         word_scores_grouped = read_mallet_word_weights(word_weights_file)
-        text = get_wordlewords(word_scores_grouped, number_of_top_words, topic_nr)
+        text = _get_wordcloudwords(word_scores_grouped, number_of_top_words, topic_nr)
         wordcloud = WordCloud(width=600, height=400, background_color="white", margin=4).generate(text)
         default_colors = wordcloud.to_array()
         figure_title = "topic "+ str(topic_nr)
@@ -264,7 +264,7 @@ try:
         if not os.path.exists(outfolder):
             os.makedirs(outfolder)
 
-        figure_filename = "wordle_tp"+"{:03d}".format(topic_nr) + ".png"
+        figure_filename = "wordcloud_tp"+"{:03d}".format(topic_nr) + ".png"
         plt.savefig(outfolder + figure_filename, dpi=dpi)
         return plt
 
