@@ -37,17 +37,33 @@ logging.basicConfig(level = logging.ERROR,
 
 def create_doc_topic(corpus, model, doc_labels):
     # Adapted from code by Stefan Pernes
-    """Creates a document-topic data frame.
+    """Creates a document-topic-matrix.
+    
+    Description:
+        With this function you can create a doc-topic-maxtrix for gensim 
+        output. 
 
     Args:
-        Gensim corpus.
-        Gensim model object.
-        List of document labels.
+        corpus (mmCorpus): Gensim corpus.
+        model: Gensim LDA model
+        doc_labels (list): List of document labels.
 
-    Returns: Doc_topic DataFrame
+    Returns: 
+        Doc_topic-matrix as DataFrame
 
     ToDo:
-
+    
+    Example:
+        >>> import gensim
+        >>> corpus = [[(1, 0.5)], []]
+        >>> gensim.corpora.MmCorpus.serialize('/tmp/corpus.mm', corpus)
+        >>> mm = gensim.corpora.MmCorpus('/tmp/corpus.mm')
+        >>> type2id = {0 : "test", 1 : "corpus"}
+        >>> doc_labels = ['doc1', 'doc2']
+        >>> model = gensim.models.LdaModel(corpus=mm, id2word=type2id, num_topics=1)
+        >>> doc_topic = visualization.create_doc_topic(corpus, model, doc_labels)
+        >>> len(doc_topic.T) == 2
+        >>> True
     """
     no_of_topics = model.num_topics
     no_of_docs = len(doc_labels)
@@ -70,15 +86,30 @@ def create_doc_topic(corpus, model, doc_labels):
 def doc_topic_heatmap(data_frame):
     # Adapted from code by Stefan Pernes and Allen Riddell
     """Plot documnet-topic distribution in a heat map.
+    
+    Description:
+        Use create_doc_topic() to generate a doc-topic
 
     Args:
-        Document-topic data frame.
+        data_frame (DataFrame): Document-topic-matrix.
 
-    Returns: Plot with Heatmap
+    Returns: 
+        Plot with Heatmap
 
     ToDo:
-        
-
+    
+    Example:
+        >>> import gensim
+        >>> corpus = [[(1, 0.5)], []]
+        >>> gensim.corpora.MmCorpus.serialize('/tmp/corpus.mm', corpus)
+        >>> mm = gensim.corpora.MmCorpus('/tmp/corpus.mm')
+        >>> type2id = {0 : "test", 1 : "corpus"}
+        >>> doc_labels = ['doc1', 'doc2']
+        >>> model = gensim.models.LdaModel(corpus=mm, id2word=type2id, num_topics=1)
+        >>> doc_topic = visualization.create_doc_topic(corpus, model, doc_labels)
+        >>> plot = doc_topic_heatmap(doc_topic)
+        >>> plot.get_fignumns()
+        [1]
     """
     data_frame = data_frame.sort_index()
     doc_labels = list(data_frame.index)
@@ -96,12 +127,16 @@ def doc_topic_heatmap(data_frame):
 
 def plot_doc_topics(doc_topic, document_index):
     """Plot topic disctribution in a document.
+    
+    Description:
+        
 
     Args:
         Document-topic data frame.
         Index of the document to be shown.
 
     Returns:
+        Plot.
 
     """
     data = doc_topic[list(doc_topic)[document_index]].copy()
@@ -287,8 +322,8 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         With this function you can plot an interactive doc_topic matrix.
 
     Args:
-        doc_topic: Doc_topic matrix in a DataFrame
-        title(str): Title shown in the plot.
+        doc_topic (DataFrame): Doc_topic matrix in a DataFrame
+        title (str): Title shown in the plot.
 
     Returns: bokeh plot
 
