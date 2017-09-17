@@ -651,7 +651,7 @@ def save_sparse_bow(sparse_bow, output):
         sparse_bow.to_csv(f, sep=' ', header=None)
 
 
-def find_stopwords(df, mfw=200, id_types=None):
+def find_stopwords(df, mfw=100, id_types=None):
     """Creates a stopword list.
 
     Description:
@@ -687,7 +687,7 @@ def find_stopwords(df, mfw=200, id_types=None):
                      for key in sparse_bow_stopwords.index.get_level_values('token_id')]
         return stopwords
     else:
-        return df.iloc[:,:100].columns.tolist()
+        return df.iloc[:,:mfw].columns.tolist()
 
 
 def find_hapax(df, id_types=None):
