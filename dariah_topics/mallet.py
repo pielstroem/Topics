@@ -30,7 +30,6 @@ log.addHandler(logging.NullHandler())
 logging.basicConfig(level=logging.ERROR,
                     format='%(levelname)s %(name)s: %(message)s')
 
-
 def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
                          path_to_corpus=False, output_file=os.path.join('mallet_output', 'binary.mallet'),
                          encoding=None, token_regex=None, preserve_case=False,
@@ -93,6 +92,14 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
     Returns:
         String. Absolute path to created MALLET binary file.
     """
+    if re.search(r'\s', path_to_mallet):
+        log.error("Whitespaces are not allowed in '%s'." %path_to_mallet)
+        return None
+
+    if re.search(r'\s', output_file):
+        log.error("Whitespaces are not allowed in '%s'." %output_file)
+        return None
+
     if system() == 'Windows':
         shell = True
     else:
@@ -103,10 +110,16 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
 
     param = [path_to_mallet]
     if not path_to_file:
+        if re.search(r'\s', path_to_corpus):
+            log.error("Whitespaces are not allowed in '%s'." %path_to_corpus)
+            return None
         param.append('import-dir')
         param.append('--input')
         param.append(path_to_corpus)
     else:
+        if re.search(r'\s', path_to_file):
+            log.error("Whitespaces are not allowed in '%s'." %path_to_file)
+            return None
         param.append('import-file')
         param.append('--input')
         param.append(path_to_file)
@@ -121,12 +134,21 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
     if remove_stopwords:
         param.append('--remove-stopwords')
     if stoplist is not None:
+        if re.search(r'\s', stoplist):
+            log.error("Whitespaces are not allowed in '%s'." %stoplist)
+            return None
         param.append('--stoplist-file')
         param.append(stoplist)
     if extra_stopwords is not None:
+        if re.search(r'\s', extra_stopwords):
+            log.error("Whitespaces are not allowed in '%s'." %extra_stopwords)
+            return None
         param.append('--extra-stopwords')
         param.append(extra_stopwords)
     if stop_pattern_file is not None:
+        if re.search(r'\s', stop_pattern_file):
+            log.error("Whitespaces are not allowed in '%s'." %stop_pattern_file)
+            return None
         param.append('--stop-pattern-file')
         param.append(stop_pattern_file)
     if skip_header:
@@ -134,9 +156,15 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
     if skip_html:
         param.append('--skip-html')
     if replacement_files is not None:
+        if re.search(r'\s', replacement_files):
+            log.error("Whitespaces are not allowed in '%s'." %replacement_files)
+            return None
         param.append('--replacement-files')
         param.append(replacement_files)
     if deletion_files is not None:
+        if re.search(r'\s', deletion_files):
+            log.error("Whitespaces are not allowed in '%s'." %deletion_files)
+            return None
         param.append('--deletion-files')
         param.append(deletion_files)
     if gram_sizes is not None:
@@ -155,16 +183,12 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
     param.append('--output')
     param.append(output_file)
 
-    try:
-        log.info("Running MALLET with %s ...", param)
-        log.info("Saving MALLET binary to %s ...", output_file)
+
+    log.info("Running MALLET with %s ...", ' '.join(param))
+    log.info("Saving MALLET binary to %s ...", output_file)
+    with open('mallet.log', 'wb') as f:
         p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
-        mallet_info = p.communicate()[0].decode('utf-8')
-        if print_output:
-            log.info(mallet_info)
-    except KeyboardInterrupt:
-        p.terminate()
-        log.error(mallet_info)
+        f.write(p.communicate()[1])
     return output_file
 
 
@@ -264,6 +288,15 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
     Returns:
         Nothing.
     """
+    if re.search(r'\s', path_to_mallet):
+        log.error("Whitespaces are not allowed in '%s'." %path_to_mallet)
+        return None
+
+    if re.search(r'\s', folder_for_output):
+        log.error("Whitespaces are not allowed in '%s'." %folder_for_output)
+        return None
+
+
     if system() == 'Windows':
         shell = True
     else:
@@ -275,11 +308,20 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
     if input_model is None:
         param.append('--input')
     else:
+        if re.search(r'\s', input_model):
+            log.error("Whitespaces are not allowed in '%s'." %input_model)
+            return None
         param.append('--input-model')
         param.append(input_model)
     if path_to_binary is not None:
+        if re.search(r'\s', path_to_binary):
+            log.error("Whitespaces are not allowed in '%s'." %path_to_binary)
+            return None
         param.append(path_to_binary)
     if input_state is not None:
+        if re.search(r'\s', input_state):
+            log.error("Whitespaces are not allowed in '%s'." %input_state)
+            return None
         param.append('--input-state')
         param.append(input_state)
 
@@ -365,7 +407,6 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
     if evaluator_file:
         param.append('--evaluator-filename')
         param.append(os.path.join(folder_for_output, 'evaluator'))
-
     # not yet working
     if output_topic_docs:
         param.append('--output-topic-docs')
@@ -374,14 +415,10 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
             param.append('--num-top-docs')
             param.append(str(topic_word_weights_file))
 
-    try:
-       log.info("Accessing Mallet with %s ...", param)
-       p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
-       stdout, stderr = p.communicate()
-       log.debug(stderr.decode('utf-8'))
-    except KeyboardInterrupt:
-       p.terminate()
-       log.error(stderr.decode('utf-8'))
+    with open('mallet.log', 'wb') as f:
+        p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
+        f.write(p.communicate()[1])
+    return None
 
 def _grouper(n, iterable, fillvalue=None):
     """Collects data into fixed-length chunks or blocks.
