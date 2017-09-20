@@ -729,7 +729,7 @@ def find_hapax(df, id_types=None):
         return df.loc[:, df.max() == 1].columns.tolist()
 
 
-def remove_features(df, features, id_types=None):
+def remove_features_from_df(df, features, id_types=None):
     """Removes features based on a list of words (types).
 
     Description:
@@ -767,8 +767,8 @@ def remove_features(df, features, id_types=None):
         if isinstance(features, list):
             features = set(features)
         stoplist_applied = [word for word in set(id_types.keys()) if word in features]
-        clean_sparse_bow = df.drop([id_types[word] for word in stoplist_applied], level='token_id')
-        return clean_sparse_bow
+        clean_df = df.drop([id_types[word] for word in stoplist_applied], level='token_id')
+        return clean_df
     else:
         features = [token for token in features if token in df.columns]
         df.drop(features, inplace=True, axis=1)
