@@ -922,4 +922,4 @@ def lda_doc_topic(model, topics, doc_labels):
     df = pd.DataFrame(model.doc_topic_).T
     df.columns = doc_labels
     df.index = topic_labels
-    return df
+    return df.reindex_axis(sorted(df.columns), axis=1)
