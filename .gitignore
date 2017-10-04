@@ -28,3 +28,4 @@ demonstrator/dariah_topics/
 demonstrator/static/*.pngcover
 .idea
 Topics.iml
+_build
