@@ -2,13 +2,19 @@
 
 from setuptools import setup, find_packages
 
+PROJECT = 'DARIAH Topic Modelling'
+VERSION = "0.3"
+REVISION = "0.3.0.dev1"
+AUTHOR = "DARIAH-DE Wuerzburg Group"
+AUTHOR_EMAIL = "pielstroem@biozentrum.uni-wuerzburg.de"
+
 setup(
     name='dariah_topics',
-    version='0.3.0dev1',
-    description='DARIAH Topic Modelling',
+    version=REVISION,
+    description=PROJECT,
     # url
-    author="DARIAH-DE Wuerzburg Group",
-    author_email="pielstroem@biozentrum.uni-wuerzburg.de",
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
     # license
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -36,5 +42,12 @@ setup(
             'bokeh>=0.12.6'
             #'wordcloud>=1.3.1'
         ]
+    },
+    command_options={
+        'build_sphinx': {
+            'project': ('setup.py', PROJECT),
+            'version': ('setup.py', VERSION),
+            'release': ('setup.py', REVISION),
+        }
     }
 )

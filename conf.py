@@ -111,7 +111,12 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'github_user': 'DARIAH-DE',
+    'github_repo': 'Topics',
+    'show_related': True,
+    'fixed_sidebar': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -191,7 +196,9 @@ texinfo_documents = [
 ]
 
 
+# Intersphinx configuration: URLs for other libraries to link
+intersphinx_mapping = { 'http://docs.python.org/3': None,
+                        'http://pandas.pydata.org/pandas-docs/stable/': None,
+                        'https://matplotlib.org/': None,
+                        'https://radimrehurek.com/gensim/': None }
 
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
