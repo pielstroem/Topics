@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -84,6 +85,14 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
+autosummary_generate = True
+
+autodoc_default_flags = [
+    'members',
+    'inherited-members',
+    'private-members',
+    'show-inheritance'
+]
 
 # -- Options for HTML output ----------------------------------------------
 

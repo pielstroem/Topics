@@ -7,10 +7,9 @@ Welcome to DARIAH Topics's documentation!
 =========================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 4
 
-
+   dariah_topics
 
 Indices and tables
 ==================
