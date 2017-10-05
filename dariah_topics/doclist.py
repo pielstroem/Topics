@@ -4,21 +4,18 @@
 Maintaining Lists of Documents
 ==============================
 
-A __document list__ manages a list of documents. There are various
+A *document list* manages a list of documents. There are various
 implementations of varying powerfulness, all have the following in common:
 
 * A document list keeps a fixed list of documents in order, i.e. after you
   created the list you can call the iteration functions and get the same file
   at the same position (even if, e.g., the underlying directory changes). So
-  these files can be matched with lists of document _contents_.
+  these files can be matched with lists of document *contents*.
 
-* A document list separates a _base directory_ with some way to form _file
-  names_. Thus, you can easily create a mirror (of, e.g., files transformed
+* A document list separates a *base directory* with some way to form *file
+  names*. Thus, you can easily create a mirror (of, e.g., files transformed
   in some way) in a different directory, or modify the way filenames are formed.
 
-
-Segments
---------
 
 """
 __author__ = "DARIAH-DE"
@@ -33,7 +30,9 @@ from copy import deepcopy
 
 class BaseDocList:
     """
+    Base class with common functionality.
 
+    Users should not instantiate this but rather a specialized subclass like `PathDocList`.
     """
 
     def __init__(self, basepath):
@@ -124,24 +123,25 @@ class BaseDocList:
 
         Assume you have three documents
 
-        A : I am an example document
-        B : Me too
-        C : All examples reference themselves
+        | A : I am an example document
+        | B : Me too
+        | C : All examples reference themselves
 
+        ::
             docs = SimpleDocList('.', filenames=['A','B','C'])
 
         Now, you have an (external) segmenter function that segments each document
         into segments each being at most two tokens long. The data structure your
-        segmenter will produce looks similar to the following:
+        segmenter will produce looks similar to the following::
 
              segmented_corpus = \
                    [[['I', 'am'], ['an', 'example'], ['document']],
                     [['Me', 'too']],
                     [['All', 'examples'], ['reference', 'themselves']]]
 
-        Now, if you run docs.flatten_segments(self), it will do two things: it will
+        Now, if you run ``docs.flatten_segments(self)``, it will do two things: it will
         record how many segments each document has (A: 3, B: 1, C: 2), and it will
-        return a structure flattened by one level as in the following:
+        return a structure flattened by one level as in the following::
 
             [['I', 'am'], ['an', 'example'], ['document'], ['Me', 'too'],
              ['All', 'examples'], ['reference', 'themselves']]
@@ -195,14 +195,19 @@ class BaseDocList:
         """
 
         Args:
-            pattern (str): A `strings.Formatter` pattern that describes how
+            format (str): A :obj:`strings.Formatter` pattern that describes how
                 to form each filename. The following formatter variables are
                 available:
 
-                    path (Path): original file path
-                    segment (int): current segment number
-                    maxwidth (int): number of digits required for the largest
-                        segment number overall
+                    * path (:obj:`~pathlib.Path`): original file path
+                    * segment (`int`): current segment number
+                    * maxwidth (`int`): number of digits required for the largest
+                         segment number overall
+            basepath: Base path for the file names. By default, self.basepath will be used.
+            as_str (bool): Convert the result to strings.
+
+        Yields:
+            pathlib.Path: path for each segment
         Raises:
             ValueError: if no segments
         """
