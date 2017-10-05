@@ -22,6 +22,7 @@ import numpy as np
 import operator
 import os
 import pandas as pd
+import re
 from platform import system
 from subprocess import Popen, PIPE
 
