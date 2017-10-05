@@ -7,9 +7,15 @@ Welcome to DARIAH Topics's documentation!
 =========================================
 
 .. toctree::
-   :maxdepth: 4
+   :titlesonly:
 
-   dariah_topics
+   README
+   Introduction using lda <Introducing_lda>
+   Introduction using Gensim <Introducing_gensim>
+   Introduction using MALLET <Introducing_MALLET>
+   API Documentation <docs/gen/modules>
+   Standalone demonstrator <demonstrator/README>
+   CONTRIBUTING
 
 Indices and tables
 ==================

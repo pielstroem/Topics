@@ -1,3 +1,5 @@
+# Information for Contributors
+
 ## Development Environment
 
 TODO
@@ -16,3 +18,7 @@ Pushing to master is protected, you can only push heads that have an "green" sta
 6. when the build has successfully finished, push master.
 
 If something goes wrong, `git reset --hard master origin/master` and try again.
+
+## Documentation
+
+- built using sphinx
