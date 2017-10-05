@@ -2,7 +2,18 @@
 
 ## Development Environment
 
-TODO
+* [Code and Issues are at Github](http://github.com/DARIAH-DE/Topics)
+* [Integration Build](http://dev.digital-humanities.de/ci/jobs/DARIAH-Topics)
+
+### Start hacking
+
+```bash
+git clone -b testing git@github.com:DARIAH-DE/Topics
+cd Topics
+mkvirtualenv Topics      # if you use virtualenvwrapper
+workon Topics            # if you use virtualenvwrapper
+pip install -r requirement-dev.txt
+```
 
 ## Releasing / Pushing to Master
 
@@ -21,4 +32,31 @@ If something goes wrong, `git reset --hard master origin/master` and try again.
 
 ## Documentation
 
-- built using sphinx
+The documentation is built using [Sphinx](http://www.sphinx-doc.org/). 
+The following files influence the docs:
+
+* ``index.rst`` contains the landing page with the table of contents. Here, all files should be linked.
+* ``*.ipynb`` for tutorials etc. can be linked from the index file
+* ``README.md`` and ``CONTRIBUTING.md`` will also be included
+* Docstrings in the modules will be included
+* ``docs/**/*`` may contain additional files
+* ``conf.py`` contains sphinx configuration
+* ``setup.py`` contains version numbers etc.
+
+### Documentation formats
+
+Standalone documentation files can be written in one of the following formats:
+
+* ReSTructured Text (`*.rst`), [see Sphinx docs](http://www.sphinx-doc.org/en/stable/rest.html)
+* Jupyter Notebook (`*.ipynb`), by way of [nbsphinx](https://nbsphinx.readthedocs.io/)
+* Markdown
+
+Docstrings should follow [Google conventions](http://google.github.io/styleguide/pyguide.html?showone=Comments#Comments), this is supported by [Napoleon](http://www.sphinx-doc.org/en/stable/ext/napoleon.html).
+
+### Build the documentation
+
+Run `python setup.py build_sphinx -a`, which will create the documentation tree in `build/sphinx/html`.
+
+### After adding another module
+
+Run `sphinx-apidoc -M -e -o docs/gen dariah_topics` to add a documentation stub to `docs/gen`. 
