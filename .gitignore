@@ -26,3 +26,6 @@ gensim_gb_txt.mm
 corpus.mm
 demonstrator/dariah_topics/
 demonstrator/static/*.pngcover
+.idea
+Topics.iml
+_build
