@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""MALLET wrapper for Python.
+"""
+Handling MALLET in Python and Generating LDA Models
+===================================================
 
 This module contains various `MALLET`_ related functions for Topic Modeling
 provided by `DARIAH-DE`_.
