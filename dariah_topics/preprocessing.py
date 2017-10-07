@@ -11,64 +11,27 @@ remove features and read existing matrices. Recurrent variable names are based
 on the following conventions:
     
 1. Corpora:
-###########
-* `corpus` means an iterable containing at least one `document`.
-* `document` means one single string containing all chracters of a text
-file, including whitespaces, punctuations, etc. In case of specific
-CSV-files, there is no `document`, but only `dkpro_processed_document`,
-because each of those CSV-files contain extra information such as
-POS-tags, lemmas, etc.
-* `tokenized_corpus` means an iterable containing at least one `tokenized_document`.
-* `tokenized_document` means an iterable containing tokens of a `document`.
-* `clean_tokenized_corpus` means an iterable containing at least 
-one `clean_tokenized_document`.
-* `clean_tokenized_document` means an iterable containing only specific
-tokens of a `document` (e.g. stopwords and hapax legomena are excluded). 
-* `dkpro_processed_document` means a pandas DataFrame containing at
-least tokens and POS-tags.
-* `document_labels` means an iterable containing names of each `document`
-and must have as much elements as `corpus`, `tokenized_corpus` or
-`clean_tokenized_corpus` respectively.
-* `token` 
-* `type` 
-Furthermore, if a document is chunked into smaller segments, each segment counts
-as one document.
+***********
+    * ``corpus`` means an iterable containing at least one `document`.
+    * ``document`` means one single string containing all characters of a text
+    file, including whitespaces, punctuations, etc. In case of specific
+    CSV-files, there is no ``document``, but only ``dkpro_document``,
+    because each of those CSV-files contain extra information such as
+    POS-tags, lemmas, etc.
+    * ``tokenized_corpus`` means an iterable containing at least one ``tokenized_document``.
+    * ``tokenized_document`` means an iterable containing tokens of a `document`.
+    * ``clean_tokenized_corpus`` means an iterable containing at least 
+    one ``clean_tokenized_document``.
+    * ``clean_tokenized_document`` means an iterable containing only specific
+    tokens of a ``tokenized_document`` (e.g. stopwords and hapax legomena are excluded). 
+    * ``dkpro_document`` means a pandas DataFrame containing at
+    least tokens and POS-tags.
+    * ``document_labels`` means an iterable containing names of each ``document``
+    and must have as much elements as ``corpus``, ``tokenized_corpus`` or
+    ``clean_tokenized_corpus``, respectively.
 
-2. Data models:
-###############
-* `document_type_matrix` means a pandas DataFrame with rows corresponding
-to `document_labels` and columns to types (distinct tokens in the corpus).
-The single values are word frequencies.
-* `matrix_market` means a pandas DataFrame with a MultiIndex and only one
-column corresponding to word frequencies. The first column of the
-MultiIndex corresponds to a document ID (based on `document_labels`)
-and the second column to a type ID. `bow` stands for bag-of-words.
-
-3. Topic modeling output:
-#########################
-* `topic_keys` means a pandas DataFrame containing the top words for each
-topic and any Dirichlet parameters.
-* `doc_topics` means a pandas DataFrame containing topic proportions per
-document, at the end of the iterations.
-
-Contents:
-#########
-* :func:`read_from_pathlist` reads one or multiple files based on a pathlist.
-* :func:`split_paragraphs` splits a `document` or `dkpro_processed_document`
-by paragraphs.
-* :func:`tokenize` tokenizes a `document` based on a regular expression.
-* :func:`filter_document_by_pos` filters a `dkpro_processed_document` by
-specific POS-tags.
-* :func:`segment_fuzzy` segments a `tokenized_document`, tolerating
-existing chunks (like paragraphs).
-* :func:`segment` is a wrapper for `segment_fuzzy` and segments a
-`tokenized_document` into segments of a certain number of tokens,
-respecting existing chunks.
-* :func:`create_document_term_matrix` creates a document-term-matrix.
-* :func:`create_sparse_bow` creates a sparse matrix market.
-* :func:`find_stopwords` 
-* :func:`find_hapax_legomena`
-* :func:`remove_features` 
+    Furthermore, if a document is chunked into smaller segments, each segment counts
+    as one document.
 """
 
 __author__ = "DARIAH-DE"
