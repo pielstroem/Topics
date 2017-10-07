@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""LDA visualization.
+"""
+Visualizing the Output of LDA Models
+====================================
 
-This module contains functions for LDA visualization provided by `DARIAH-DE`_.
 
-.. _Gensim:
-    https://radimrehurek.com/gensim/index.html
-.. _Mallet:
-    http://mallet.cs.umass.edu/
-.. _DARIAH-DE:
-    https://de.dariah.eu
-    https://github.com/DARIAH-DE
 """
 
 __author__ = "DARIAH-DE"
