@@ -11,8 +11,8 @@ and segment documents, create `document-term matrices <https://en.wikipedia.org/
 determine and remove features and read existing matrices. Recurrent variable names are \
 based on the following conventions:
     
-1. Corpora:
-***********
+Corpora
+*******
     * ``corpus`` means an iterable containing at least one ``document`` or ``dkpro_document``.
     * ``document`` means one single string containing all characters of a text \
     file, including whitespaces, punctuations, etc.
@@ -30,8 +30,8 @@ based on the following conventions:
     Furthermore, if a document is chunked into smaller segments, each segment counts
     as one document.
 
-2. Data models:
-***************
+Data models
+***********
     * ``document_term_matrix`` means either a pandas DataFrame with rows corresponding to \
     ``document_labels`` and columns to types (distinct tokens in the corpus). The \
     single values are token frequencies, or a pandas DataFrame with a MultiIndex \
@@ -39,8 +39,8 @@ based on the following conventions:
     MultiIndex corresponds to a document ID (based on ``document_labels``) and the \
     second column to a type ID.
 
-Contents:
-*********
+Contents
+********
     * :func:`create_document_term_matrix()` creates a document-term matrix, for either \
     large or small corpora.
     * :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
