@@ -12,7 +12,7 @@ determine and remove features and read existing matrices. Recurrent variable nam
 based on the following conventions:
     
 1. Corpora:
-###########
+***********
     * ``corpus`` means an iterable containing at least one ``document`` or ``dkpro_document``.
     * ``document`` means one single string containing all characters of a text \
     file, including whitespaces, punctuations, etc.
@@ -31,7 +31,7 @@ based on the following conventions:
     as one document.
 
 2. Data models:
-###############
+***************
     * ``document_term_matrix`` means either a pandas DataFrame with rows corresponding to \
     ``document_labels`` and columns to types (distinct tokens in the corpus). The \
     single values are token frequencies, or a pandas DataFrame with a MultiIndex \
@@ -40,25 +40,24 @@ based on the following conventions:
     second column to a type ID.
 
 Contents:
-*********
-* :func:`create_document_term_matrix()` creates a document-term matrix, for either \
-large or small corpora.
-* :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
-numbers.
-* :func:`filter_dkpro_document()` filters a ``dkpro_document`` by specific \
-*part-of-speech tags*.
-* :func:`find_hapax_legomena()` determines *hapax legomena* based on frequencies \
-of a ``document_term_matrix``.
-* :func:`find_stopwords()` determines *most frequent words* based on frequencies \
-of a ``document_term_matrix``.
-* :func:`read_from_pathlist()` reads one or multiple files based on a pathlist.
-* :func:`segment()` is a wrapper for :func:`segment_fuzzy()` and segments a \
-``tokenized_document`` into segments of a certain number of tokens, respecting existing chunks.
-* :func:`segment_fuzzy()` segments a ``tokenized_document``, tolerating existing \
-chunks (like paragraphs).
-* :func:`split_paragraphs()` splits a ``document`` by paragraphs.
-* :func:`tokenize()` tokenizes a ``document`` based on a Unicode regular expression.
-* :func:`remove_features()` removes features from a ``document_term_matrix``.
+    * :func:`create_document_term_matrix()` creates a document-term matrix, for either \
+    large or small corpora.
+    * :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
+    numbers.
+    * :func:`filter_dkpro_document()` filters a ``dkpro_document`` by specific \
+    *part-of-speech tags*.
+    * :func:`find_hapax_legomena()` determines *hapax legomena* based on frequencies \
+    of a ``document_term_matrix``.
+    * :func:`find_stopwords()` determines *most frequent words* based on frequencies \
+    of a ``document_term_matrix``.
+    * :func:`read_from_pathlist()` reads one or multiple files based on a pathlist.
+    * :func:`segment()` is a wrapper for :func:`segment_fuzzy()` and segments a \
+    ``tokenized_document`` into segments of a certain number of tokens, respecting existing chunks.
+    * :func:`segment_fuzzy()` segments a ``tokenized_document``, tolerating existing \
+    chunks (like paragraphs).
+    * :func:`split_paragraphs()` splits a ``document`` by paragraphs.
+    * :func:`tokenize()` tokenizes a ``document`` based on a Unicode regular expression.
+    * :func:`remove_features()` removes features from a ``document_term_matrix``.
 """
 
 from collections import Counter, defaultdict
