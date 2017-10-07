@@ -12,7 +12,7 @@ determine and remove features and read existing matrices. Recurrent variable nam
 based on the following conventions:
     
 1. Corpora:
-***********
+###########
     * ``corpus`` means an iterable containing at least one ``document`` or ``dkpro_document``.
     * ``document`` means one single string containing all characters of a text \
     file, including whitespaces, punctuations, etc.
@@ -24,14 +24,14 @@ based on the following conventions:
     * ``clean_tokenized_document`` means an iterable containing only specific \
     tokens (e.g. no *stopwords* or hapax *legomena*) of a ``tokenized_document``. 
     * ``document_labels`` means an iterable containing names of each ``document`` \
-    and must have as much elements as ``corpus``, ``tokenized_corpus`` or
+    and must have as much elements as ``corpus``, ``tokenized_corpus`` or \
     ``clean_tokenized_corpus``, respectively.
 
     Furthermore, if a document is chunked into smaller segments, each segment counts
     as one document.
 
 2. Data models:
-***************
+###############
     * ``document_term_matrix`` means either a pandas DataFrame with rows corresponding to \
     ``document_labels`` and columns to types (distinct tokens in the corpus). The \
     single values are token frequencies, or a pandas DataFrame with a MultiIndex \
@@ -40,7 +40,7 @@ based on the following conventions:
     second column to a type ID.
 
 Contents:
-#########
+*********
 * :func:`create_document_term_matrix()` creates a document-term matrix, for either \
 large or small corpora.
 * :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
