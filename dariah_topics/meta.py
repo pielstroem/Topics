@@ -1,4 +1,6 @@
-"""Metadata.
+"""
+Handling Metadata for Corpora
+=============================
 
 This module contains functions for metadata handling
 provided by `DARIAH-DE`_.
