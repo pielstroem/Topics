@@ -1,13 +1,13 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Preprocessing.
+"""
+Processing Text Data, Creating Matrices and Cleaning Corpora
+============================================================
 
-This module contains functions for various preprocessing steps
-provided by `DARIAH-DE`_.
-
-.. _DARIAH-DE:
-    https://de.dariah.eu
-    https://github.com/DARIAH-DE
+Functions of this module are for **preprocessing purpose**. You can read text files,
+tokenize and segment documents, create document-term matrices, determine and
+remove features and read existing matrices.
 """
 
 __author__ = "DARIAH-DE"
