@@ -1,8 +1,11 @@
 """
-The :mod:`dariah_topics` package currently offers four modules:
+The :mod:`dariah_topics` package currently offers seven modules:
 
-* :mod:`dariah_topics.preprocessing` contains preprocessing code
-* :mod:`dariah_topics.visualization` offers visualization stuff that depends on PyLDAvis
-* :mod:`dariah_topics.mallet` provides a wrapper that calls mallet
-* :mod:`dariah_topics.evaluation` provides coherence measures
+* :mod:`dariah_topics.doclist` for maintaining document lists. 
+* :mod:`dariah_topics.evaluation` for evaluating semantic coherence of topics.
+* :mod:`dariah_topics.preprocessing` for preprocessing text data.
+* :mod:`dariah_topics.postprocessing` for postprocessing text data.
+* :mod:`dariah_topics.mallet` for calling MALLET from within Python.
+* :mod:`dariah_topics.meta` for maintaining metadata.
+* :mod:`dariah_topics.visualization` for visualizing the output of LDA models.
 """
