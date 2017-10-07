@@ -40,6 +40,7 @@ based on the following conventions:
     second column to a type ID.
 
 Contents:
+*********
     * :func:`create_document_term_matrix()` creates a document-term matrix, for either \
     large or small corpora.
     * :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
