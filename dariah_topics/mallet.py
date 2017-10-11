@@ -95,104 +95,86 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
     Returns:
         String. Absolute path to created MALLET binary file.
     """
-    if re.search(r'\s', path_to_mallet):
-        log.error("Whitespaces are not allowed in '%s'." %path_to_mallet)
-        return None
+    try:
+        if re.search(r'\s', path_to_mallet):
+            raise ValueError("Whitespaces are not allowed in '%s'." %path_to_mallet)
 
-    if re.search(r'\s', output_file):
-        log.error("Whitespaces are not allowed in '%s'." %output_file)
-        return None
+        if re.search(r'\s', output_file):
+            raise ValueError("Whitespaces are not allowed in '%s'." %output_file)
 
-    if system() == 'Windows':
-        shell = True
-    else:
-        shell = False
-
-    if not os.path.exists(os.path.dirname(output_file)):
-        os.makedirs(os.path.dirname(output_file))
-
-    param = [path_to_mallet]
-    if not path_to_file:
-        if re.search(r'\s', path_to_corpus):
-            log.error("Whitespaces are not allowed in '%s'." %path_to_corpus)
-            return None
-        param.append('import-dir')
-        param.append('--input')
-        param.append(path_to_corpus)
-    else:
-        if re.search(r'\s', path_to_file):
-            log.error("Whitespaces are not allowed in '%s'." %path_to_file)
-            return None
-        param.append('import-file')
-        param.append('--input')
-        param.append(path_to_file)
-    if encoding is not None:
-        param.append('--encoding')
-        param.append(encoding)
-    if token_regex is not None:
-        param.append('--token-regex')
-        param.append(token_regex)
-    if preserve_case:
-        param.append('--preserve-case')
-    if remove_stopwords:
-        param.append('--remove-stopwords')
-    if stoplist is not None:
-        if re.search(r'\s', stoplist):
-            log.error("Whitespaces are not allowed in '%s'." %stoplist)
-            return None
-        param.append('--stoplist-file')
-        param.append(stoplist)
-    if extra_stopwords is not None:
-        if re.search(r'\s', extra_stopwords):
-            log.error("Whitespaces are not allowed in '%s'." %extra_stopwords)
-            return None
-        param.append('--extra-stopwords')
-        param.append(extra_stopwords)
-    if stop_pattern_file is not None:
-        if re.search(r'\s', stop_pattern_file):
-            log.error("Whitespaces are not allowed in '%s'." %stop_pattern_file)
-            return None
-        param.append('--stop-pattern-file')
-        param.append(stop_pattern_file)
-    if skip_header:
-        param.append('--skip-header')
-    if skip_html:
-        param.append('--skip-html')
-    if replacement_files is not None:
-        if re.search(r'\s', replacement_files):
-            log.error("Whitespaces are not allowed in '%s'." %replacement_files)
-            return None
-        param.append('--replacement-files')
-        param.append(replacement_files)
-    if deletion_files is not None:
-        if re.search(r'\s', deletion_files):
-            log.error("Whitespaces are not allowed in '%s'." %deletion_files)
-            return None
-        param.append('--deletion-files')
-        param.append(deletion_files)
-    if gram_sizes is not None:
-        param.append('--gram-sizes')
-        param.append(str(gram_sizes))
-    if keep_sequence:
-        param.append('--keep-sequence')
-    if keep_sequence_bigrams:
-        param.append('--keep-sequence-bigrams')
-    if binary_features:
-        param.append('--binary-features')
-    if save_text_in_source:
-        param.append('--save-text-in-source')
-    if print_output:
-        param.append('--print-output')
-    param.append('--output')
-    param.append(output_file)
+        if system() == 'Windows':
+            shell = True
+        else:
+            shell = False
+            
+        if not os.path.exists(os.path.dirname(output_file)):
+            os.makedirs(os.path.dirname(output_file))
+            
+        param = [path_to_mallet]
+        if not path_to_file:
+            if re.search(r'\s', path_to_corpus):
+                raise ValueError(" {path_to_corpus} Whitespaces are not allowed in '%s'." %path_to_corpus)
+            param.extend(['import-dir', '--input', str(path_to_corpus)])
+        else:
+            if re.search(r'\s', path_to_file):
+                raise ValueError("Whitespaces are not allowed in '%s'." %path_to_file)
+            param.extend(['import-file', '--input', str(path_to_file)])
+            
+        if encoding is not None:
+            param.extend(['--encoding', str(encoding)])
+        if token_regex is not None:
+            param.extend(['--token-regex', str(token_regex)])
+        if preserve_case:
+            param.extend('--preserve-case')
+        if remove_stopwords:
+            param.extend('--remove-stopwords')
+        if stoplist is not None:
+            if re.search(r'\s', stoplist):
+                raise ValueError("Whitespaces are not allowed in '%s'." %stoplist)
+            param.extend(['--stoplist-file', str(stoplist)])
+        if extra_stopwords is not None:
+            if re.search(r'\s', extra_stopwords):
+                raise ValueError("Whitespaces are not allowed in '%s'." %extra_stopwords)
+            param.extend(['--extra-stopwords', str(extra_stopwords)])
+        if stop_pattern_file is not None:
+            if re.search(r'\s', stop_pattern_file):
+                raise ValueError("Whitespaces are not allowed in '%s'." %stop_pattern_file)
+            param.extend(['--stop-pattern-file', str(stop_pattern_file)])
+        if skip_header:
+            param.extend('--skip-header')
+        if skip_html:
+            param.extend('--skip-html')
+        if replacement_files is not None:
+            if re.search(r'\s', replacement_files):
+                raise ValueError("Whitespaces are not allowed in '%s'." %replacement_files)
+            param.extend(['--replacement-files', str(replacement_files)])
+        if deletion_files is not None:
+            if re.search(r'\s', deletion_files):
+                raise ValueError("Whitespaces are not allowed in '%s'." %deletion_files)
+            param.extend(['--deletion-files', str(deletion_files)])
+        if gram_sizes is not None:
+            param.extend(['--gram-sizes', str(gram_sizes)])
+        if keep_sequence:
+            param.extend('--keep-sequence')
+        if keep_sequence_bigrams:
+            param.extend('--keep-sequence-bigrams')
+        if binary_features:
+            param.extend('--binary-features')
+        if save_text_in_source:
+            param.extend('--save-text-in-source')
+        if print_output:
+            param.extend(['--print-output', '--output', str(output_file)])
 
 
-    log.info("Running MALLET with %s ...", ' '.join(param))
-    log.info("Saving MALLET binary to %s ...", output_file)
-    with open('mallet.log', 'wb') as f:
-        p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
-        f.write(p.communicate()[1])
-    return output_file
+        log.info("Running MALLET with %s ...", ' '.join(param))
+        log.info("Saving MALLET binary to %s ...", output_file)
+        with open('mallet.log', 'wb') as f:
+            p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
+            f.write(p.communicate()[1])
+        return output_file
+    except ValueError as err:
+        raise ValueError(log.info("Mallet model could not be created.".format( err)))
+
 
 
 def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_model=None,
@@ -291,137 +273,120 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
     Returns:
         Nothing.
     """
-    if re.search(r'\s', path_to_mallet):
-        log.error("Whitespaces are not allowed in '%s'." %path_to_mallet)
-        return None
+    try:
+        if re.search(r'\s', path_to_mallet):
+            raise ValueError("Whitespaces are not allowed in '%s'." %path_to_mallet)
 
-    if re.search(r'\s', folder_for_output):
-        log.error("Whitespaces are not allowed in '%s'." %folder_for_output)
-        return None
+        if re.search(r'\s', folder_for_output):
+            raise ValueError("Whitespaces are not allowed in '%s'." %folder_for_output)
 
+        if system() == 'Windows':
+            shell = True
+        else:
+            shell = False
 
-    if system() == 'Windows':
-        shell = True
-    else:
-        shell = False
+        os.makedirs(folder_for_output, exist_ok=True)
+        param = [path_to_mallet, 'train-topics']
+        
+        if input_model is None:
+            param.append('--input')
+        else:
+            if re.search(r'\s', input_model):
+                raise ValueError("Whitespaces are not allowed in '%s'." %input_model)
+            param.extend(['--input-model', str(input_model)])
+        if path_to_binary is not None:
+            if re.search(r'\s', path_to_binary):
+                raise ValueError("Whitespaces are not allowed in '%s'." %path_to_binary)
+            param.append(path_to_binary)
+        if input_state is not None:
+            if re.search(r'\s', input_state):
+                raise ValueError("Whitespaces are not allowed in '%s'." %input_state)
+            param.extend(['--input-state', str(input_state)])
 
-    os.makedirs(folder_for_output, exist_ok=True)
+        log.debug("Choosing parameters ...")
+        if num_topics:
+            param.extend(['--num-topics', str(num_topics)])
+        if num_iterations:
+            param.extend(['--num-iterations', str(num_iterations)])
+        if num_threads:
+            param.extend(['--num-threads', str(num_threads)])
+        if num_top_words:
+            param.extend(['--num-top-words', str(num_top_words)])
+        if num_icm_iterations:
+            param.extend(['--num-icm-iterations', str(num_icm_iterations)])
+        if no_inference:
+            param.extend(['--no-inference', str(no_inference)])
+        if random_seed:
+            param.extend(['--random-seed', str(random_seed)])
 
-    param = [path_to_mallet, 'train-topics']
-    if input_model is None:
-        param.append('--input')
-    else:
-        if re.search(r'\s', input_model):
-            log.error("Whitespaces are not allowed in '%s'." %input_model)
-            return None
-        param.append('--input-model')
-        param.append(input_model)
-    if path_to_binary is not None:
-        if re.search(r'\s', path_to_binary):
-            log.error("Whitespaces are not allowed in '%s'." %path_to_binary)
-            return None
-        param.append(path_to_binary)
-    if input_state is not None:
-        if re.search(r'\s', input_state):
-            log.error("Whitespaces are not allowed in '%s'." %input_state)
-            return None
-        param.append('--input-state')
-        param.append(input_state)
+        log.debug("Choosing hyperparameters ...")
+        if optimize_interval is not None:
+            param.extend(['--optimize-interval', str(optimize_interval)])
+        if optimize_burn_in is not None:
+            param.extend(['--optimize-burn-in', str(optimize_burn_in)])
+        if use_symmetric_alpha is not None:
+            param.extend('--use-symmetric-alpha')
+        if alpha is not None:
+            param.extend(['--alpha', str(alpha)])
+        if beta is not None:
+            param.extend(['--beta', str(beta)])
 
-    log.debug("Choosing parameters ...")
-    if num_topics is not False:
-        param.append('--num-topics')
-        param.append(str(num_topics))
-    if num_iterations is not False:
-        param.append('--num-iterations')
-        param.append(str(num_iterations))
-    if num_threads is not False:
-        param.append('--num-threads')
-        param.append(str(num_threads))
-    if num_top_words is not False:
-        param.append('--num-top-words')
-        param.append(str(num_top_words))
-    if num_icm_iterations is not False:
-        param.append('--num-icm-iterations')
-        param.append(str(num_icm_iterations))
-    if no_inference is not False:
-        param.append('--no-inference')
-        param.append(str(no_inference))
-    if random_seed is not False:
-        param.append('--random-seed')
-        param.append(str(random_seed))
-
-    log.debug("Choosing hyperparameters ...")
-    if optimize_interval is not None:
-        param.append('--optimize-interval')
-        param.append(str(optimize_interval))
-    if optimize_burn_in is not None:
-        param.append('--optimize-burn-in')
-        param.append(str(optimize_burn_in))
-    if use_symmetric_alpha is not None:
-        param.append('--use-symmetric-alpha')
-    if alpha is not None:
-        param.append('--alpha')
-        param.append(str(alpha))
-    if beta is not None:
-        param.append('--beta')
-        param.append(str(beta))
-
-    log.debug("Choosing output parameters ...")
-    if output_topic_keys:
-        param.append('--output-topic-keys')
-        param.append(os.path.join(folder_for_output, 'topic_keys.txt'))
-    if output_doc_topics:
-        param.append('--output-doc-topics')
-        param.append(os.path.join(folder_for_output, 'doc_topics.txt'))
-        if doc_topics_threshold is not None:
-            param.append('--doc-topics-threshold')
-            param.append(str(doc_topics_threshold))
-    if topic_word_weights_file:
-        param.append('--topic-word-weights-file')
-        param.append(os.path.join(folder_for_output, 'topic_word_weights.txt'))
-    if word_topic_counts_file:
-        param.append('--word-topic-counts-file')
-        param.append(os.path.join(folder_for_output, 'word_topic_counts.txt'))
-    if diagnostics_file:
-        param.append('--diagnostics-file')
-        param.append(os.path.join(folder_for_output, 'diagnostics.xml'))
-    if xml_topic_report:
-        param.append('--xml-topic-report')
-        param.append(os.path.join(folder_for_output, 'topic_report.xml'))
-    if xml_topic_phrase_report:
-        param.append('--xml-topic-phrase-report')
-        param.append(os.path.join(folder_for_output, 'topic_phrase_report.xml'))
-    if output_model:
-        param.append('--output-model')
-        param.append(os.path.join(folder_for_output, 'mallet.model'))
-        if output_model_interval is not None:
-            param.append('--output-model-interval')
-            param.append(str(output_model_interval))
-    if output_state:
-        param.append('--output-state')
-        param.append(os.path.join(folder_for_output, 'state.gz'))
-        if output_state_interval is not None:
-            param.append('--output-state-interval')
-            param.append(str(output_state_interval))
-    if inferencer_file:
-        param.append('--inferencer-filename')
-        param.append(os.path.join(folder_for_output, 'inferencer'))
-    if evaluator_file:
-        param.append('--evaluator-filename')
-        param.append(os.path.join(folder_for_output, 'evaluator'))
-    # not yet working
-    if output_topic_docs:
-        param.append('--output-topic-docs')
-        param.append(os.path.join(folder_for_output, 'topic_docs.txt'))
+        log.debug("Choosing output parameters ...")
+        if output_topic_keys:
+            param.extend(['--output-topic-keys',
+                         os.path.join(folder_for_output, 'topic_keys.txt')])
+        if output_doc_topics:
+            param.extend(['--output-doc-topics', 
+                         os.path.join(folder_for_output, 'doc_topics.txt')])
+            if doc_topics_threshold is not None:
+                param.extend(['--doc-topics-threshold', str(doc_topics_threshold)])
+        if topic_word_weights_file:
+            param.extend(['--topic-word-weights-file',
+                         os.path.join(folder_for_output, 'topic_word_weights.txt')])
+        if word_topic_counts_file:
+            param.extend(['--word-topic-counts-file',
+                         os.path.join(folder_for_output, 'word_topic_counts.txt')])
+        if diagnostics_file:
+            param.extend(['--diagnostics-file',
+                         os.path.join(folder_for_output, 'diagnostics.xml')])
+        if xml_topic_report:
+            param.extend(['--xml-topic-report',
+                         os.path.join(folder_for_output, 'topic_report.xml')])
+        if xml_topic_phrase_report:
+            param.extend(['--xml-topic-phrase-report',
+                         os.path.join(folder_for_output, 'topic_phrase_report.xml')])
+        if output_model:
+            param.extend(['--output-model', 
+                         os.path.join(folder_for_output, 'mallet.model')])
+            if output_model_interval is not None:
+                param.extend(['--output-model-interval',
+                             str(output_model_interval)])
+        if output_state:
+            param.extend(['--output-state',
+                         os.path.join(folder_for_output, 'state.gz')])
+            if output_state_interval is not None:
+                param.extend(['--output-state-interval',
+                             str(output_state_interval)])
+        if inferencer_file:
+            param.extend(['--inferencer-filename', 
+                         os.path.join(folder_for_output, 'inferencer')])
+        if evaluator_file:
+            param.extend(['--evaluator-filename',
+                         os.path.join(folder_for_output, 'evaluator')])
+        # not yet working
+        if output_topic_docs:
+            param.extend(['--output-topic-docs',
+                         os.path.join(folder_for_output, 'topic_docs.txt')])
         if num_top_docs is not None:
-            param.append('--num-top-docs')
-            param.append(str(topic_word_weights_file))
+            param.extend(['--num-top-docs',
+                         str(topic_word_weights_file)])
 
-    with open('mallet.log', 'wb') as f:
-        p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
-        f.write(p.communicate()[1])
-    return None
+        with open('mallet.log', 'wb') as f:
+            p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
+            f.write(p.communicate()[1])
+    except ValueError as err:
+        raise ValueError(log.info("Mallet model could not be created.", err))
+
 
 def _grouper(n, iterable, fillvalue=None):
     """Collects data into fixed-length chunks or blocks.
