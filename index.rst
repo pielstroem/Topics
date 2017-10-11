@@ -15,7 +15,7 @@ Welcome to DARIAH Topics's documentation!
    Introduction using MALLET <Introducing_MALLET>
    API Documentation <docs/gen/modules>
    Standalone demonstrator <demonstrator/README>
-   CONTRIBUTING
+   docs/CONTRIBUTING
 
 Indices and tables
 ==================
