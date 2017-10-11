@@ -100,6 +100,8 @@ autodoc_default_flags = [
 
 default_role = 'any'
 
+nbsphinx_timeout = -1
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
