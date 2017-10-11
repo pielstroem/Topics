@@ -172,8 +172,9 @@ def create_mallet_binary(path_to_mallet='mallet', path_to_file=False,
             p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
             f.write(p.communicate()[1])
         return output_file
-    except ValueError as err:
-        raise ValueError(log.info("Mallet model could not be created.".format( err)))
+    except:
+        log.error("Mallet model could not be created.", exc_info=True)
+        raise
 
 
 
@@ -384,8 +385,9 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
         with open('mallet.log', 'wb') as f:
             p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
             f.write(p.communicate()[1])
-    except ValueError as err:
-        raise ValueError(log.info("Mallet model could not be created.", err))
+    except:
+        log.error("Mallet model could not be created.", exc_info=True)
+        raise
 
 
 def _grouper(n, iterable, fillvalue=None):
