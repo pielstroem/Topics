@@ -17,40 +17,33 @@ Usage instructions
 
 1. Put this script in a directory that is on the system's path.
    For future reference, I will assume you saved it in
-   `~/scripts/ipynb_drop_output`.
+   `~/bin/ipynb_drop_output`.
 2. Make sure it is executable by typing the command
-   `chmod +x ~/scripts/ipynb_drop_output`.
-3. Register a filter for ipython notebooks by
-   putting the following line in `~/.config/git/attributes`:
-   `*.ipynb  filter=clean_ipynb`
-4. Connect this script to the filter by running the following
+   `chmod +x ~/bin/ipynb_drop_output`.
+3. Configure a filter in your ~/.gitconfig using these
    git commands:
 
    git config --global filter.clean_ipynb.clean ipynb_drop_output
    git config --global filter.clean_ipynb.smudge cat
+4. Configure this filter for jupyter notebooks in your project's
+   ~/.gitattributes by adding:
+
+    *.ipynb    filter=clean_ipynb
 
 To tell git to ignore the output and prompts for a notebook,
 open the notebook's metadata (Edit > Edit Notebook Metadata). A
-panel should open containing the lines:
+panel should open containing a dictionary with some metadata.
 
-    {
-        "name" : "",
-        "signature" : "some very long hash"
-    }
+Add an extra entry
 
-Add an extra line so that the metadata now looks like:
-
-    {
-        "name" : "",
-        "signature" : "don't change the hash, but add a comma at the end of the line",
         "git" : { "suppress_outputs" : true }
-    }
 
-You may need to "touch" the notebooks for git to actually register a change, if
-your notebooks are already under version control.
+and save your notebook.
 
 Notes
 =====
+
+Script modified from https://gist.github.com/pbugnion/ea2797393033b54674af
 
 This script is inspired by http://stackoverflow.com/a/20844506/827862, but
 lets the user specify whether the ouptut of a notebook should be suppressed
