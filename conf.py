@@ -101,6 +101,7 @@ autodoc_default_flags = [
 default_role = 'any'
 
 nbsphinx_timeout = -1
+nbsphinx_allow_errors = True
 
 # -- Options for HTML output ----------------------------------------------
 
