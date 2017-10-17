@@ -10,9 +10,9 @@ Welcome to DARIAH Topics's documentation!
    :titlesonly:
 
    README
-   Introduction using lda <Introducing_lda>
-   Introduction using Gensim <Introducing_gensim>
-   Introduction using MALLET <Introducing_MALLET>
+   Introduction using lda <IntroducingLda>
+   Introduction using Gensim <IntroducingGensim>
+   Introduction using MALLET <IntroducingMallet>
    API Documentation <docs/gen/modules>
    Standalone demonstrator <demonstrator/README>
    CONTRIBUTING
