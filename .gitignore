@@ -15,6 +15,7 @@ grenzbote_plain/
 .python-version
 .tox
 wiki/
+mallet.log
 tutorial_supplementals/font/
 tutorial_supplementals/mallet_input/*
 tutorial_supplementals/mallet_output/*
