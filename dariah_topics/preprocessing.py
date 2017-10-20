@@ -2,322 +2,565 @@
 # -*- coding: utf-8 -*-
 
 """
-Processing Text Data, Creating Matrices and Cleaning Corpora
-============================================================
+Preprocessing Text Data, Creating Matrices and Cleaning Corpora
+***************************************************************
 
 Functions of this module are for **preprocessing purpose**. You can read text \
 files, `tokenize <https://en.wikipedia.org/wiki/Tokenization_(lexical_analysis)>`_ \
-and segment documents, create `document-term matrices <https://en.wikipedia.org/wiki/Document-term_matrix>`_, \
-determine and remove features and read existing matrices. Recurrent variable names are \
-based on the following conventions:
-    
-Corpora
-*******
-    * ``corpus`` means an iterable containing at least one ``document`` or ``dkpro_document``.
+and segment documents (if a document is chunked into smaller segments, each segment \
+counts as one document), create and read `document-term matrices <https://en.wikipedia.org/wiki/Document-term_matrix>`_, \
+determine and remove features. Recurrent variable names are based on the following \
+conventions:
+
+    * ``corpus`` means an iterable containing at least one ``document``.
     * ``document`` means one single string containing all characters of a text \
-    file, including whitespaces, punctuations, etc.
+    file, including whitespaces, punctuations, numbers, etc.
     * ``dkpro_document`` means a pandas DataFrame containing tokens and additional \
-    information, e.g. *part-of-speech tags* or *lemmas*.
-    * ``tokenized_corpus`` means an iterable containing at least one ``tokenized_document``.
+    information, e.g. *part-of-speech tags* or *lemmas*, produced by `DARIAH-DKPro-Wrapper <https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper>`_.
+    * ``tokenized_corpus`` means an iterable containing at least one ``tokenized_document`` \
+    or ``dkpro_document``.
     * ``tokenized_document`` means an iterable containing tokens of a ``document``.
-    * ``clean_tokenized_corpus`` means an iterable containing at least  one ``clean_tokenized_document``.
-    * ``clean_tokenized_document`` means an iterable containing only specific \
-    tokens (e.g. no *stopwords* or hapax *legomena*) of a ``tokenized_document``. 
     * ``document_labels`` means an iterable containing names of each ``document`` \
-    and must have as much elements as ``corpus``, ``tokenized_corpus`` or \
-    ``clean_tokenized_corpus``, respectively.
-
-    Furthermore, if a document is chunked into smaller segments, each segment counts
-    as one document.
-
-Data models
-***********
+    and must have as much elements as ``corpus`` or ``tokenized_corpus`` does.
     * ``document_term_matrix`` means either a pandas DataFrame with rows corresponding to \
-    ``document_labels`` and columns to types (distinct tokens in the corpus). The \
-    single values are token frequencies, or a pandas DataFrame with a MultiIndex \
+    ``document_labels`` and columns to types (distinct tokens in the corpus), whose \
+    values are token frequencies, or a pandas DataFrame with a MultiIndex \
     and only one column corresponding to word frequencies. The first column of the \
     MultiIndex corresponds to a document ID (based on ``document_labels``) and the \
-    second column to a type ID.
+    second column to a type ID. The first variant is designed for small and the \
+    second for large corpora.
+    * ``token2id`` means a dictionary containing a token as key and an unique identifier \
+    as key, e.g. ``{'first_document': 0, 'second_document': 1}``.
 
 Contents
 ********
+    * :func:`add_token2id` adds a token to a ``document_ids`` or ``type_ids`` dictionary \
+    and assigns an unique identifier.
     * :func:`create_document_term_matrix()` creates a document-term matrix, for either \
-    large or small corpora.
-    * :func:`duplicate_document_label()` duplicates a ``document_label`` with consecutive \
-    numbers.
-    * :func:`filter_dkpro_document()` filters a ``dkpro_document`` by specific \
-    *part-of-speech tags*.
+    small or large corpora.
+    * :func:`filter_pos_tags()` filters a ``dkpro_document`` by specific \
+    *part-of-speech tags* and returns either tokens or, if available, lemmas.
     * :func:`find_hapax_legomena()` determines *hapax legomena* based on frequencies \
     of a ``document_term_matrix``.
     * :func:`find_stopwords()` determines *most frequent words* based on frequencies \
     of a ``document_term_matrix``.
+    * :func:`read_document_term_matrix()` reads a document-term matrix from a CSV file.
     * :func:`read_from_pathlist()` reads one or multiple files based on a pathlist.
+    * :func:`read_matrix_market_file()` reads a `Matrix Market <http://math.nist.gov/MatrixMarket/formats.html#MMformat>`_ \
+    file for `Gensim <https://radimrehurek.com/gensim/>`_.
+    * :func:`read_model()` reads a LDA model.
+    * :func:`read_token2id()` reads a ``document_ids`` or ``type_ids`` dictionary \
+    from a CSV file.
+    * :func:`remove_features()` removes features from a ``document_term_matrix``.
     * :func:`segment()` is a wrapper for :func:`segment_fuzzy()` and segments a \
     ``tokenized_document`` into segments of a certain number of tokens, respecting existing chunks.
     * :func:`segment_fuzzy()` segments a ``tokenized_document``, tolerating existing \
     chunks (like paragraphs).
-    * :func:`split_paragraphs()` splits a ``document`` by paragraphs.
+    * :func:`split_paragraphs()` splits a ``document`` or ``dkpro_document`` by paragraphs.
     * :func:`tokenize()` tokenizes a ``document`` based on a Unicode regular expression.
-    * :func:`remove_features()` removes features from a ``document_term_matrix``.
 """
+
 
 from collections import Counter, defaultdict
 import csv
 from itertools import chain
-import logging
+from gensim.corpora import MmCorpus
+import os
 from lxml import etree
 import numpy as np
-import os
 import pandas as pd
+import pickle
 import regex
+import logging
 
 
-log = logging.getLogger('preprocessing')
+log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
-logging.basicConfig(level=logging.ERROR,
+logging.basicConfig(level=logging.WARNING,
                     format='%(levelname)s %(name)s: %(message)s')
 
-regular_expression = r'\p{Letter}+\p{Punctuation}?\p{Letter}+'
 
+def add_token2id(token, token2id):
+    """Adds token to token2id dictionary.
 
-def read_from_txt(doclist):
-    """Opens TXT files using file paths.
-
-    Description:
-        With this function you can read plain text files. Commit a list of
-        full paths or one single path as argument.
-        Use the function `create_document_list()` to create a list of your text
-        files.
+    With this function you can append a ``token`` to an existing ``token2id`` \
+    dictionary. If ``token2id`` has *x* elements with *n* identifiers, ``token`` \
+    will be element *x + 1* with identifier *n + 1*. 
 
     Args:
-        doclist Union(list[str], str): List of all documents in the corpus
-            or single path to TXT file.
-
-    Yields:
-        Document.
-
-    Todo:
-        * Separate metadata (author, header)
-
-    Example:
-        >>> list(read_from_txt('corpus_txt/Doyle_AScandalinBohemia.txt'))[0][:20]
-        'A SCANDAL IN BOHEMIA'
-    """
-    log.info("Accessing TXT documents ...")
-    if isinstance(doclist, str):
-        with open(doclist, 'r', encoding='utf-8') as f:
-            yield f.read()
-    elif isinstance(doclist, list):
-        for file in doclist:
-            with open(file, 'r', encoding='utf-8') as f:
-                yield f.read()
-
-
-def read_from_tei(doclist):
-    """Opens TEI XML files using file paths.
-
-    Description:
-        With this function you can read TEI encoded XML files. Commit a list of
-        full paths or one single path as argument.
-        Use the function `create_document_list()` to create a list of your XML
-        files.
-
-    Args:
-        doclist Union(list[str], str): List of all documents in the corpus
-            or single path to TEI XML file.
-
-    Yields:
-        Document.
-
-    Todo:
-        * Seperate metadata (author, header)?
-
-    Example:
-        >>> list(read_from_tei('corpus_tei/Schnitzler_Amerika.xml'))[0][142:159]
-        'Arthur Schnitzler'
-    """
-    log.info("Accessing TEI XML documents ...")
-    if not isinstance(doclist, list):
-        doclist = [doclist]
-    ns = dict(tei='http://www.tei-c.org/ns/1.0')
-    for file in doclist:
-        tree = etree.parse(file)
-        text_el = tree.xpath('//tei:text', namespaces=ns)[0]
-        yield "".join(text_el.xpath('.//text()'))
-
-
-def read_from_csv(doclist, columns=['ParagraphId', 'TokenId', 'Lemma', 'CPOS', 'NamedEntity']):
-    """Opens CSV files using file paths.
-
-    Description:
-        With this function you can read CSV files generated by `DARIAH-DKPro-Wrapper`_,
-        a tool for natural language processing. Commit a list of full paths or
-        one single path as argument. You also have the ability to select certain
-        columns.
-        Use the function `create_document_list()` to create a list of your CSV
-        files.
-        .. _DARIAH-DKPro-Wrapper:
-            https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper
-
-    Args:
-        doclist Union(list[str], str): List of all documents in the corpus
-            or single path to CSV file.
-        columns (list[str]): List of CSV column names.
-            Defaults to '['ParagraphId', 'TokenId', 'Lemma', 'CPOS', 'NamedEntity']'.
-
-    Yields:
-        Document.
-
-    Todo:
-        * Seperate metadata (author, header)?
-
-    Example:
-        >>> list(read_from_csv('corpus_csv/Doyle_AScandalinBohemia.txt.csv'))[0][:4] # doctest: +NORMALIZE_WHITESPACE
-                   ParagraphId  TokenId    Lemma CPOS NamedEntity
-        0            0        0        a  ART           _
-        1            0        1  scandal   NP           _
-        2            0        2       in   PP           _
-        3            0        3  bohemia   NP           _
-    """
-    log.info("Accessing CSV documents ...")
-    if isinstance(doclist, str):
-        doclist = [doclist]
-    for file in doclist:
-        df = pd.read_csv(file, sep='\t', quoting=csv.QUOTE_NONE)
-        yield df[columns]
-
-
-def tokenize(doc_txt, expression=regular_expression, lower=True, simple=False):
-    """Tokenizes with Unicode Regular Expressions.
-
-    Description:
-        With this function you can tokenize a document with a regular expression.
-        You also have the ability to commit your own regular expression. The default
-        expression is '\p{Letter}+\p{Punctuation}?\p{Letter}+', which means one or
-        more letters, followed by one or no punctuation, followed by one or more
-        letters. So one letter words won't match.
-        In case you want to lower alls tokens, set the argument `lower` to True (it
-        is by default).
-        If you want a very simple and primitive tokenization, set the argument
-        `simple` to True.
-        Use the functions `read_from_txt()`, `read_from_tei()` or `read_from_csv()`
-        to read your text files.
-
-    Args:
-        doc_txt (str): Document as string.
-        expression (str): Regular expression to find tokens.
-        lower (boolean): If True, lowers all words. Defaults to True.
-        simple (boolean): Uses simple regular expression (r'\w+'). Defaults to False.
-            If set to True, argument `expression` will be ignored.
-
-    Yields:
-        Tokens
-
-    Example:
-        >>> list(tokenize("This is one example text."))
-        ['this', 'is', 'one', 'example', 'text']
-    """
-    if lower:
-        doc_txt = doc_txt.lower()
-    if simple:
-        pattern = regex.compile(r'\w+')
-    else:
-        pattern = regex.compile(expression)
-    doc_txt = regex.sub("\.", "", doc_txt)
-    doc_txt = regex.sub("‒", " ", doc_txt)
-    doc_txt = regex.sub("–", " ", doc_txt)
-    doc_txt = regex.sub("—", " ", doc_txt)
-    doc_txt = regex.sub("―", " ", doc_txt)
-    tokens = pattern.finditer(doc_txt)
-    for match in tokens:
-        yield match.group()
-
-
-def filter_pos_tags(doc_csv, pos_tags=['ADJ', 'V', 'NN']):
-    """Gets lemmas by selected POS-tags from DARIAH-DKPro-Wrapper output.
-
-    Description:
-        With this function you can select certain columns of a CSV file
-        generated by `DARIAH-DKPro-Wrapper`_, a tool for natural language processing.
-        Use the function `read_from_csv()` to read CSV files.
-        .. _DARIAH-DKPro-Wrapper:
-            https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper
-
-    Args:
-        doc_csv (DataFrame): DataFrame containing DARIAH-DKPro-Wrapper output.
-        pos_tags (list[str]): List of DKPro POS-tags that should be selected.
-            Defaults to '['ADJ', 'V', 'NN']'.
-
-    Yields:
-        Lemma.
-
-    Example:
-        >>> df = pd.DataFrame({'CPOS': ['CARD', 'ADJ', 'NN', 'NN'],
-        ...                    'Lemma': ['one', 'more', 'example', 'text']})
-        >>> list(filter_pos_tags(df))[0] # doctest: +NORMALIZE_WHITESPACE
-        1    more
-        2    example
-        3    text
-        Name: Lemma, dtype: object
-    """
-    log.info("Accessing %s ...", pos_tags)
-    doc_csv = doc_csv[doc_csv['CPOS'].isin(pos_tags)]
-    yield doc_csv['Lemma']
-
-
-def split_paragraphs(doc_txt, sep=regex.compile('\n')):
-    """Splits the given document by paragraphs.
-
-    Description:
-        With this function you can split a document by paragraphs. You also have
-        the ability to select a certain regular expression to split the document.
-        Use the functions `read_from_txt()`, `read_from_tei()` or `read_from_csv()`
-        to read your text files.
-
-    Args:
-        doc_txt (str): Document text.
-        sep (regex.Regex): Separator indicating a paragraph.
+        token (str): Token.
+        token2id (dict): A dictionary with tokens as keys and identifiers as values.
 
     Returns:
-        List of paragraphs.
+        An extended token2id dictionary.
+    
+    Raises:
+        ValueError, if ``token`` has alread an ID in ``token2id``.
+        
+    Example:
+        >>> token = 'example'
+        >>> token2id = {'text': 0}
+        >>> len(add_token2id(token, token2id)) == 2
+        True
+    """
+    if token in token2id.keys():
+        raise KeyError("{} has already an ID in token2id. Access its value with token2id[token].".format(token))
+    token2id[token] = len(token2id) + 1
+    return token2id
+
+
+def create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=False):
+    """Creates a document-term matrix.
+
+    With this function you can create a document-term-matrix where rows \
+    correspond to documents in the collection and columns correspond to terms. \
+    Use the function :func:`read_from_pathlist()` to read and :func:`tokenize()` \
+    to tokenize your text files.
+
+    Args:
+        tokenized_corpus (list): Tokenized corpus as an iterable containing one
+            or more iterables containing tokens.
+        document_labels (list): Name or label of each text file.
+        large_corpus (bool, optional): Set to True, if ``tokenized_corpus`` is
+            very large. Defaults to False.
+
+    Returns:
+        Document-term matrix as pandas DataFrame.
 
     Example:
-        >>> split_paragraphs("This test contains \\n paragraphs.")
-        ['This test contains ', ' paragraphs.']
+        >>> tokenized_corpus = [['this', 'is', 'document', 'one'], ['this', 'is', 'document', 'two']]
+        >>> document_labels = ['document_one', 'document_two']
+        >>> create_document_term_matrix(tokenized_corpus, document_labels) #doctest: +NORMALIZE_WHITESPACE
+                      this   is  document  two  one
+        document_one   1.0  1.0       1.0  0.0  1.0
+        document_two   1.0  1.0       1.0  1.0  0.0
+        >>> document_term_matrix, document_ids, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, True)
+        >>> isinstance(document_term_matrix, pd.DataFrame) and isinstance(document_ids, dict) and isinstance(type_ids, dict)
+        True
     """
-    if not hasattr(sep, 'match'):
-        sep = regex.compile(sep)
-    return sep.split(doc_txt)
+    if large_corpus:
+        return _create_large_corpus_model(tokenized_corpus, document_labels)
+    else:
+        return _create_small_corpus_model(tokenized_corpus, document_labels)
+
+
+def filter_pos_tags(dkpro_document, pos_tags=['ADJ', 'V', 'NN'], lemma=True):
+    """Gets tokens or lemmas respectively of selected POS-tags from pandas DataFrame.
+
+    With this function you can filter `DARIAH-DKPro-Wrapper <https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper>`_ \
+    output. Commit a list of POS-tags to get specific tokens (if ``lemma`` False) \
+    or lemmas (if ``lemma`` True). 
+    Use the function :func:`read_from_pathlist()` to read CSV files.
+
+    Args:
+        dkpro_document (pandas.DataFrame): DARIAH-DKPro-Wrapper output.
+        pos_tags (list, optional): List of desired POS-tags. Defaults
+            to ``['ADJ', 'V', 'NN']``.
+        lemma (bool, optional): If True, lemmas will be selected, otherwise tokens.
+            Defaults to True.
+
+    Yields:
+        A pandas DataFrame containing tokens or lemmas.
+
+    Example:
+        >>> dkpro_document = pd.DataFrame({'CPOS': ['ART', 'V', 'ART', 'NN'],
+        ...                                'Token': ['this', 'was', 'a', 'document'],
+        ...                                'Lemma': ['this', 'is', 'a', 'document']})
+        >>> list(filter_pos_tags(dkpro_document)) #doctest: +NORMALIZE_WHITESPACE
+        [1          is
+        3    document
+        Name: Lemma, dtype: object]
+    """
+    tokenized_document = dkpro_document[dkpro_document['CPOS'].isin(pos_tags)]
+    if lemma:
+        log.info("Selecting {} lemmas ...".format(pos_tags))
+        yield tokenized_document['Lemma']
+    else:
+        log.info("Selecting {} tokens ...".format(pos_tags))
+        yield tokenized_document['Token']
+
+
+def find_hapax_legomena(document_term_matrix, type_ids=None):
+    """Creates a list with hapax legommena.
+
+    With this function you can determine *hapax legomena* for each document. \
+    Use the function :func:`create_document_term_matrix()` to create a \
+    document-term matrix.
+
+    Args:
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        type_ids (dict): A dictionary with types as key and identifiers as values.
+            If ``document_term_matrix`` is designed for large corpora, you have
+            to commit ``type_ids``, too.
+
+    Returns:
+        Hapax legomena in a list.
+
+    Example:
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['hapax', 'stopword', 'stopword']]
+        >>> document_term_matrix = create_document_term_matrix(tokenized_corpus, document_labels)
+        >>> find_hapax_legomena(document_term_matrix)
+        ['hapax']
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> find_hapax_legomena(document_term_matrix, type_ids)
+        ['hapax']
+    """
+    log.info("Determining hapax legomena ...")
+    if isinstance(document_term_matrix.index, pd.MultiIndex):
+        log.debug("Large corpus model ...")
+        return _hapax_legomena_large_corpus_model(document_term_matrix, type_ids)
+    else:
+        log.debug("Small corpus model ...")
+        return document_term_matrix.loc[:, document_term_matrix.max() == 1].columns.tolist()
+
+
+def find_stopwords(document_term_matrix, most_frequent_tokens=100, type_ids=None):
+    """Creates a list with stopword based on most frequent tokens.
+
+    With this function you can determine *most frequent tokens*, also known as \
+    *stopwords*. First, you have to translate your corpus into a document-term \
+    matrix.
+    Use the function :func:`create_document_term_matrix()` to create a \
+    document-term matrix.
+
+    Args:
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        most_frequent_tokens (int, optional): Treshold for most frequent tokens.
+        type_ids (dict): If ``document_term_matrix`` is designed for large corpora,
+            you have to commit ``type_ids``, too.
+
+    Returns:
+        Most frequent tokens in a list.
+
+    Example:
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['hapax', 'stopword', 'stopword']]
+        >>> document_term_matrix = create_document_term_matrix(tokenized_corpus, document_labels)
+        >>> find_stopwords(document_term_matrix, 1)
+        ['stopword']
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> find_stopwords(document_term_matrix, 1, type_ids)
+        ['stopword']
+    """
+    log.info("Determining stopwords ...")
+    if isinstance(document_term_matrix.index, pd.MultiIndex):
+        log.debug("Large corpus model ...")
+        return _stopwords_large_corpus_model(document_term_matrix, type_ids, most_frequent_tokens)
+    else:
+        log.debug("Small corpus model ...")
+        return document_term_matrix.iloc[:, :most_frequent_tokens].columns.tolist()
+
+
+def read_document_term_matrix(filepath):
+    """Reads a document-term matrix from CSV file.
+
+    With this function you can read a CSV file containing a document-term \
+    matrix.
+    Use the function :func:`create_document_term_matrix()` to create a document-term \
+    matrix.
+
+    Args:
+        filepath (str): Path to CSV file.
+
+    Returns:
+        A document-term matrix as pandas DataFrame.
+    
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.csv') as tmpfile:
+        ...     tmpfile.write(b'this,is,an,example,text\\ndocument,1,0,1,0,1') and True
+        ...     tmpfile.flush()
+        ...     read_document_term_matrix(tmpfile.name) #doctest: +NORMALIZE_WHITESPACE
+        True
+                  this  is  an  example  text
+        document     1   0   1        0     1
+        >>> with tempfile.NamedTemporaryFile(suffix='.csv') as tmpfile:
+        ...     tmpfile.write(b'document_id,type_id,0\\n1,1,1') and True
+        ...     tmpfile.flush()
+        ...     read_document_term_matrix(tmpfile.name) #doctest: +NORMALIZE_WHITESPACE
+        True
+                             0
+        document_id type_id   
+        1           1        1
+    """
+    document_term_matrix = pd.read_csv(filepath)
+    if 'document_id' and 'type_id' in document_term_matrix:
+        return document_term_matrix.set_index(['document_id', 'type_id'])
+    else:
+        return document_term_matrix
+
+
+def read_from_pathlist(pathlist, file_format=None, xpath_expression='//tei:text', sep='\t', columns=None):
+    """Reads text files based on a pathlist.
+
+    With this function you can read multiple file formats:
+        * Plain text files (``.txt``).
+        * TEI XML files (``.xml``).
+        * CSV files (``.csv``), e.g. produced by `DARIAH-DKPro-Wrapper <https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper>`_. 
+
+    The argument ``pathlist`` is an iterable of full or relative paths. In case of \
+    CSV files, you have the ability to select specific columns via ``columns``. \
+    If there are multiple file formats in ``pathlist``, do not specify ``file_format`` \
+    and file extensions will be considered.
+
+    Args:
+        pathlist (list): One or more paths to text files.
+        file_format (str, optional): Format of the files. Possible values are
+            ``text``, ``xml`` and ``csv`. If None, file extensions will be considered.
+            Defaults to None.
+        xpath_expression (str, optional): XPath expressions to match part of the
+            XML file. Defaults to ``//tei:text``.
+        sep (str, optional): Separator of CSV file. Defaults to ``'\\t'``
+        columns (list, optional): Column name or names for CSV files. If None, the
+            whole file will be processed. Defaults to None.
+
+    Yields:
+        A ``document`` as str or, in case of a CSV file, a ``dkpro_document`` as a pandas DataFrame.
+
+    Raises:
+        ValueError, if ``file_format`` is not supported.
+
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.txt') as first:
+        ...     pathlist = []
+        ...     first.write(b"This is the first example.") and True
+        ...     first.flush()
+        ...     pathlist.append(first.name)
+        ...     with tempfile.NamedTemporaryFile(suffix='.txt') as second:
+        ...         second.write(b"This is the second example.") and True
+        ...         second.flush()
+        ...         pathlist.append(second.name)
+        ...         list(read_from_pathlist(pathlist, 'text'))
+        True
+        True
+        ['This is the first example.', 'This is the second example.']
+    """
+    log.info("Reading {} files ...".format(len(pathlist)))
+    for n, file in enumerate(pathlist):
+        log.debug("File #{}".format(n))
+        _, extension = os.path.splitext(file)
+        if file_format == 'text' or extension == '.txt':
+            yield _read_txt(file)
+        elif file_format == 'xml' or extension == '.xml':
+            yield _read_xml(file, xpath_expression)
+        elif file_format == 'csv' or extension == '.csv':
+            yield _read_csv(file, sep, csv_columns)
+        else:
+            if file_format is None:
+                log.error("Skipping {}, because the file format {} is not supported.".format(file, extension))
+                pass
+            else:
+                raise ValueError("Unable to read {}, because the file format {} is not supported.".format(file, file_format))
+
+
+def read_matrix_market_file(filepath):
+    """Reads a Matrix Market file for Gensim.
+
+    With this function you can read a Matrix Market file to process it with \
+    `Gensim <https://radimrehurek.com/gensim/>`_.
+
+    Args:
+        filepath (str): Path to Matrix Market file.
+
+    Returns:
+        Matrix Market model for Gensim.
+    """
+    if os.path.splitext(filepath)[1] is not '.mm':
+        raise ValueError("The file {} is not a Matrix Market file.".format(filepath))
+    return MmCorpus(filepath)
+
+
+def read_model(filepath):
+    """Reads a LDA model.
+
+    With this function you can read a LDA model, if it was saved using :module:`pickle`.
+    If you want to read MALLET models, you have to specify a parameter of the
+    function :func:`create_mallet_model()`.
+
+    Args:
+        filepath (str): Path to LDA model, e.g. ``/home/models/model.pickle``.
+
+    Returns:
+        A LDA model.
+
+    Example:
+        >>> import lda
+        >>> import gensim
+        >>> import tempfile
+        >>> a = lda.LDA
+        >>> with tempfile.NamedTemporaryFile(suffix='.pickle') as tmpfile:
+        ...     pickle.dump(a, tmpfile, protocol=pickle.HIGHEST_PROTOCOL)
+        ...     tmpfile.flush()
+        ...     read_model(tmpfile.name) == a
+        True
+        >>> a = gensim.models.LdaModel
+        >>> with tempfile.NamedTemporaryFile(suffix='.pickle') as tmpfile:
+        ...     pickle.dump(a, tmpfile, protocol=pickle.HIGHEST_PROTOCOL)
+        ...     tmpfile.flush()
+        ...     read_model(tmpfile.name) == a
+        True
+    """
+    with open(filepath, 'rb') as model:
+        return pickle.load(model)
+
+
+def read_token2id(filepath):
+    """Reads a token2id dictionary from CSV file.
+
+    With this function you can read a CSV-file containing a document or type dictionary.
+
+    Args:
+        filepath (str): Path to CSV file.
+
+    Returns:
+        A dictionary.
+    
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.csv') as tmpfile:
+        ...     tmpfile.write(b"0,this\\n1,is\\n2,an\\n3,example") and True
+        ...     tmpfile.flush()
+        ...     read_token2id(tmpfile.name)
+        True
+        {0: 'this', 1: 'is', 2: 'an', 3: 'example'}
+    """
+    dictionary = pd.read_csv(filepath, header=None)
+    dictionary.index = dictionary[0]
+    dictionary = dictionary[1]
+    return dictionary.to_dict()
+    
+    
+def remove_features(features, document_term_matrix=None, tokenized_corpus=None, type_ids=None):
+    """Removes features based on a list of tokens.
+
+    With this function you can clean your corpus (either a document-term matrix \
+    or a ``tokenized_corpus``) from *stopwords* and *hapax legomena*.
+    Use the function :func:`create_document_term_matrix()` or :func:`tokenize` to \
+    create a document-term matrix or to tokenize your corpus, respectively.
+
+    Args:
+        features (list): A list of tokens.
+        document_term_matrix (pandas.DataFrame, optional): A document-term matrix.
+        tokenized_corpus (list, optional): An iterable of one or more ``tokenized_document``.
+        type_ids (dict, optional): A dictionary with types as key and identifiers as values.
+
+    Returns:
+        A clean document-term matrix as pandas DataFrame or ``tokenized_corpus`` as list.
+
+    Example:
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['this', 'is', 'a', 'document']]
+        >>> document_term_matrix = create_document_term_matrix(tokenized_corpus, document_labels)
+        >>> features = ['this']
+        >>> remove_features(features, document_term_matrix) #doctest: +NORMALIZE_WHITESPACE
+                   is  document    a
+        document  1.0       1.0  1.0
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> len(remove_features(features, document_term_matrix, type_ids=type_ids))
+        3
+        >>> list(remove_features(features, tokenized_corpus=tokenized_corpus))
+        [['is', 'a', 'document']]
+    """
+    log.info("Removing features ...")
+    if document_term_matrix is not None and tokenized_corpus is None:
+        if isinstance(document_term_matrix.index, pd.MultiIndex):
+            return _remove_features_from_large_corpus_model(document_term_matrix, type_ids, features)
+        else:
+            return _remove_features_from_small_corpus_model(document_term_matrix, features)
+    elif document_term_matrix is None and tokenized_corpus is not None:
+        return _remove_features_from_tokenized_corpus(tokenized_corpus, features)
+    else:
+        raise ValueError("Commit either document-term matrix or tokenized_corpus.")
+
+
+def segment(document, segment_size=1000, tolerance=0, chunker=None,
+            tokenizer=None, flatten_chunks=True, materialize=True):
+    """Segments a document into segments of about ``segment_size`` tokens, respecting existing chunks.
+
+    Consider you have a document. You wish to split the document into \
+    segments of about 1000 tokens, but you prefer to keep paragraphs together \
+    if this does not increase or decrease the token size by more than 5%.
+    This is a convenience wrapper around :func:`segment_fuzzy()`.
+
+    Args:
+        document (list): The document to process. This is an iterable of
+            chunks, each of which is an iterable of tokens.
+        segment_size (int): The target size of each segment, in tokens. Defaults
+            to 1000.
+        tolerance (float, optional): How much may the actual segment size differ from
+            the segment_size? If ``0 < tolerance < 1``, this is interpreted as a
+            fraction of the segment_size, otherwise it is interpreted as an
+            absolute number. If ``tolerance < 0``, chunks are never split apart.
+            Defaults to None.
+        chunker (callable, optional): A one-argument function that cuts the document into
+            chunks. If this is present, it is called on the given document.
+            Defaults to None.
+        tokenizer (callable, optional): A one-argument function that tokenizes each chunk.
+            Defaults to None.
+        flatten_chunks (bool, optional): If True, undo the effect of the chunker by
+            chaining the chunks in each segment, thus each segment consists of
+            tokens. This can also be a one-argument function in order to
+            customize the un-chunking. Defaults to True.
+        materialize (bool, optional): If True, materializes the segments. Defaults to True.
+
+    Example:
+        >>> segment([['This', 'is', 'the', 'first', 'chunk'],
+        ...          ['this', 'is', 'the', 'second', 'chunk']], 2) #doctest: +NORMALIZE_WHITESPACE
+        [['This', 'is'],
+        ['the', 'first'],
+        ['chunk', 'this'],
+        ['is', 'the'],
+        ['second', 'chunk']]
+    """
+    if chunker is not None:
+        document = chunker(document)
+    if tokenizer is not None:
+        document = map(tokenizer, document)
+
+    segments = segment_fuzzy(document, segment_size, tolerance)
+
+    if flatten_chunks:
+        if not callable(flatten_chunks):
+            def flatten_chunks(segment):
+                return list(chain.from_iterable(segment))
+        segments = map(flatten_chunks, segments)
+    if materialize:
+        segments = list(segments)
+    return segments
 
 
 def segment_fuzzy(document, segment_size=5000, tolerance=0.05):
     """Segments a document, tolerating existing chunks (like paragraphs).
 
-    Description:
-        Consider you have a document. You wish to split the document into
-        segments of about 1000 tokens, but you prefer to keep paragraphs together
-        if this does not increase or decrease the token size by more than 5%.
+    Consider you have a ``document``. You wish to split the ``document`` into \
+    segments of about 1000 tokens, but you prefer to keep paragraphs together \
+    if this does not increase or decrease the token size by more than 5%.
 
     Args:
-        document: The document to process. This is an Iterable of chunks, each
-            of which is an iterable of tokens.
-        segment_size (int): The target length of each segment in tokens.
-        tolerance (Number): How much may the actual segment size differ from
-            the segment_size? If 0 < tolerance < 1, this is interpreted as a
-            fraction of the segment_size, otherwise it is interpreted as an
-            absolute number. If tolerance < 0, chunks are never split apart.
+        document (list): The document to process. This is an iterable of
+            chunks, each of which is an iterable of tokens.
+        segment_size (int, optional): The target length of each segment in tokens.
+            Defaults to 5000.
+        tolerance (float, optional): How much may the actual segment size differ from
+            the ``segment_size``? If ``0 < tolerance < 1``, this is interpreted as a
+            fraction of the ``segment_size``, otherwise it is interpreted as an
+            absolute number. If ``tolerance < 0``, chunks are never split apart.
+            Defaults to 0.05.
 
     Yields:
         Segments. Each segment is a list of chunks, each chunk is a list of
         tokens.
 
     Example:
-        >>> list(segment_fuzzy([['This', 'test', 'is', 'very', 'clear'],
-        ...                     ['and', 'contains', 'chunks']], 2)) # doctest: +NORMALIZE_WHITESPACE
-        [[['This', 'test']],
-        [['is', 'very']],
-        [['clear'], ['and']],
-        [['contains', 'chunks']]]
+        >>> list(segment_fuzzy([['This', 'is', 'the', 'first', 'chunk'],
+        ...                     ['this', 'is', 'the', 'second', 'chunk']], 2)) #doctest: +NORMALIZE_WHITESPACE
+        [[['This', 'is']],
+        [['the', 'first']],
+        [['chunk'], ['this']],
+        [['is', 'the']],
+        [['second', 'chunk']]]
     """
     if tolerance > 0 and tolerance < 1:
         tolerance = round(segment_size * tolerance)
@@ -350,623 +593,442 @@ def segment_fuzzy(document, segment_size=5000, tolerance=0.05):
     except StopIteration:
         pass
 
-    # handle leftovers
     if current_segment:
         yield current_segment
 
 
-def segment(document, segment_size=1000, tolerance=0, chunker=None,
-            tokenizer=None, flatten_chunks=False, materialize=False):
-    """Segments a document into segments of about `segment_size` tokens, respecting existing chunks.
+def split_paragraphs(document, sep=regex.compile(r'\n')):
+    """Splits the given document by paragraphs.
 
-    Description:
-        Consider you have a document. You wish to split the document into
-        segments of about 1000 tokens, but you prefer to keep paragraphs together
-        if this does not increase or decrease the token size by more than 5%.
-        This is a convenience wrapper around `segment_fuzzy()`.
+    With this function you can split a document by paragraphs. In case of a \
+    document as str, you also have the ability to select a certain regular \
+    expression to split the document.
+    Use the function :func:`read_from_pathlist()` to read files.
 
     Args:
-        segment_size (int): The target size of each segment, in tokens.
-        tolerance (Number): see `segment_fuzzy`
-        chunker (callable): a one-argument function that cuts the document into
-            chunks. If this is present, it is called on the given document.
-        tokenizer (callable): a one-argument function that tokenizes each chunk.
-        flatten_chunks (bool): if True, undo the effect of the chunker by
-            chaining the chunks in each segment, thus each segment consists of
-            tokens. This can also be a one-argument function in order to
-            customize the un-chunking.
+        document Union(str, pandas.DataFrame): Document text or DARIAH-DKPro-Wrapper output.
+        sep (regex.Regex, optional): Separator indicating a paragraph.
+
+    Returns:
+        A list of paragraphs.
 
     Example:
-        >>> list(segment([['This', 'test', 'is', 'very', 'clear'],
-        ...               ['and', 'contains', 'chunks']], 2)) # doctest: +NORMALIZE_WHITESPACE
-        [[['This', 'test']],
-        [['is', 'very']],
-        [['clear'], ['and']],
-        [['contains', 'chunks']]]
+        >>> document = "First paragraph\\nsecond paragraph."
+        >>> split_paragraphs(document)
+        ['First paragraph', 'second paragraph.']
+        >>> dkpro_document = pd.DataFrame({'Token': ['first', 'paragraph', 'second', 'paragraph', '.'],
+        ...                                'ParagraphId': [1, 1, 2, 2, 2]})
+        >>> split_paragraphs(dkpro_document)[0] #doctest: +NORMALIZE_WHITESPACE
+                         Token
+        ParagraphId           
+        1                first
+        1            paragraph
     """
-    if chunker is not None:
-        document = chunker(document)
-    if tokenizer is not None:
-        document = map(tokenizer, document)
+    if isinstance(document, str):
+        if not hasattr(sep, 'match'):
+            sep = regex.compile(sep)
+        splitted_document = sep.split(document)
+        return list(filter(str.strip, splitted_document)) #remove elements containing only whitespaces
+    elif isinstance(document, pd.DataFrame):
+        grouped_document = document.set_index('ParagraphId').groupby(level=0)
+        return [paragraphs for _, paragraphs in grouped_document]
 
-    segments = segment_fuzzy(document, segment_size, tolerance)
 
-    if flatten_chunks:
-        if not callable(flatten_chunks):
-            def flatten_chunks(segment):
-                return list(chain.from_iterable(segment))
-        segments = map(flatten_chunks, segments)
-    if materialize:
-        segments = list(segments)
+def tokenize(document, pattern=r'\p{L}+\p{P}?\p{L}+', lower=True):
+    """Tokenizes with Unicode regular expressions.
 
-    return segments
-
-def remove_features_from_file(doc_token_list, features_to_be_removed):
-    """Removes features using feature list.
-
-    Description:
-        With this function you can remove features from ppreprocessed files.
-        Commit a list of features.
-        Use the function `tokenize()` to access your files.
+    With this function you can tokenize a ``document`` with a regular expression. \
+    You also have the ability to commit your own regular expression. The default \
+    expression is ``\p{Letter}+\p{Punctuation}?\p{Letter}+``, which means one or \
+    more letters, followed by one or no punctuation, followed by one or more \
+    letters. So, one letter words will not match. In case you want to lower \
+    all tokens, set the argument ``lower`` to True (it is by default).    
+    Use the functions :func:`read_from_pathlist()` to read your text files.
 
     Args:
-        doc_token_list Union(list[str], str): List of all documents in the corpus
-            and their tokens.
-        features_to_be_removed list[str]: List of features that should be
-        removed
+        document (str): Document text.
+        pattern (str, optional): Regular expression to match tokens.
+        lower (boolean, optional): If True, lowers all characters. Defaults to True.
+
     Yields:
-        cleaned token array
-
-    Todo:
+        All matching tokens in the ``document``.
 
     Example:
-        >>> doc_tokens = [['short', 'example', 'example', 'text', 'text']]
-        >>> features_to_be_removed = ['example']
-        >>> test = remove_features_from_file(doc_tokens, features_to_be_removed)
-        >>> list(test)
-        [['short', 'text', 'text']]
+        >>> list(tokenize("This is 1 example text."))
+        ['this', 'is', 'example', 'text']
     """
-    #log.info("Removing features ...")
-    doc_token_array = np.array(doc_token_list)
-    feature_array = np.array(features_to_be_removed)
-    #get indices of features that should be deleted
-    indices = np.where(np.in1d(doc_token_array, feature_array,))
-    doc_token_array = np.delete(doc_token_array, indices)
-    yield doc_token_array.tolist()
+    log.info("Tokenizing document ...")
+    if lower:
+        log.debug("Lowering all characters ...")
+        document = document.lower()
+    compiled_pattern = regex.compile(pattern)
+    tokenized_document = compiled_pattern.finditer(document)
+    for match in tokenized_document:
+        yield match.group()
 
-def create_mallet_import(doc_tokens_cleaned, doc_labels, outpath = os.path.join('tutorial_supplementals', 'mallet_input')):
-    """Creates files for mallet import.
 
-    Description:
-        With this function you can create preprocessed plain text files.
-        Commit a list of full paths or one single path as argument.
-        Use the function `remove_features_from_file()` to create a list of tokens
-        per document.
+def _create_bag_of_words(document_labels, tokenized_corpus):
+    """Creates a bag-of-words model.
+
+    This private function is wrapped in :func:`_create_large_corpus_model()`. The \
+    first level consists of the document label as key, and the dictionary \
+    of counts as value. The second level consists of type ID as key, and the \
+    count of types in document pairs as value.
 
     Args:
-        doc_tokens_cleaned Union(list[str], str): List of tokens per document
-        doc_labels list[str]: List of documents labels.
+        document_labels (list): Iterable of document labels.
+        tokenized_corpus (list): Tokenized corpus as an iterable
+            containing one or more iterables containing tokens.
 
-    Todo:
+    Returns:
+        A bag-of-words model as dictionary of dictionaries, document IDs and type IDs.
 
     Example:
-        >>> doc_labels = ['examplefile']
-        >>> doc_tokens_cleaned = [['short', 'example', 'text']]
-        >>> create_mallet_import(doc_tokens_cleaned, doc_labels)
-        >>> outpath = os.path.join('tutorial_supplementals', 'mallet_input')
-        >>> os.path.isfile(os.path.join(outpath, 'examplefile.txt'))
+        >>> document_labels = ['exampletext']
+        >>> tokenized_corpus = [['this', 'is', 'an', 'example', 'text']]
+        >>> bag_of_words, document_ids, type_ids = _create_bag_of_words(document_labels, tokenized_corpus)
+        >>> isinstance(bag_of_words, dict) and isinstance(document_ids, dict) and isinstance(type_ids, dict)
         True
     """
-    #log.info("Generating mallet input files ...")
-    if not os.path.exists(outpath):
-                os.makedirs(outpath)
+    document_ids = _token2id(document_labels)
+    type_ids = _token2id(tokenized_corpus)
+    bag_of_words = defaultdict(dict)
+    for document_label, tokenized_document in zip(document_labels, tokenized_corpus):
+        bag_of_words[document_label] = Counter([type_ids[token] for token in tokenized_document])
+    return {document_ids[id_]: doc for id_, doc in bag_of_words.items()}, document_ids, type_ids
 
-    for tokens, label in zip(doc_tokens_cleaned, doc_labels):
-        with open(os.path.join(outpath,label+'.txt'), 'w', encoding="utf-8") as f:
-            for token in tokens:
-                f.write(' '.join(token))
-                
 
-def create_doc_term_matrix(tokens, doc_labels):
-    """Creates a document-term matrix
+def _create_large_corpus_model(tokenized_corpus, document_labels):
+    """Creates a document-term matrix for large corpora.
 
-    Description:
-        With this function you can create a document-term matrix
-        where rows correspond to documents in the collection and columns 
-        correspond to terms.
-        Use the function `tokenize()` to tokenize your text files and
-        Use the function `_wordcounts()` to generate the wordcounts
-    Args:
-        doc_labels (list[str]): List of doc labels as string
-        tokens (list): List of tokens.
-
-    Returns:
-        DataFrame.
-
-    Example:
-        >>> example = create_doc_term_matrix('example', 'label')
-        >>> print(isinstance(example, pd.DataFrame))
-        >>> True
-    """
-    df = pd.DataFrame([_wordcounts(doc, label) for doc, label in zip(tokens, doc_labels)])
-    df = df.fillna(0)
-    return df.loc[:, df.sum().sort_values(ascending=False).index]
-
-def _wordcounts(doc, label):
-    """Creates a Series with wordcounts
-
-    Description:
-        Only the function 'create_doc_term_matrix() uses this private 
-        function. 
+    This private function is wrapped in :func:`create_document_term_matrix()` and \
+    creates a pandas DataFrame containing document and type IDs as MultiIndex \
+    and type frequencies as values representing the counts of tokens for each \
+    token in each document.
 
     Args:
-        doc (list[tokens]): List of tokens
-        label (String): String with document_label.
+        tokenized_corpus (list): Tokenized corpus as an iterable
+            containing one or more iterables containing tokens.
+        document_labels (list): Iterable of document labels.
 
     Returns:
-        Pandas Series.
-        
-    ToDo:
-        Complete documetation
-        
-    Example:
+        A document-term matrix as pandas DataFrame, ``document_ids`` and ``type_ids``.
 
-    """
-    s = pd.Series(Counter(doc))
-    s.name = label
-    return s
-
-
-def create_dictionary(tokens):
-    """Creates a dictionary of unique tokens with identifier.
-
-    Description:
-        With this function you can create a dictionary of unique tokens as key
-        and an identifier as value.
-        Use the function `tokenize()` to tokenize your text files.
-
-    Args:
-        tokens (list): List of tokens.
-
-    Returns:
-        Dictionary.
+    Todo:
+        * Make the whole function faster.
 
     Example:
-        >>> create_dictionary(['example'])
-        {'example': 1}
-    """
-    if all(isinstance(element, list) for element in tokens):
-        tokens = {token for element in tokens for token in element}
-    return {token: id_ for id_, token in enumerate(set(tokens), 1)}
-
-
-def _create_large_counter(doc_labels, doc_tokens, type_dictionary):
-    """Creates a dictionary of dictionaries.
-
-    Description:
-        Only the function `create_sparse_bow()` uses this private function to
-        create a dictionary of dictionaries.
-        The first level consists of the document label as key, and the dictionary
-        of counts as value. The second level consists of token ID as key, and the
-        count of tokens in document pairs as value.
-
-    Args:
-        doc_labels (list): List of doc labels.
-        doc_tokens (list): List of tokens.
-        type_dictionary (dict): Dictionary of {token: id}.
-
-    Returns:
-        Dictionary of dictionaries.
-
-    Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'example', 'text', 'text']]
-        >>> type_dictionary = {'short': 1, 'example': 2, 'text': 3}
-        >>> isinstance(_create_large_counter(doc_labels, doc_tokens, type_dictionary), defaultdict)
+        >>> tokenized_corpus = [['this', 'is', 'document', 'one'], ['this', 'is', 'document', 'two']]
+        >>> document_labels = ['document_one', 'document_two']
+        >>> document_term_matrix, document_ids, type_ids = _create_large_corpus_model(tokenized_corpus, document_labels)
+        >>> isinstance(document_term_matrix, pd.DataFrame) and isinstance(document_ids, dict) and isinstance(type_ids, dict)
         True
     """
-    largecounter = defaultdict(dict)
-    for doc, tokens in zip(doc_labels, doc_tokens):
-        largecounter[doc] = Counter(
-            [type_dictionary[token] for token in tokens])
-    return largecounter
+    bag_of_words, document_ids, type_ids = _create_bag_of_words(document_labels, tokenized_corpus)
+    multi_index = _create_multi_index(bag_of_words)
+    document_term_matrix = pd.DataFrame(np.zeros((len(multi_index), 1), dtype=int), index=multi_index)
+    index_iterator = multi_index.groupby(multi_index.get_level_values('document_id'))
+
+    for document_id in range(1, len(multi_index.levels[0]) + 1):
+        for type_id in [val[1] for val in index_iterator[document_id]]:
+            document_term_matrix.set_value((document_id, type_id), 0, int(bag_of_words[document_id][type_id]))
+    return document_term_matrix, document_ids, type_ids
 
 
-def _create_sparse_index(largecounter):
-    """Creates a sparse index for pandas DataFrame.
+def _create_multi_index(bag_of_words):
+    """Creates a MultiIndex for a pandas DataFrame.
 
-    Description:
-        Only the function `create_sparse_bow()` uses this private function to
-        create a pandas multiindex out of tuples.
-        The multiindex represents document ID to token IDs relations.
+    This private function is wrapped in :func:`_create_large_corpus_model()`.
 
     Args:
-        largecounter (dict): Dictionary of {document: {token: frequency}}.
+        bag_of_words (dict): A bag-of-words model of ``{document_id: {type_id: frequency}}``.
 
     Returns:
         Pandas MultiIndex.
 
     Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'example', 'text', 'text']]
-        >>> type_dictionary = {'short': 1, 'example': 2, 'text': 3}
-        >>> largecounter = _create_large_counter(doc_labels, doc_tokens, type_dictionary)
-        >>> isinstance(_create_sparse_index(largecounter), pd.MultiIndex)
-        True
+        >>> bag_of_words = {1: {1: 2, 2: 3, 3: 4}}
+        >>> _create_multi_index(bag_of_words)
+        MultiIndex(levels=[[1], [1, 2, 3]],
+                   labels=[[0, 0, 0], [0, 1, 2]],
+                   names=['document_id', 'type_id'])
     """
     tuples = []
-    for key in range(1, len(largecounter) + 1):
-        if len(largecounter[key]) == 0:
-            tuples.append((key, 0))
-        for value in largecounter[key]:
-            tuples.append((key, value))
-    sparse_index = pd.MultiIndex.from_tuples(
-        tuples, names=['doc_id', 'token_id'])
-    return sparse_index
+    for document_id in range(1, len(bag_of_words) + 1):
+        if len(bag_of_words[document_id]) == 0:
+            tuples.append((document_id, 0))
+        for type_id in bag_of_words[document_id]:
+            tuples.append((document_id, type_id))
+    return pd.MultiIndex.from_tuples(tuples, names=['document_id', 'type_id'])
 
 
-def create_sparse_bow(doc_labels, doc_tokens, type_dictionary, doc_dictionary):
-    """Creates sparse matrix for bag-of-words model.
+def _create_small_corpus_model(tokenized_corpus, document_labels):
+    """Creates a document-term matrix for small corpora.
 
-    Description:
-        This function creates a sparse DataFrame ('bow' means `bag-of-words`_)
-        containing document and type identifier as multiindex and type
-        frequencies as values representing the counts of tokens for each token
-        in each document.
-        It is also the main function that incorporates the private functions
-        `_create_large_counter()` and `_create_sparse_index()``.
-        Use the function `get_labels()` for `doc_labels`, `tokenize()` for
-        `doc_tokens`, and `create_dictionary()` for `type_dictionary` as well
-        as for `doc_ids`.
-        Use the function `create_dictionary()` to generate the dictionaries
-        `type_dictionary` and `doc_dictionary`.
-        .. _bag-of-words:
-            https://en.wikipedia.org/wiki/Bag-of-words_model
+    This private function is wrapped in :func:`create_document_term_matrix()`.
 
     Args:
-        doc_labels (list[str]): List of doc labels as string.
-        doc_tokens (list[str]): List of tokens as string.
-        type_dictionary (dict[str]): Dictionary with {token: id}.
-        doc_ids (dict[str]): Dictionary with {document label: id}.
+        tokenized_corpus (list): Tokenized corpus as an iterable
+            containing one or more iterables containing tokens.
+        document_labels (list): Name or label of each text file.
+
 
     Returns:
-        Multiindexed Pandas DataFrame.
-
-    ToDo:
-        * Test if it's necessary to build sparse_df_filled with int8 zeroes instead of int64.
-        * Avoid saving sparse bow as .mm file to ingest into gensim.
+        Document-term matrix as pandas DataFrame.
 
     Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'text']]
-        >>> type_dictionary = {'short': 1, 'example': 2, 'text': 3}
-        >>> doc_ids = {'exampletext': 1}
-        >>> len(create_sparse_bow(doc_labels, doc_tokens, type_dictionary, doc_ids))
-        3
+        >>> tokenized_corpus = [['this', 'is', 'document', 'one'], ['this', 'is', 'document', 'two']]
+        >>> document_labels = ['document_one', 'document_two']
+        >>> _create_small_corpus_model(tokenized_corpus, document_labels) #doctest: +NORMALIZE_WHITESPACE
+                      this   is  document  two  one
+        document_one   1.0  1.0       1.0  0.0  1.0
+        document_two   1.0  1.0       1.0  1.0  0.0
     """
-    temp_counter = _create_large_counter(
-        doc_labels, doc_tokens, type_dictionary)
-    largecounter = {doc_dictionary[key]: value for key, value in temp_counter.items()}
-    sparse_index = _create_sparse_index(largecounter)
-    sparse_bow_filled = pd.DataFrame(
-        np.zeros((len(sparse_index), 1), dtype=int), index=sparse_index)
-    index_iterator = sparse_index.groupby(
-        sparse_index.get_level_values('doc_id'))
-
-    for doc_id in range(1, len(sparse_index.levels[0]) + 1):
-        for token_id in [val[1] for val in index_iterator[doc_id]]:
-            sparse_bow_filled.set_value(
-                (doc_id, token_id), 0, int(largecounter[doc_id][token_id]))
-    return sparse_bow_filled
+    log.info("Creating document-term matrix for small corpus ...")
+    document_term_matrix = pd.DataFrame()
+    for tokenized_document, document_label in zip(tokenized_corpus, document_labels):
+        log.debug("Updating {} in document-term matrix ...".format(document_label))
+        current_document = pd.Series(Counter(tokenized_document))
+        current_document.name = document_label
+        document_term_matrix = document_term_matrix.append(current_document)
+    document_term_matrix = document_term_matrix.loc[:, document_term_matrix.sum().sort_values(ascending=False).index]
+    return document_term_matrix.fillna(0)
 
 
-def save_sparse_bow(sparse_bow, output):
-    """Saves sparse matrix for bag-of-words model.
+def _hapax_legomena_large_corpus_model(document_term_matrix, type_ids):
+    """Determines hapax legomena in large corpus model.
 
-    Description:
-        With this function you can save the sparse matrix as `.mm file`_.
-        .. _.mm file: http://math.nist.gov/MatrixMarket/formats.html#MMformat
+    This private function is wrapped in :func:`find_hapax_legomena()`.
 
     Args:
-        sparse_bow (DataFrame): DataFrame with term and term frequency by document.
-        output (str): Path to output file without extension, e.g. /tmp/sparsebow.
-
-    Returns:
-        None.
-
-    Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'text']]
-        >>> type_dictionary = {'short': 1, 'example': 2, 'text': 3}
-        >>> doc_ids = {'exampletext': 1}
-        >>> sparse_bow = create_sparse_bow(doc_labels, doc_tokens, type_dictionary, doc_ids)
-        >>> save_sparse_bow(sparse_bow, 'sparsebow')
-        >>> import os.path
-        >>> os.path.isfile('sparsebow.mm')
-        True
-    """
-    num_docs = sparse_bow.index.get_level_values("doc_id").max()
-    num_types = sparse_bow.index.get_level_values("token_id").max()
-    sum_counts = sparse_bow[0].sum()
-
-    header_string = str(num_docs) + " " + str(num_types) + \
-        " " + str(sum_counts) + "\n"
-
-    with open('.'.join([output, 'mm']), 'w', encoding="utf-8") as f:
-        f.write("%%MatrixMarket matrix coordinate real general\n")
-        f.write(header_string)
-        sparse_bow.to_csv(f, sep=' ', header=None)
-
-
-def find_stopwords(df, mfw=100, id_types=None):
-    """Creates a stopword list.
-
-    Description:
-        With this function you can determine most frequent words, also known as
-        stopwords. First, you have to translate your corpus into the bag-of-words
-        model using the function `create_sparse_matrix()` and create an dictionary
-        containing types and identifier using `create_dictionary()`.
-
-    Args:
-        sparse_bow (DataFrame): DataFrame with term and term frequency by document.
-        id_types (dict[str]): Dictionary with {token: id}.
-        mfw (int): Target size of most frequent words to be considered.
-
-    Returns:
-        Most frequent words in a list.
-
-    Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'short', 'example', 'text']]
-        >>> id_types = {'short': 1, 'example': 2, 'text': 3}
-        >>> doc_ids = {'exampletext': 1}
-        >>> sparse_bow = create_sparse_bow(doc_labels, doc_tokens, id_types, doc_ids)
-        >>> find_stopwords(sparse_bow, 1, id_types)
-        ['short']
-    """
-    log.info("Finding stopwords ...")
-    if isinstance(df.index, pd.MultiIndex):
-        type2id = {value: key for key, value in id_types.items()}
-        sparse_bow_collapsed = df.groupby(
-            df.index.get_level_values('token_id')).sum()
-        sparse_bow_stopwords = sparse_bow_collapsed[0].nlargest(mfw)
-        stopwords = [type2id[key]
-                     for key in sparse_bow_stopwords.index.get_level_values('token_id')]
-        return stopwords
-    else:
-        return df.iloc[:,:mfw].columns.tolist()
-
-
-def find_hapax(df, id_types=None):
-    """Creates a list with hapax legommena.
-
-    Description:
-        With this function you can determine hapax legomena for each document.
-        First, you have to translate your corpus into the bag-of-words
-        model using the function `create_sparse_matrix()` and create an dictionary
-        containing types and identifier using `create_dictionary()`.
-
-    Args:
-        sparse_bow (DataFrame): DataFrame with term and term frequency by document.
-        id_types (dict[str]): Dictionary with {token: id}.
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        type_ids (dict): A dictionary with types as key and identifiers as values.
 
     Returns:
         Hapax legomena in a list.
 
     Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'example', 'text', 'text']]
-        >>> id_types = {'short': 1, 'example': 2, 'text': 3}
-        >>> doc_ids = {'exampletext': 1}
-        >>> sparse_bow = create_sparse_bow(doc_labels, doc_tokens, id_types, doc_ids)
-        >>> find_hapax(sparse_bow, id_types)
-        ['short']
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['hapax', 'stopword', 'stopword']]
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> find_hapax_legomena(document_term_matrix, type_ids)
+        ['hapax']
     """
-    log.info("Finding hapax legomena ...")
-    if isinstance(df.index, pd.MultiIndex):
-        type2id = {value: key for key, value in id_types.items()}
-        sparse_bow_collapsed = df.groupby(
-            df.index.get_level_values('token_id')).sum()
-        sparse_bow_hapax = sparse_bow_collapsed.loc[sparse_bow_collapsed[0] == 1]
-        hapax = [type2id[key]
-                 for key in sparse_bow_hapax.index.get_level_values('token_id')]
-        return hapax
-    else:
-        #return df.loc[:,(df.isin([1])).any()].columns.tolist()
-        return df.loc[:, df.max() == 1].columns.tolist()
+    id2type = {id_: type_ for type_, id_ in type_ids.items()}
+    document_term_matrix_collapsed = document_term_matrix.groupby(document_term_matrix.index.get_level_values('type_id')).sum()
+    hapax_legomena = document_term_matrix_collapsed.loc[document_term_matrix_collapsed[0] == 1]
+    return [id2type[token] for token in hapax_legomena.index.get_level_values('type_id')]
 
 
-def remove_features_from_df(df, features, id_types=None):
-    """Removes features based on a list of words (types).
-
-    Description:
-        With this function you can clean your corpus from stopwords and hapax
-        legomena.
-        First, you have to translate your corpus into the bag-of-words
-        model using the function `create_sparse_bow()` and create a dictionary
-        containing types and identifier using `create_dictionary()`.
-        Use the functions `find_stopwords()` and `find_hapax()` to generate a
-        feature list.
-
-    Args:
-        sparse_bow (DataFrame): DataFrame with term and term frequency by document.
-        features Union(set, list): Set or list containing features to remove.
-        (not included) features (str): Text as iterable.
-
-    Returns:
-        Clean corpus.
-
-    ToDo:
-        * Adapt function to work with mm-corpus format.
-
-    Example:
-        >>> doc_labels = ['exampletext']
-        >>> doc_tokens = [['short', 'example', 'example', 'text', 'text']]
-        >>> id_types = {'short': 1, 'example': 2, 'text': 3}
-        >>> doc_ids = {'exampletext': 1}
-        >>> sparse_bow = create_sparse_bow(doc_labels, doc_tokens, id_types, doc_ids)
-        >>> features = ['short']
-        >>> len(remove_features(sparse_bow, features, id_types))
-        2
-    """
-    log.info("Removing features ...")
-    if isinstance(df.index, pd.MultiIndex):
-        if isinstance(features, list):
-            features = set(features)
-        stoplist_applied = [word for word in set(id_types.keys()) if word in features]
-        clean_df = df.drop([id_types[word] for word in stoplist_applied], level='token_id')
-        return clean_df
-    else:
-        features = [token for token in features if token in df.columns]
-        df.drop(features, inplace=True, axis=1)
-        return df
-
-
-def make_doc2bow_list(sparse_bow):
-    """Creates doc2bow_list for gensim.
-
-    Description:
-        With this function you can create a doc2bow_list as input for the gensim
-        function `get_document_topics()` to show topics for each document.
-
-    Args:
-        sparse_bow (DataFrame): DataFrame with term and term frequency by document.
-
-    Returns:
-        List of lists containing tuples.
-
-    Example:
-        >>> doc_labels = ['exampletext1', 'exampletext2']
-        >>> doc_tokens = [['test', 'corpus'], ['for', 'testing']]
-        >>> type_dictionary = {'test': 1, 'corpus': 2, 'for': 3, 'testing': 4}
-        >>> doc_dictionary = {'exampletext1': 1, 'exampletext2': 2}
-        >>> sparse_bow = create_sparse_bow(doc_labels, doc_tokens, type_dictionary, doc_dictionary)
-        >>> from gensim.models import LdaModel
-        >>> from gensim.corpora import Dictionary
-        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
-        >>> dictionary = Dictionary(corpus)
-        >>> documents = [dictionary.doc2bow(document) for document in corpus]
-        >>> model = LdaModel(corpus=documents, id2word=dictionary, iterations=1, passes=1, num_topics=1)
-        >>> make_doc2bow_list(sparse_bow)
-        [[(1, 1), (2, 1)], [(3, 1), (4, 1)]]
-    """
-    doc2bow_list = []
-    for doc in sparse_bow.index.groupby(sparse_bow.index.get_level_values('doc_id')):
-        temp = [(token, count) for token, count in zip(
-            sparse_bow.loc[doc].index, sparse_bow.loc[doc][0])]
-        doc2bow_list.append(temp)
-    return doc2bow_list
-
-
-def lda2dataframe(model, vocab, num_keys=10):
-    """Converts lda output to a DataFrame
+def _read_csv(filepath, sep, columns):
+    """Reads a CSV file based on its path.
     
-    Description:
-        With this function you can convert lda output to a DataFrame, 
-        a more convenient datastructure.
-        
-    Note:
-
-    Args:
-        model: LDA model.
-        vocab (list[str]): List of strings containing corpus vocabulary. 
-        num_keys (int): Number of top keywords for topic
-        
-    Returns:
-        DataFrame
-
-    Example:
-        >>> import lda
-        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
-        >>> doc_term_matrix = create_doc_term_matrix(corpus, ['doc1', 'doc2'])
-        >>> vocab = doc_term_matrix.columns
-        >>> model = lda.LDA(n_topics=1, n_iter=1)
-        >>> model.fit(doc_term_matrix.as_matrix().astype(int))
-        >>> df = lda2dataframe(model, vocab, num_keys=1)
-        >>> len(df) == 1
-        True
-    """
-    topics = []
-    topic_word = model.topic_word_
-    for i, topic_dist in enumerate(topic_word):
-        topics.append(np.array(vocab)[np.argsort(topic_dist)][:-num_keys-1:-1])
-    return pd.DataFrame(topics, index=['Topic ' + str(n+1) for n in range(len(topics))], columns=['Key ' + str(n+1) for n in range(num_keys)])
-
-
-def gensim2dataframe(model, num_keys=10):
-    """Converts gensim output to DataFrame.
-
-    Description:
-        With this function you can convert gensim output (usually a list of
-        tuples) to a DataFrame, a more convenient datastructure.
-
-    Args:
-        model: Gensim LDA model.
-        num_keys (int): Number of top keywords for topic.
-
-    Returns:
-        DataFrame.
-
-    ToDo:
-
-    Example:
-        >>> from gensim.models import LdaModel
-        >>> from gensim.corpora import Dictionary
-        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
-        >>> dictionary = Dictionary(corpus)
-        >>> documents = [dictionary.doc2bow(document) for document in corpus]
-        >>> model = LdaModel(corpus=documents, id2word=dictionary, iterations=1, passes=1, num_topics=1)
-        >>> isinstance(gensim2dataframe(model, 4), pd.DataFrame)
-        True
-    """
-    num_topics = model.num_topics
-    topics_df = pd.DataFrame(index = range(num_topics),
-                                 columns= range(num_keys))
-
-    topics = model.show_topics(num_topics = model.num_topics, formatted=False)
-
-    for topic, values in topics:
-        keyword = [value[0] for value in values]
-        topics_df.loc[topic] = keyword
-
-    return topics_df
-
-
-def lda_doc_topic(model, topics, doc_labels):
-    """Creates a doc_topic_matrix for lda output.
+    This private function is wrapped in `read_from_pathlist()`.
     
-    Description:
-        With this function you can convert lda output to a DataFrame, 
-        a more convenient datastructure.
-        Use 'lda2DataFrame()' to get topics.
-        
-    Note:
-
     Args:
-        model: Gensim LDA model.
-        topics: DataFrame.
-        doc_labels (list[str]): List of doc labels as string.
+        filepath (str): Path to CSV file.
+        sep (str): Separator of CSV file.
+        columns (list): Column names for the CSV file. If None, the whole file will be processed.
 
     Returns:
-        DataFrame
+        A ``dkpro_document`` as pandas DataFrame with additional information,
+            e.g. lemmas or POS-tags.
+    
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.csv') as tmpfile:
+        ...     tmpfile.write(b"Token,POS\\nThis,ART\\nis,V\\na,ART\\nCSV,NN\\nexample,NN\\n.,PUNC") and True
+        ...     tmpfile.flush()
+        ...     _read_csv(tmpfile.name, ',', ['Token']) #doctest: +NORMALIZE_WHITESPACE
+        True
+              Token
+        0      This
+        1        is
+        2         a
+        3       CSV
+        4   example
+        5         .
+    """
+    log.debug("Reading columns {} of {} ...".format(columns, filepath))
+    if columns is None:
+        log.warning("No column names were specified or do not match. The whole file will be processed.")
+    return pd.read_csv(filepath, sep=sep, quoting=csv.QUOTE_NONE, usecols=columns)
+
+
+def _read_txt(filepath):
+    """Reads a plain text file based on its path.
+
+    This private function is wrapped in `read_from_pathlist()`.
+
+    Args:
+        filepath (str): Path to plain text file.
+  
+    Returns:
+        A ``document`` as str.
+    
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile:
+        ...     tmpfile.write(b"This is a plain text example.") and True
+        ...     tmpfile.flush()
+        ...     _read_txt(tmpfile.name)
+        True
+        'This is a plain text example.'
+    """
+    log.debug("Reading {} ...".format(filepath))
+    with open(filepath, 'r', encoding='utf-8') as document:
+        return document.read()
+
+
+def _read_xml(filepath, xpath_expression):
+    """Reads a TEI XML file based on its path.
+    
+    This private function is wrapped in `read_from_pathlist()`.
+    
+    Args:
+        filepath (str): Path to XML file.
+        xpath_expression (str): XPath expressions to match part of the XML file.
+    
+    Returns:
+        Either a ``document`` as str or a list of all parts of the ``document``,
+            e. g. chapters of a novel.
+    
+    Example:
+        >>> import tempfile
+        >>> with tempfile.NamedTemporaryFile(suffix='.xml') as tmpfile:
+        ...     tmpfile.write(b"<text>This is a XML example.</text>") and True
+        ...     tmpfile.flush()
+        ...     _read_xml(tmpfile.name, '//text')
+        True
+        'This is a XML example.'
+    """
+    log.debug("Reading {} matching part or parts of {} ...".format(xpath_expression, filepath))
+    ns = dict(tei='http://www.tei-c.org/ns/1.0')
+    tree = etree.parse(filepath)
+    document = [''.join(element.xpath('.//text()')) for element in tree.xpath(xpath_expression, namespaces=ns)]
+    if len(document) == 1:
+        return document[0]
+    else:
+        return document
+
+
+def _remove_features_from_large_corpus_model(document_term_matrix, type_ids, features):
+    """Removes features from large corpus model.
+
+    This private function is wrapped in :func:`remove_features()`.
+
+    Args:
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        type_ids (dict): A dictionary with types as key and identifiers as values.
+        features (list): A list of tokens.
+
+    Returns:
+        A clean document-term matrix as pandas DataFrame.
 
     Example:
-        >>> import lda
-        >>> corpus = [['test', 'corpus'], ['for', 'testing']]
-        >>> doc_term_matrix = create_doc_term_matrix(corpus, ['doc1', 'doc2'])
-        >>> vocab = doc_term_matrix.columns
-        >>> model = lda.LDA(n_topics=1, n_iter=1)
-        >>> model.fit(doc_term_matrix.as_matrix().astype(int))
-        >>> topics = lda2dataframe(model, vocab)
-        >>> doc_topic = lda_doc_topic(model, vocab, ['doc1', 'doc2'])
-        >>> len(doc_topic.T) == 2
-        True
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['token', 'stopword', 'stopword']]
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> len(_remove_features_from_large_corpus_model(document_term_matrix, type_ids, ['token']))
+        1
     """
-    topic_labels = []
-    topic_terms = [x[:3] for x in topics.values.tolist()]
-    for topic in topic_terms:
-        topic_labels.append(" ".join(topic))
-    df = pd.DataFrame(model.doc_topic_).T
-    df.columns = doc_labels
-    df.index = topic_labels
-    return df.reindex_axis(sorted(df.columns), axis=1)
+    features = [token for token in set(type_ids.keys()) if token in features]
+    return document_term_matrix.drop([type_ids[token] for token in features], level='type_id')
+
+
+def _remove_features_from_small_corpus_model(document_term_matrix, features):
+    """Removes features from small corpus model.
+
+    This private function is wrapped in :func:`remove_features()`.
+
+    Args:
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        features (list): A list of tokens.
+
+    Returns:
+        A clean document-term matrix as pandas DataFrame.
+
+    Example:
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['token', 'stopword', 'stopword']]
+        >>> document_term_matrix = create_document_term_matrix(tokenized_corpus, document_labels)
+        >>> _remove_features_from_small_corpus_model(document_term_matrix, ['token']) #doctest: +NORMALIZE_WHITESPACE
+                  stopword
+        document       2.0
+
+    """
+    features = [token for token in features if token in document_term_matrix.columns]
+    return document_term_matrix.drop(features, axis=1)
+
+
+def _remove_features_from_tokenized_corpus(tokenized_corpus, features):
+    """Removes features from a tokenized corpus.
+
+    This private function is wrapped in :func:`remove_features()`.
+
+    Args:
+        tokenized_corpus (list): The tokenized corpus to process. This is an iterable of
+            documents, each of which is an iterable of tokens.
+        features (list): A list of tokens.
+
+    Yields:
+        A clean tokenized corpus as list.
+
+    Example:
+        >>> tokenized_corpus = [['token', 'stopword', 'stopword']]
+        >>> list(_remove_features_from_tokenized_corpus(tokenized_corpus, ['stopword']))
+        [['token']]
+    """
+    tokenized_corpus_arr = np.array(tokenized_corpus)
+    features_arr = np.array(features)
+    indices = np.where(np.in1d(tokenized_corpus_arr, features_arr))
+    yield np.delete(tokenized_corpus_arr, indices).tolist()
+
+
+def _stopwords_large_corpus_model(document_term_matrix, type_ids, most_frequent_tokens):
+    """Determines stopwords in large corpus model.
+
+    This private function is wrapped in :func:`find_stopwords()`.
+
+    Args:
+        document_term_matrix (pandas.DataFrame): A document-term matrix.
+        type_ids (dict): A dictionary with types as key and identifiers as values.
+        most_frequent_tokens (int, optional): Treshold for most frequent tokens.
+
+    Returns:
+        Most frequent tokens in a list.
+
+    Example:
+        >>> document_labels = ['document']
+        >>> tokenized_corpus = [['hapax', 'stopword', 'stopword']]
+        >>> document_term_matrix, _, type_ids = create_document_term_matrix(tokenized_corpus, document_labels, large_corpus=True)
+        >>> find_stopwords(document_term_matrix, 1, type_ids)
+        ['stopword']
+    """
+    id2type = {id_: type_ for type_, id_ in type_ids.items()}
+    document_term_matrix_collapsed = document_term_matrix.groupby(document_term_matrix.index.get_level_values('type_id')).sum()
+    stopwords = document_term_matrix_collapsed[0].nlargest(most_frequent_tokens)
+    return [id2type[token] for token in stopwords.index.get_level_values('type_id')]
+
+
+def _token2id(tokens):
+    """Creates a dictionary of tokens as keys and identifier as keys.
+
+    This private function is wrapped in :func:`_create_largecounter()`.
+
+    Args:
+        tokens (list): Iterable of tokens.
+
+    Returns:
+        A dictionary.
+
+    Example:
+        >>> _token2id(['token'])
+        {'token': 1}
+        >>> _token2id([['token']])
+        {'token': 1}
+    """
+    log.debug("Creating dictionary of tokens as keys and identifier as keys ...")
+    if all(isinstance(element, list) for element in tokens):
+        tokens = {token for element in tokens for token in element}
+    return {token: id_ for id_, token in enumerate(set(tokens), 1)}
