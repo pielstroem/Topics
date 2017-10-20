@@ -1,18 +1,23 @@
 # Topics – Easy Topic Modeling in Python
 
-Topics is a gentle introduction to Topic Modeling. It provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter notebook](http://jupyter.org/), integrating three of the most popular LDA implementations: [gensim](https://radimrehurek.com/gensim/), [MALLET](http://mallet.cs.umass.edu/), and [lda](http://pythonhosted.org/lda/index.html). Users not yet familiar with working with Python scripts can test basic topic modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md).
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). For a standalone application, which does not require a Python interpreter or any extra installations, have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases).
 
+At the moment, this library supports three LDA implementations:
+* [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
+* [MALLET](http://mallet.cs.umass.edu/), which is known to be very robust.
+* [Gensim](https://radimrehurek.com/gensim/), which is attractive because of its multi-core support.
 
-At the moment, there are three Jupyter notebooks containing three different LDA implementations:
-- [An Introduction to lda](Introducing_lda.ipynb)
-- [An Introduction to gensim](Introducing_gensim.ipynb)
-- [An Introduction to MALLET](Introducing_MALLET.ipynb)
-
+## Resources
+* [Topics website](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/)
+* [Topics API documentation](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/docs/gen/modules.html)
+* [Topics paper](https://dh2017.adho.org/abstracts/411/411.pdf)
+* [Demonstrator releases](https://github.com/DARIAH-DE/Topics/releases)
+* [An introduction to Topic Modeling using lda](IntroducingLda.ipynb)
+* [An introduction to Topic Modeling using MALLET](IntroducingMallet.ipynb)
+* [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
 
 ### Getting Started
-
 #### Windows
-
 1.  Download and install the latest version of [WinPython](https://winpython.github.io/).
 2.  Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 3.  Open the **WinPython PowerShell Prompt.exe** in your **WinPython** folder and type `git clone https://github.com/DARIAH-DE/Topics.git` to clone **Topics** into your WinPython folder.
@@ -29,7 +34,6 @@ At the moment, there are three Jupyter notebooks containing three different LDA 
 
 
 #### macOS and Linux
-
 1. Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 2. Open the [command-line interface](https://en.wikipedia.org/wiki/Command-line_interface), type `git clone https://github.com/DARIAH-DE/Topics.git` to clone **Topics** into your working directory.
 3. **Note**: The distribution packages `libfreetype6-dev` and `libpng-dev` and a compiler for C++, e.g. [gcc](https://gcc.gnu.org/) have to be installed.
@@ -39,7 +43,6 @@ At the moment, there are three Jupyter notebooks containing three different LDA 
 
 
 #### Working with MALLET
-
 1. Download and unzip [MALLET](http://mallet.cs.umass.edu).
 2. Set the environment variable for MALLET.
 
