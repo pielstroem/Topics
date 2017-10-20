@@ -326,7 +326,7 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
         if optimize_burn_in is not None:
             param.extend(['--optimize-burn-in', str(optimize_burn_in)])
         if use_symmetric_alpha is not None:
-            param.extend('--use-symmetric-alpha')
+            param.extend(['--use-symmetric-alpha'])
         if alpha is not None:
             param.extend(['--alpha', str(alpha)])
         if beta is not None:
