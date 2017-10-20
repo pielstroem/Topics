@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
 
@@ -23,7 +24,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     # keywords
-    packages=find_packages(exclude=['corpora', 'demonstrator', 'test', 'tutorial_supplementals']),
+    packages=find_packages(exclude=['docs', 'demonstrator', 'grenzboten_sample', 'test', 'tutorial_supplementals']),
     install_requires=[
         'pandas>=0.19.2',
         'regex>=2017.01.14',
@@ -32,7 +33,7 @@ setup(
         'numpy>=1.3',
         'lxml>=3.6.4'
     ],
-    # pip install -e .[demonstrator,vis,evaluation]
+    # pip install -e .[demonstrator, vis]
     extras_require={
         'demonstrator': [
             'flask>=0.11.1'
@@ -40,7 +41,6 @@ setup(
         'vis': [
             'matplotlib>=1.5.3',
             'bokeh>=0.12.6'
-            #'wordcloud>=1.3.1'
         ]
     },
     command_options={
