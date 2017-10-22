@@ -269,7 +269,7 @@ def read_document_term_matrix(filepath):
     Example:
         >>> import tempfile
         >>> with tempfile.NamedTemporaryFile(suffix='.csv') as tmpfile:
-        ...     tmpfile.write(b'this,is,an,example,text\\ndocument,1,0,1,0,1') and True
+        ...     tmpfile.write(b',this,is,an,example,text\\ndocument,1,0,1,0,1') and True
         ...     tmpfile.flush()
         ...     read_document_term_matrix(tmpfile.name) #doctest: +NORMALIZE_WHITESPACE
         True
@@ -288,6 +288,8 @@ def read_document_term_matrix(filepath):
     if 'document_id' and 'type_id' in document_term_matrix:
         return document_term_matrix.set_index(['document_id', 'type_id'])
     else:
+        document_term_matrix = document_term_matrix.set_index('Unnamed: 0')
+        document_term_matrix.index.name = None
         return document_term_matrix
 
 
