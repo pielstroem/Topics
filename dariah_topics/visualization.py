@@ -59,6 +59,7 @@ def create_doc_topic(corpus, model, doc_labels):
         >>> len(doc_topic.T) == 2
         >>> True
     """
+    log.info("Generating doc_topic_matrix ... ")
     no_of_topics = model.num_topics
     no_of_docs = len(doc_labels)
     doc_topic = np.zeros((no_of_topics, no_of_docs))
@@ -105,6 +106,7 @@ def doc_topic_heatmap(data_frame):
         >>> plot.get_fignumns()
         [1]
     """
+    log.info("Generating doc_topic_heatmap ... ")
     data_frame = data_frame.sort_index()
     doc_labels = list(data_frame.index)
     topic_labels = list(data_frame)
@@ -131,8 +133,22 @@ def plot_doc_topics(doc_topic, document_index):
 
     Returns:
         Plot.
+        
+    Example:
+        >>> import gensim
+        >>> corpus = [[(1, 0.5)], []]
+        >>> gensim.corpora.MmCorpus.serialize('/tmp/corpus.mm', corpus)
+        >>> mm = gensim.corpora.MmCorpus('/tmp/corpus.mm')
+        >>> type2id = {0 : "test", 1 : "corpus"}
+        >>> doc_labels = ['doc1', 'doc2']
+        >>> model = gensim.models.LdaModel(corpus=mm, id2word=type2id, num_topics=1)
+        >>> doc_topic = visualization.create_doc_topic(corpus, model, doc_labels)
+        >>> plot = visualization.plot_doc_topics(doc_topics, 0)
+        >>> plot.get_fignumns()
+        [1]
 
     """
+    log.info("Calculating topic distribution ... ")
     data = doc_topic[list(doc_topic)[document_index]].copy()
     data = data[data != 0]
     data = data.sort_values()
@@ -155,9 +171,25 @@ try:
     # Work in progress following
     #
     def topicwords_in_df(model):
+        """Read Keywords for each topic
+
+        Args:
+            model: Gensim LDA model
+
+        Note: Work in progress
+
+        ToDo: 
+            Check if this function should be implemented 
+            and complete docstring
+        
+        Returns: 
+            Pandas DataFrame
+
+        """
         pattern = regex.compile(r'\p{L}+\p{P}?\p{L}+')
         topics = []
         index = []
+        log.info("Get keywords for topic ...")
         for n, topic in enumerate(model.show_topics()):
             topics.append(pattern.findall(topic[1]))
             index.append("Topic " + str(n+1))
@@ -172,10 +204,16 @@ try:
             topic_nr(int): Choose topic
             words (int): Number of words to show
 
-        Note: Function does use wordcloud package -> https://pypi.python.org/pypi/wordcloud
-            pip install wordcloud
+        Note: 
+            Work in progress
+            Function does use wordcloud package -> https://pypi.python.org/pypi/wordcloud
+            pip install wordcloud.
 
-        ToDo: Check if this function should be implemented
+        ToDo: 
+            Check if this function should be implemented.
+             
+        Returns:
+            Plot.
 
         """
         plt.figure()
@@ -186,13 +224,49 @@ try:
 
 
     def get_color_scale(word, font_size, position, orientation, font_path, random_state=None):
-        """ Create color scheme for wordle."""
+        """ Create color scheme for wordle.
+        
+        Description:
+            
+
+        Args:
+   
+        Note: 
+            Work in progress
+
+        ToDo: 
+            Check if this function should be implemented. 
+        
+        Returns:
+        
+        """
         return "hsl(245, 58%, 25%)" # Default. Uniform dark blue.
         #return "hsl(0, 00%, %d%%)" % random.randint(80, 100) # Greys for black background.
         #return "hsl(221, 65%%, %d%%)" % random.randint(30, 35) # Dark blues for white background
 
     def get_topicRank(topic, topicRanksFile):
-        #print("getting topic rank.")
+        """ Add ranking to topics
+        
+        Description:
+            Uses topicRanksFile to add ranking to topics
+
+        Args:
+            topic(int): Number of topic.
+            topicRanksFile(str): Path to topicRanksFile
+
+        Returns: 
+            Rank of choosen topic
+
+        Note:
+            Work in progress
+
+        ToDo:
+            Check if this function should be implemented.
+        
+        """
+        assert topicRanksFile
+        
+        log.info("Add ranking ...")
         with open(topicRanksFile, "r") as infile:
             topicRanks = pd.read_csv(infile, sep=",", index_col=0)
             rank = int(topicRanks.iloc[topic]["Rank"])
@@ -207,13 +281,17 @@ try:
         Args:
             word_weigts_file: Word_weights_file created with Mallet
 
-        Returns: Pandas DataFrame
+        Returns: 
+            Pandas DataFrame
 
         Note:
+            Work in progress
 
         ToDo:
 
         """
+        assert word_weights_file
+        log.info("Get word weights ...")
         word_scores = pd.read_table(word_weights_file, header=None, sep="\t")
         word_scores = word_scores.sort(columns=[0,2], axis=0, ascending=[True, False])
         word_scores_grouped = word_scores.groupby(0)
@@ -231,13 +309,16 @@ try:
             topic_nr(int): Topic the wordcloud should be generated for
             number_of_top_words(int): Number of top words that should be considered
 
-        Returns: Words for wordcloud.
+        Returns: 
+            Words for wordcloud.
 
         Note:
+            Work in progress
 
         ToDo:
 
         """
+        log.info("Transform mallet output for wordcloud ...")
         topic_word_scores = word_scores_grouped.get_group(topic_nr)
         top_topic_word_scores = topic_word_scores.iloc[0:number_of_top_words]
         topic_words = top_topic_word_scores.loc[:,1].tolist()
@@ -271,14 +352,17 @@ try:
             outfolder(str): Specify path to safe wordclouds.
             dpi(int): Set resolution for wordclouds.
 
-        Returns: Plot
+        Returns: 
+            Plot
 
         Note:
+            Work in progress
 
         ToDo:
 
         """
-
+        assert word_weights_file
+        log.info("Generate wordcloud...")
         word_scores_grouped = read_mallet_word_weights(word_weights_file)
         text = _get_wordcloudwords(word_scores_grouped, number_of_top_words, topic_nr)
         wordcloud = WordCloud(width=600, height=400, background_color="white", margin=4).generate(text)
@@ -294,10 +378,33 @@ try:
             os.makedirs(outfolder)
 
         figure_filename = "wordcloud_tp"+"{:03d}".format(topic_nr) + ".png"
+        assert figure_filename
         plt.savefig(outfolder + figure_filename, dpi=dpi)
         return plt
 
     def plot_wordle_from_lda(model, vocab, topic_nr, words, height, width):
+        """ Plot wordle for Gensim.
+        
+        Description:
+            
+
+        Args:
+            model: Gensim lda model.
+            vocab:
+            topic_nr(int): Topic a wordcloud should be generated for.
+            height(int): Height of the plot
+            weight(int): Weight of the plot
+   
+        Note: 
+            Work in progress
+
+        ToDo: 
+            Check if this function should be implemented. 
+        
+        Returns:
+        
+        """
+        log.info("Generate wordcloud...")
         topic_dist = model.topic_word_[topic_nr]
         topic_words = np.array(vocab)[np.argsort(topic_dist)][:-words:-1]
         token_value = {}
@@ -306,7 +413,7 @@ try:
         return WordCloud(background_color='white', height=height, width=width).fit_words(token_value)
 
 except ImportError as e:
-    log.info('WordCloud functions not available, they require the wordcloud module')
+    log.error('WordCloud functions not available, they require the wordcloud module')
 
 
 def doc_topic_heatmap_interactive(doc_topic, title):
@@ -319,11 +426,13 @@ def doc_topic_heatmap_interactive(doc_topic, title):
         doc_topic (DataFrame): Doc_topic matrix in a DataFrame
         title (str): Title shown in the plot.
 
-    Returns: bokeh plot
+    Returns: 
+        bokeh plot
 
     Note:
 
     ToDo:
+        Doctest
 
     """
     log.info("Importing functions from bokeh ...")
@@ -424,12 +533,14 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
         endtime(int): sets ending point for visualization
 
 
-    Returns: matplotlib plot
+    Returns: 
+        matplotlib plot
 
     Note: this function is created for a corpus with filenames that looks like:
             1866_ArticleName.txt
 
     ToDo: make it compatible with gensim output
+            Doctest
 
     """
 
