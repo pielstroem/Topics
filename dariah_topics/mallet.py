@@ -381,6 +381,9 @@ def create_mallet_model(path_to_mallet='mallet', path_to_binary=None, input_mode
         if num_top_docs is not None:
             param.extend(['--num-top-docs',
                          str(topic_word_weights_file)])
+                         
+        log.info("Running MALLET with %s ...", ' '.join(param))
+        log.info("Saving MALLET output to %s ...", folder_for_output)
 
         with open('mallet.log', 'wb') as f:
             p = Popen(param, stdout=PIPE, stderr=PIPE, shell=shell)
@@ -422,7 +425,7 @@ def show_doc_topic_matrix(output_folder, doc_topics='doc_topics.txt', topic_keys
         >>> len(df.T)
         17
     """
-
+    
     doc_topics=os.path.join(output_folder, doc_topics)
     assert doc_topics
     topic_keys=os.path.join(output_folder, topic_keys)
@@ -442,6 +445,7 @@ def show_doc_topic_matrix(output_folder, doc_topics='doc_topics.txt', topic_keys
         for line in f:
             li=line.lstrip()
             if li.startswith("#"):
+                log.info("Old doc_topics file format. Mallet version outdated!")
                 lines=f.readlines()
                 for line in lines:
                     docnum, docname, *values=line.rstrip().split('\t')
@@ -455,6 +459,7 @@ def show_doc_topic_matrix(output_folder, doc_topics='doc_topics.txt', topic_keys
                 break
 
     if easy_file_format:
+        log.info("Reading doc_topics file at %s ...", ' '.join(doc_topics))
         newindex=[]
         doc_topic_matrix=pd.read_csv(
             doc_topics, sep='\t', names=labels[0:], encoding='utf-8')
