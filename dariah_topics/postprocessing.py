@@ -606,16 +606,6 @@ def _save_matrix_market(document_term_matrix, path):
         None.
 
     Example:
-        >>> from dariah_topics import preprocessing
-        >>> import os
-        >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
-        >>> document_labels = ['document_label']
-        >>> path = 'tmp'
-        >>> document_term_matrix, document_ids, type_ids = preprocessing.create_document_term_matrix(tokenized_corpus, document_labels, True)
-        >>> _save_matrix_market(document_term_matrix, path)
-        >>> with open(os.path.join(path, 'document_term_matrix.mm'), 'r', encoding='utf-8') as file:
-        ...     '%%MatrixMarket matrix coordinate real general' in file.read()
-        True
     """
     num_docs = document_term_matrix.index.get_level_values('document_id').max()
     num_types = document_term_matrix.index.get_level_values('type_id').max()
