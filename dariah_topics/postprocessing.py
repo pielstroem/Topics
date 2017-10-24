@@ -252,12 +252,12 @@ def show_document_topics(topics=None, model=None, document_labels=None, doc_topi
     Example:
     """
     from lda.lda import LDA
-    from gensi.models.ldamodel import LdaModel, LdaMulticore
+    from gensim.models import ldamodel
   
     index = [' '.join(keys[:num_keys]) for keys in topics.values]
     if isinstance(model, LDA):
         return _show_lda_document_topics(model, document_labels, index)
-    elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
+    elif isinstance(model, ldamodel.LdaModel) or isinstance(model, ldamodel.LdaMulticore):
         return _show_gensim_document_topics(doc2bow, model, document_labels, index)
     elif doc_topics_file is not None:
         return _show_mallet_document_topics(doc_topics_file, index)
@@ -289,11 +289,11 @@ def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
     Example:
     """
     from lda.lda import LDA
-    from gensi.models.ldamodel import LdaModel, LdaMulticore
-
+    from gensim.models import ldamodel
+    
     if isinstance(model, LDA):
         return _show_lda_topics(model, vocabulary, num_keys)
-    elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
+    elif isinstance(model, ldamodel.LdaModel) or isinstance(model, ldamodel.LdaMulticore):
         return _show_gensim_topics(model, num_keys)
     elif topic_keys_file is not None:
         return _show_mallet_topics(topic_keys_file, num_keys)
