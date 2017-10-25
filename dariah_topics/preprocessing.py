@@ -369,7 +369,7 @@ def read_matrix_market_file(filepath):
     Returns:
         Matrix Market model for Gensim.
     """
-    if os.path.splitext(filepath)[1] is not '.mm':
+    if os.path.splitext(filepath)[1] != '.mm':
         raise ValueError("The file {} is not a Matrix Market file.".format(filepath))
     return MmCorpus(filepath)
 
