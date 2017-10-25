@@ -137,11 +137,10 @@ def save_document_term_matrix(document_term_matrix, path, document_ids=None, typ
     if not os.path.exists(path):
         log.info("Creating directory {} ...".format(path))
         os.makedirs(path)
-    document_term_matrix.to_csv(os.path.join(path, 'document_term_matrix.csv'))
     if not matrix_market:
         log.info("Saving document_term_matrix.csv to {} ...".format(path))
         document_term_matrix.to_csv(os.path.join(path, 'document_term_matrix.csv'))
-    if isinstance(document_term_matrix.index, pd.MultiIndex):
+    if isinstance(document_term_matrix.index, pd.MultiIndex) and not matrix_market:
         if document_ids and type_ids is not None:
             log.info("Saving document_ids.csv to {} ...".format(path))
             pd.Series(document_ids).to_csv(os.path.join(path, 'document_ids.csv'))
@@ -252,12 +251,12 @@ def show_document_topics(topics=None, model=None, document_labels=None, doc_topi
     Example:
     """
     from lda.lda import LDA
-    from gensim.models import ldamodel
+    from gensim.models import LdaModel, LdaMulticore
   
     index = [' '.join(keys[:num_keys]) for keys in topics.values]
     if isinstance(model, LDA):
         return _show_lda_document_topics(model, document_labels, index)
-    elif isinstance(model, ldamodel.LdaModel) or isinstance(model, ldamodel.LdaMulticore):
+    elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
         return _show_gensim_document_topics(doc2bow, model, document_labels, index)
     elif doc_topics_file is not None:
         return _show_mallet_document_topics(doc_topics_file, index)
@@ -289,11 +288,11 @@ def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
     Example:
     """
     from lda.lda import LDA
-    from gensim.models import ldamodel
+    from gensim.models import LdaModel, LdaMulticore
     
     if isinstance(model, LDA):
         return _show_lda_topics(model, vocabulary, num_keys)
-    elif isinstance(model, ldamodel.LdaModel) or isinstance(model, ldamodel.LdaMulticore):
+    elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
         return _show_gensim_topics(model, num_keys)
     elif topic_keys_file is not None:
         return _show_mallet_topics(topic_keys_file, num_keys)
@@ -375,12 +374,12 @@ def _show_gensim_document_topics(doc2bow, model, document_labels, index):
         True
     """
     num_topics = model.num_topics
-    document_topics = []
+    num_documents = len(document_labels)
+    document_topics = np.zeros((num_topics, num_documents))
+
     for n, document in enumerate(doc2bow):
-        topic_distributions = []
         for distribution in model.get_document_topics(document):
-            topic_distributions.append(distribution)
-        document_topics.append(topic_distributions[1])
+            document_topics[distribution[0]][n] = distribution[1]
     return pd.DataFrame(document_topics, index=index, columns=document_labels).T
 
 
