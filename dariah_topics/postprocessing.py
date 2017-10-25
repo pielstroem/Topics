@@ -295,7 +295,7 @@ def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
     elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
         return _show_gensim_topics(model, num_keys)
     elif topic_keys_file is not None:
-        return _show_mallet_topics(topic_keys_file, num_keys)
+        return _show_mallet_topics(topic_keys_file)
 
 
 def show_word_weights(word_weights_file, num_tokens):
@@ -450,7 +450,7 @@ def _show_lda_document_topics(model, document_labels, index):
         >>> isinstance(_show_lda_document_topics(model, document_labels, index), pd.DataFrame)
         True
     """
-    return pd.DataFrame(model.doc_topic_, index=index, columns=document_labels).T
+    return pd.DataFrame(model.doc_topic_, index=document_labels, columns=index).T
     
 
 def _show_lda_topics(model, vocabulary, num_keys):
