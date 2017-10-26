@@ -293,7 +293,7 @@ def read_document_term_matrix(filepath):
         return document_term_matrix
 
 
-def read_from_pathlist(pathlist, file_format=None, xpath_expression='//tei:text', sep='\t', columns=None):
+def read_from_pathlist(pathlist, file_format=None, xpath_expression='//tei:text', sep='\t', csv_columns=None):
     """Reads text files based on a pathlist.
 
     With this function you can read multiple file formats:
