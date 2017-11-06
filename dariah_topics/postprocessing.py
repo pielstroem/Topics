@@ -379,7 +379,7 @@ def _show_gensim_document_topics(doc2bow, model, document_labels, index):
     for n, document in enumerate(doc2bow):
         for distribution in model.get_document_topics(document):
             document_topics[distribution[0]][n] = distribution[1]
-    return pd.DataFrame(document_topics, index=index, columns=document_labels).T
+    return pd.DataFrame(document_topics, index=index, columns=document_labels)
 
 
 def _show_gensim_topics(model, num_keys=10):
