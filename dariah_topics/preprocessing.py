@@ -659,7 +659,7 @@ def tokenize(document, pattern=r'\p{L}+\p{P}?\p{L}+', lower=True):
         >>> list(tokenize("This is 1 example text."))
         ['this', 'is', 'example', 'text']
     """
-    log.info("Tokenizing document ...")
+    log.debug("Tokenizing document ...")
     if lower:
         log.debug("Lowering all characters ...")
         document = document.lower()
