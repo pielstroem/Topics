@@ -16,7 +16,29 @@ At the moment, this library supports three LDA implementations:
 * [An introduction to Topic Modeling using MALLET](IntroducingMallet.ipynb)
 * [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
 
-### Getting Started
+## Installation
+
+To install the latest stable version:
+
+```
+$ pip install git+https://github.com/DARIAH-DE/Topics.git
+```
+
+To install the latest development version:
+
+```
+$ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
+```
+
+Also, you can clone the repository and install it from a source code:
+
+```
+git clone https://github.com/DARIAH-DE/Topics.git
+cd Topics
+python setup.py install
+```
+
+## Working with notebooks
 #### Windows
 1.  Download and install the latest version of [WinPython](https://winpython.github.io/).
 2.  Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
