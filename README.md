@@ -30,7 +30,7 @@ To install the latest development version:
 $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 ```
 
-Also, you can clone the repository and install it from its source code:
+Also, you can clone the repository (or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip)) and install it from its source code:
 
 ```
 git clone https://github.com/DARIAH-DE/Topics.git
