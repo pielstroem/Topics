@@ -33,14 +33,14 @@ $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 Also, you can clone the repository:
 
 ```
-git clone https://github.com/DARIAH-DE/Topics.git
+$ git clone https://github.com/DARIAH-DE/Topics.git
 ```
 
-or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip)) and install it from its source code:
+or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) and install it from its source code:
 
 ```
-cd Topics
-python setup.py install
+$ cd Topics
+$ python setup.py install
 ```
 
 ## Working with notebooks
