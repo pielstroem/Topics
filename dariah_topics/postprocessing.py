@@ -508,9 +508,9 @@ def _show_mallet_document_topics(doc_topics_file, index):
         ...     tmpfile.flush()
         ...     _show_mallet_document_topics(tmpfile.name, index) #doctest: +NORMALIZE_WHITESPACE
         True
-                      first topic  second topic
-        document_one          0.1           0.2
-        document_two          0.4           0.5
+                      document_one  document_two
+        first topic            0.1           0.4
+        second topic           0.2           0.5
     """
     document_topics_triples = []
     document_labels = []
