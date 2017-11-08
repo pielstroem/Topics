@@ -522,7 +522,7 @@ def _show_mallet_document_topics(doc_topics_file, index):
                 lines = file.readlines()
                 for line in lines:
                     documet_number, document_label, *values = line.rstrip().split('\t')
-                    document_labels.append(document_label)
+                    document_labels.append(os.path.splitext(os.path.basename(document_label))[0])
                     for topic, share in _grouper(2, values):
                         triple = (document_label, int(topic), float(share))
                         topics.append(int(topic))
@@ -532,10 +532,10 @@ def _show_mallet_document_topics(doc_topics_file, index):
                 break
     if easy_file_format:
         document_topics = pd.read_table(doc_topics_file, sep='\t', header=None)
-        document_topics.index = [os.path.basename(document_label) for document_label in document_topics[1]]
+        document_topics.index = [os.path.splitext(os.path.basename(document_label))[0] for document_label in document_topics[1]]
         document_topics = document_topics.drop([0, 1], axis=1)
         document_topics.columns = index
-        return document_topics
+        return document_topics.T
     else:
         document_topics_triples = sorted(document_topics_triples, key=operator.itemgetter(0, 1))
         document_labels = sorted(document_labels)
