@@ -62,9 +62,8 @@ def call_commandline(cmd, logfile=False, shell=False, stdin=None, stdout='pipe',
     log.debug("stderr = {}".format(stderr))
 
     p = Popen(cmd, shell=shell, stdin=stdin, stdout=stdout, stderr=stderr)
-    p.wait()
-    decoded_stdout = _decode_stdout(p.stdout)
-    decoded_stderr = _decode_stdout(p.stderr)
+    decoded_stdout = _decode_stdout(p.stdout)[:4]
+    decoded_stderr = _decode_stdout(p.stderr)[:4]
 
     if communicate:
         if logfile:
