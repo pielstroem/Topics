@@ -31,6 +31,7 @@ import re
 import random
 from dariah_topics import postprocessing
 import shutil
+import string
 from platform import system
 from subprocess import Popen, PIPE
 import tempfile
