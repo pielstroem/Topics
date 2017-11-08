@@ -472,7 +472,8 @@ def remove_features(features, document_term_matrix=None, tokenized_corpus=None, 
         else:
             return _remove_features_from_small_corpus_model(document_term_matrix, features)
     elif document_term_matrix is None and tokenized_corpus is not None:
-        return _remove_features_from_tokenized_corpus(tokenized_corpus, features)
+        for tokenized_document in tokenized_corpus:
+            yield _remove_features_from_tokenized_document(tokenized_document, features)
     else:
         raise ValueError("Commit either document-term matrix or tokenized_corpus.")
 
@@ -963,8 +964,8 @@ def _remove_features_from_small_corpus_model(document_term_matrix, features):
     return document_term_matrix.drop(features, axis=1)
 
 
-def _remove_features_from_tokenized_corpus(tokenized_corpus, features):
-    """Removes features from a tokenized corpus.
+def _remove_features_from_tokenized_document(tokenized_document, features):
+    """Removes features from a tokenized document.
 
     This private function is wrapped in :func:`remove_features()`.
 
@@ -978,13 +979,13 @@ def _remove_features_from_tokenized_corpus(tokenized_corpus, features):
 
     Example:
         >>> tokenized_corpus = [['token', 'stopword', 'stopword']]
-        >>> list(_remove_features_from_tokenized_corpus(tokenized_corpus, ['stopword']))
+        >>> list(_remove_features_from_tokenized_document(tokenized_corpus, ['stopword']))
         [['token']]
     """
-    tokenized_corpus_arr = np.array(tokenized_corpus)
+    tokenized_document_arr = np.array(tokenized_document)
     features_arr = np.array(features)
-    indices = np.where(np.in1d(tokenized_corpus_arr, features_arr))
-    yield np.delete(tokenized_corpus_arr, indices).tolist()
+    indices = np.where(np.in1d(tokenized_document_arr, features_arr))
+    return np.delete(tokenized_document_arr, indices).tolist()
 
 
 def _stopwords_large_corpus_model(document_term_matrix, type_ids, most_frequent_tokens):
