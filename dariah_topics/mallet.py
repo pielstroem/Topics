@@ -110,7 +110,7 @@ class Mallet:
                  args.append(value)
         if not all(_check_whitespace(arg) for arg in args):
             raise ValueError("Whitespaces are not allowed in {}".format(args))
-        return (call_commandline(args, self.logfile, self.shell))
+        return call_commandline(args, self.logfile, self.shell)
 
     def import_tokenized_corpus(self, tokenized_corpus, document_labels, **kwargs):
         """
