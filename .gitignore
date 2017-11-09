@@ -16,9 +16,7 @@ grenzbote_plain/
 .tox
 wiki/
 mallet.log
-tutorial_supplementals/font/
-tutorial_supplementals/mallet_input/*
-tutorial_supplementals/mallet_output/*
+tutorial_supplementals/mallet_output
 tutorial_supplementals/document_term_matrix.mm
 .ropeproject
 gb_all_model.lda.expElogbeta.npy
