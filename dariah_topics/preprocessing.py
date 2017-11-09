@@ -472,8 +472,10 @@ def remove_features(features, document_term_matrix=None, tokenized_corpus=None, 
         else:
             return _remove_features_from_small_corpus_model(document_term_matrix, features)
     elif document_term_matrix is None and tokenized_corpus is not None:
-        for tokenized_document in tokenized_corpus:
-            yield _remove_features_from_tokenized_document(tokenized_document, features)
+        clean_tokenized_corpus = pd.Series() # schöner machen
+        for n, tokenized_document in enumerate(tokenized_corpus):
+            clean_tokenized_corpus[str(n)] = _remove_features_from_tokenized_document(tokenized_document, features)
+        return clean_tokenized_corpus
     else:
         raise ValueError("Commit either document-term matrix or tokenized_corpus.")
 
