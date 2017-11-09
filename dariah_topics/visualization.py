@@ -110,7 +110,7 @@ def doc_topic_heatmap(data_frame):
     data_frame = data_frame.sort_index()
     doc_labels = list(data_frame.index)
     topic_labels = list(data_frame)
-    if len(doc_labels) > 20 or len(topic_labels) > 20: plt.figure(figsize=(20,20))    # if many items, enlarge figure
+    if len(doc_labels) > 20 or len(topic_labels) > 20: plt.figure(figsize=(10,10))    # if many items, enlarge figure
     plt.pcolor(data_frame, norm=None, cmap='Reds')
     plt.yticks(np.arange(data_frame.shape[0])+1.0, doc_labels)
     plt.xticks(np.arange(data_frame.shape[1])+0.5, topic_labels, rotation='90')
