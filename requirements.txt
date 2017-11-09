@@ -1,1 +1,1 @@
--e .[vis,demonstrator,evaluation]
+-e .[vis,demonstrator]

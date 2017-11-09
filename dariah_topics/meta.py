@@ -1,4 +1,6 @@
-"""Metadata.
+"""
+Handling Metadata for Corpora
+=============================
 
 This module contains functions for metadata handling
 provided by `DARIAH-DE`_.
@@ -144,4 +146,4 @@ def fn2metadata(glob_pattern='corpus/*.txt', fn_pattern=regex.compile('(?<author
     metadata = pd.DataFrame(metadata_list)
     if index is not None:
         metadata = metadata.set_index(index)
-    return metadata
+    return metadata.sort_values('title').reset_index().drop('index', axis=1)

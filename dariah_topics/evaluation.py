@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Evaluating Topics
-=================
+Measuring and Evaluating Semantic Coherence of Topics
+=====================================================
 
 Topic Models generate probability distributions for words out of a collection of
 texts, sorting many single word distributions into distinct semantic groups

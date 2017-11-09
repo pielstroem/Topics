@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import sys
 sys.path.insert(0, 'demonstrator')
-
 import demonstrator
 from io import BytesIO
 import os
@@ -9,6 +10,27 @@ import tempfile
 import unittest
 from pathlib import Path
 
+
+int_bytes = b"1"
+stopword_bytes = b"this\nis\na\nstopwords\nlist"
+text_bytes = b"""
+I had called upon my friend, Mr. Sherlock Holmes, one day in the autumn
+of last year, and found him in deep conversation with a very stout,
+florid-faced elderly gentleman, with fiery red hair. With an apology for
+my intrusion, I was about to withdraw, when Holmes pulled me abruptly into
+the room and closed the door behind me.
+
+"Wedlock suits you," he remarked. "I think Watson, that you have put on
+seven and a half pounds since I saw you."
+
+"Seven," I answered.
+
+"Indeed, I should have thought a little more. Just a trifle more, I
+fancy, Watson. And in practice again, I observe. You did not tell me
+that you intended to go into harness."
+
+"Then how do you know?"
+"""
 
 class DemonstratorTestCase(unittest.TestCase):
     def setUp(self):
@@ -26,12 +48,7 @@ class DemonstratorTestCase(unittest.TestCase):
         assert b'index' in rv.data
 
     def test_topic_modeling(self):
-        with Path(self.project_path, 'grenzboten_sample',
-                  'Grenzboten_1844_Tagebuch_56.txt').open('rb') as f:
-            text_bytes = f.read()
-        int_bytes = b"1"
-        stopword_bytes = b"foo bar"
-        files = (BytesIO(text_bytes), 'Grenzboten_1844_Tagebuch_56.txt')
+        files = (BytesIO(text_bytes), 'document.txt')
         num_topics = BytesIO(int_bytes)
         num_iterations = BytesIO(int_bytes)
         stopword_list = (BytesIO(stopword_bytes), 'stopwords.txt')
