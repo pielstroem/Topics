@@ -1,5 +1,7 @@
 # Topics – Easy Topic Modeling in Python
 
+<img src="demonstrator/icon.png" height="120px" width="auto"/>
+
 [Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
 
 At the moment, this library supports three LDA implementations:
