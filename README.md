@@ -1,6 +1,6 @@
 # Topics – Easy Topic Modeling in Python
 
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). For a standalone application, which does not require a Python interpreter or any extra installations, have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases).
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -11,7 +11,7 @@ At the moment, this library supports three LDA implementations:
 * [Topics website](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/)
 * [Topics API documentation](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/docs/gen/modules.html)
 * [Topics paper](https://dh2017.adho.org/abstracts/411/411.pdf)
-* [Demonstrator releases](https://github.com/DARIAH-DE/Topics/releases)
+* **[Standalone Demonstrator releases](https://github.com/DARIAH-DE/Topics/releases)**
 * [An introduction to Topic Modeling using lda](IntroducingLda.ipynb)
 * [An introduction to Topic Modeling using MALLET](IntroducingMallet.ipynb)
 * [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
