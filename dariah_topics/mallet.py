@@ -46,7 +46,7 @@ def _decode_stdout(stdout):
     return [line.decode('utf-8').replace('\n', '') for line in stdout]
 
 
-def call_commandline(cmd, logfile=False, shell=False, stdin=None, stdout='pipe', stderr='pipe', communicate=True):
+def call_commandline(cmd, logfile=False, stdin=None, stdout='pipe', stderr='pipe', communicate=True):
     if stdin == 'pipe':
         stdin = PIPE
     if stdout == 'pipe':
@@ -56,12 +56,11 @@ def call_commandline(cmd, logfile=False, shell=False, stdin=None, stdout='pipe',
     
     cmd = [str(arg) for arg in cmd]
     log.info("Calling the command-line with {} ...".format(' '.join(cmd)))
-    log.debug("shell = {}".format(shell))
     log.debug("stdin = {}".format(stdin))
     log.debug("stdout = {}".format(stdout))
     log.debug("stderr = {}".format(stderr))
 
-    p = Popen(cmd, shell=shell, stdin=stdin, stdout=stdout, stderr=stderr)
+    p = Popen(cmd, stdin=stdin, stdout=stdout, stderr=stderr)
     decoded_stderr = _decode_stdout(p.stderr)
 
     if communicate:
@@ -88,17 +87,16 @@ def _check_whitespace(string):
 
 class Mallet:
     def __init__(self, executable='mallet', temp_output=None, logfile=True):
-        self.executable = executable
+        self.executable = shutil.which(executable)
+        if self.executable is None:
+            raise FileNotFoundError(("The executable '{0}' could not be found.\n"
+                                     "Either place the executable into the $PATH or call "
+                                     "{1}(executable='/path/to/mallet')").format(executable, self.__class__.__name__))
         if temp_output is None:
             prefix = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(5)])
             temp_output = os.path.join(tempfile.gettempdir(), prefix)
         self.temp_output = temp_output
         self.logfile = logfile
-        if system() == 'Windows':
-            shell = True
-        else:
-            shell = False
-        self.shell = shell
 
     def call_mallet(self, command, **kwargs):
         args = [self.executable, command]
@@ -108,7 +106,7 @@ class Mallet:
                  args.append(value)
         if not all(_check_whitespace(arg) for arg in args):
             raise ValueError("Whitespaces are not allowed in {}".format(args))
-        return call_commandline(args, self.logfile, self.shell)
+        return call_commandline(args, self.logfile)
 
     def import_tokenized_corpus(self, tokenized_corpus, document_labels, **kwargs):
         mallet_binary = os.path.join(self.temp_output, 'corpus.mallet')
