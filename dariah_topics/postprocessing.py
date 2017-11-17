@@ -221,7 +221,7 @@ def save_tokenized_corpus(tokenized_corpus, document_labels, path):
     return None
 
 
-def show_document_topics(topics=None, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3):
+def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3):
     """Shows topic distribution for each document.
     
     With this function you can show the topic distributions for all documents in a pandas DataFrame. \
