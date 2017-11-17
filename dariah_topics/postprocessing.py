@@ -221,7 +221,7 @@ def save_tokenized_corpus(tokenized_corpus, document_labels, path):
     return None
 
 
-def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3):
+def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3, easy_file_format=True):
     """Shows topic distribution for each document.
     
     With this function you can show the topic distributions for all documents in a pandas DataFrame. \
@@ -258,7 +258,7 @@ def show_document_topics(topics, model=None, document_labels=None, doc_topics_fi
     elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
         return _show_gensim_document_topics(doc2bow, model, document_labels, index)
     elif doc_topics_file is not None:
-        return _show_mallet_document_topics(doc_topics_file, index)
+        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format)
 
 
 def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
@@ -491,7 +491,7 @@ def _show_lda_topics(model, vocabulary, num_keys):
     return pd.DataFrame(topics, index=index, columns=columns)
 
 
-def _show_mallet_document_topics(doc_topics_file, index):
+def _show_mallet_document_topics(doc_topics_file, index, easy_file_format):
     """Shows document-topic-mapping.
     Args:
         outfolder (str): Folder for MALLET output.
