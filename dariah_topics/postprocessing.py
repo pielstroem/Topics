@@ -506,7 +506,7 @@ def _show_mallet_document_topics(doc_topics_file, index, easy_file_format):
         >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile:
         ...     tmpfile.write(b'0\\tdocument_one.txt\\t0.1\\t0.2\\n1\\tdocument_two.txt\\t0.4\\t0.5') and True
         ...     tmpfile.flush()
-        ...     _show_mallet_document_topics(tmpfile.name, index) #doctest: +NORMALIZE_WHITESPACE
+        ...     _show_mallet_document_topics(tmpfile.name, index, True) #doctest: +NORMALIZE_WHITESPACE
         True
                       document_one  document_two
         first topic            0.1           0.4
