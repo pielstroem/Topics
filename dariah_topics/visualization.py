@@ -518,7 +518,7 @@ def doc_topic_heatmap_interactive(doc_topic, title):
 
 
 
-def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung preußen partei', 'dichter goethe kunst'], threshold=0.1, starttime=1841, endtime=1920):
+def show_topic_over_time(doc_topics, pattern = r"\d{4}",  threshold=0.1, starttime=1841, endtime=1920):
     """Creates a visualization that shows topics over time
 
     Description:
@@ -544,26 +544,35 @@ def show_topic_over_time(doc_topic, labels=['armee truppen general', 'regierung 
 
     """
 
-    years=list(range(starttime,endtime))
-    doc_topicT = doc_topic.T
-    for label in labels:
-        topic_over_threshold_per_year =[]
-        df = doc_topicT.loc[doc_topicT[label] >  threshold]
-        d = defaultdict(int)
-        for item in df.index.values:
-            year = item.split('_')
-            d[year[0]]+=1
-        for year in years:
-            topic_over_threshold_per_year.append(d[str(year)])
-        plt.plot(years, topic_over_threshold_per_year, label=label)
 
-    plt.xlabel('Year')
-    plt.ylabel('count topics over threshold')
-    plt.legend()
-    fig = plt.gcf()
-    fig.set_size_inches(18.5, 10.5)
-    plt.show()
+ 
+  years=list(range(starttime,endtime))
+  #doc_topicT = doc_topics.T
+  topiclabels = []
+  for topiclabel in doc_topics.index.values
+  for topiclabel in topiclabels:
+      topic_over_threshold_per_year = []
+      mask = doc_topics.loc[topiclabel] > threshold
+      df = doc_topics.loc[topiclabel].loc[mask]
+      #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
+      #print (df)
+      d = defaultdict(int)
+      for item in df.index.values:
+          reg = regex.compile(pattern)
+          year = reg.findall(item)
+          d[year[0]]+=1
+      for year in years:
+          topic_over_threshold_per_year.append(d[str(year)])
+      plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
 
+  plt.xlabel('Year')
+  plt.ylabel('count topics over threshold')
+  plt.legend()
+  fig = plt.gcf()
+  fig.set_size_inches(18.5, 10.5)
+  plt.show()
+  return fig
+show_topic_over_time(doc_topics, threshold=0.1, starttime=1841, endtime=1920).show()   
 
 
 
