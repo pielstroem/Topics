@@ -3,5 +3,5 @@ nose
 nosexcover
 jupyter
 sphinx
-nbsphinx
+git+https://github.com/spatialaudio/nbsphinx#egg=nbsphinx
 recommonmark
