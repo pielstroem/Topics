@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from subprocess import check_output, STDOUT, CalledProcessError
-from nose.plugins.skip import SkipTest
 from pathlib import Path
+import pytest
 import logging
 import re
 
@@ -28,7 +28,7 @@ def run_notebook(notebook_name):
             message = cellinfo.group(1)
         logging.error(message)
 
-@SkipTest
+@pytest.mark.skip
 def jupyter_lda_test():
     run_notebook("IntroducingLda.ipynb")
 
