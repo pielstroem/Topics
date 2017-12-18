@@ -976,7 +976,7 @@ def _remove_features_from_tokenized_document(tokenized_document, features):
             tokens.
         features (list): An iterable of tokens.
 
-    Yields:
+    Returns:
         A clean tokenized document as list.
 
     Example:
