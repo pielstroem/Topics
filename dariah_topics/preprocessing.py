@@ -972,12 +972,12 @@ def _remove_features_from_tokenized_document(tokenized_document, features):
     This private function is wrapped in :func:`remove_features()`.
 
     Args:
-        tokenized_corpus (list): The tokenized corpus to process. This is an iterable of
-            documents, each of which is an iterable of tokens.
-        features (list): A list of tokens.
+        tokenized_document (list): The tokenized document to process. This is an iterable of
+            tokens.
+        features (list): An iterable of tokens.
 
     Yields:
-        A clean tokenized corpus as list.
+        A clean tokenized document as list.
 
     Example:
         >>> tokenized_corpus = [['token', 'stopword', 'stopword']]
