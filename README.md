@@ -55,7 +55,7 @@ $ pip install jupyter
 Afterwards, you can run Jupyter via:
 
 ```
-$ juptyer notebook
+$ jupyter notebook
 ```
 
 ## Working with MALLET
