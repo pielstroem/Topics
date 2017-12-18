@@ -4,10 +4,10 @@
 from setuptools import setup, find_packages
 
 PROJECT = 'DARIAH Topic Modelling'
-VERSION = "0.4"
-REVISION = "0.4.0.dev1"
-AUTHOR = "DARIAH-DE Wuerzburg Group"
-AUTHOR_EMAIL = "pielstroem@biozentrum.uni-wuerzburg.de"
+VERSION = '0.4'
+REVISION = '0.4.0.dev1'
+AUTHOR = 'DARIAH-DE Wuerzburg Group'
+AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
 
 setup(
     name='dariah_topics',
@@ -40,7 +40,8 @@ setup(
         ],
         'vis': [
             'matplotlib>=1.5.3',
-            'bokeh>=0.12.6'
+            'bokeh>=0.12.6',
+            'wordcloud>=1.3.1'
         ]
     },
     command_options={
