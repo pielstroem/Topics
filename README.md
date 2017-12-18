@@ -1,6 +1,6 @@
 # Topics – Easy Topic Modeling in Python
 
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) Notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -36,14 +36,36 @@ Also, you can clone the repository:
 $ git clone https://github.com/DARIAH-DE/Topics.git
 ```
 
-or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) and install it from its source code:
+or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) (don't forget to unzip it) and install it from its source code:
 
 ```
 $ cd Topics
 $ python setup.py install
 ```
 
-## Working with notebooks
+## Working with Jupyter notebooks
+As a server-client application, the Jupyter Notebook App allows you to interactively edit and run Python code from within so-called notebooks via a web browser. Those notebooks also support the lightweight markup language [Markdown](https://en.wikipedia.org/wiki/Markdown), which allows you to document and comment single code snippets.
+
+To install Jupyter:
+
+```
+$ pip install jupyter
+```
+
+Afterwards, you can run Jupyter via:
+
+```
+$ juptyer notebook
+```
+
+## Working with MALLET
+MALLET is a Java-based package for statistical natural language processing. The MALLET topic modeling toolkit contains efficient, sampling-based implementations of Latent Dirichlet Allocation, Pachinko Allocation, and Hierarchical LDA.
+
+You can download the software [here](http://mallet.cs.umass.edu/download.php). For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
+
+## Troubleshooting
+(In development...)
+
 #### Windows
 1.  Download and install the latest version of [WinPython](https://winpython.github.io/).
 2.  Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
@@ -68,10 +90,3 @@ $ python setup.py install
 5. Install [Jupyter](http://jupyter.readthedocs.io/en/latest/install.html) and run it by typing `jupyter notebook` in the command-line.
 5. Access the folder **Topics** through Jupyter in your browser, select one of the files with suffix `.ipynb` and follow the instructions.
 
-
-#### Working with MALLET
-1. Download and unzip [MALLET](http://mallet.cs.umass.edu).
-2. Set the environment variable for MALLET.
-
-
-For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
