@@ -58,7 +58,7 @@ def _decode(std):
         >>> _decode([bytes('This is a test.', encoding='utf-8')])
         ['This is a test.']
     """
-    return [line.decode('utf-8').replace('\n', '') for line in stdout]
+    return [line.decode('utf-8').replace('\n', '') for line in std]
 
 
 def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=True, logfile=False):
@@ -82,9 +82,8 @@ def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=
         :class:`Popen` object of the subprocess.
         
     Example:
-        >>> call_commandline(['mkdir', 'test_dir'])
-        >>> os.path.exists('test_dir')
-        True
+        >>> call_commandline(['mkdir', 'test_dir']) # doctest: +ELLIPSIS
+        <subprocess.Popen object at ...>
     """
     if stdin == 'pipe':
         stdin = PIPE
@@ -99,7 +98,7 @@ def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=
     log.info("Calling the command-line: {0} ...".format(' '.join(cmd)))
 
     process = Popen(cmd, stdin=stdin, stdout=stdout, stderr=stderr)
-    decoded_stderr = _decode_stdout(process.stderr)
+    decoded_stderr = _decode(process.stderr)
 
     if communicate:
         decoded_stderr = _decode(process.stderr)
@@ -210,13 +209,13 @@ class Mallet:
             :class:`Popen` object of the MALLET subprocess.
             
         Example:
-            >>> import tempfile
-            >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile:
+            >>> import tempfile # doctest: +SKIP
+            >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile: # doctest: +SKIP
             ...     tmpfile.write(b"This is a plain text example.")
             ...     tmpfile.flush()
-            >>> Mallet = Mallet(corpus_output='.')
-            >>> Mallet.call_mallet('import-file', input=tmpfile.name)
-            >>> os.path.exists('text.vectors')
+            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
+            >>> Mallet.call_mallet('import-file', input=tmpfile.name) # doctest: +SKIP
+            >>> os.path.exists('text.vectors') # doctest: +SKIP
             True
         """
         args = [self.executable, command]
@@ -286,16 +285,16 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.')
-            >>> Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
-            >>> os.path.exists('corpus.mallet')
+            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
+            >>> Mallet.import_tokenized_corpus(tokenized_corpus, document_labels) # doctest: +SKIP
+            >>> os.path.exists('corpus.mallet') # doctest: +SKIP
             True
         """
         corpus_file = os.path.join(self.corpus_output, 'corpus.mallet')
         postprocessing.save_tokenized_corpus(tokenized_corpus, document_labels, self.corpus_output)
         self.call_mallet('import-dir', keep_sequence=None, input=self.corpus_output, output=corpus_file, **kwargs)
         
-        _check_output(os.path.join(self.corpus_output, 'corpus.mallet'))  
+        _check_mallet_output(os.path.join(self.corpus_output, 'corpus.mallet'))  
         
         return corpus_file
 
@@ -384,10 +383,10 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.')
-            >>> mallet_binary = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
-            >>> Mallet.train_topics(mallet_binary, output_model='model.mallet')
-            >>> os.path.exists('model.mallet')
+            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
+            >>> mallet_binary = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels) # doctest: +SKIP
+            >>> Mallet.train_topics(mallet_binary, output_model='model.mallet') # doctest: +SKIP
+            >>> os.path.exists('model.mallet') # doctest: +SKIP
             True
         """
         self.call_mallet('train-topics', input=mallet_binary, **kwargs)
