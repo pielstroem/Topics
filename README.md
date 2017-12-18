@@ -43,7 +43,7 @@ $ cd Topics
 $ python setup.py install
 ```
 
-## Working with Jupyter notebooks
+## Working with Jupyter Notebooks
 As a server-client application, the Jupyter Notebook App allows you to interactively edit and run Python code from within so-called notebooks via a web browser. Those notebooks also support the lightweight markup language [Markdown](https://en.wikipedia.org/wiki/Markdown), which allows you to document and comment single code snippets.
 
 To install Jupyter:
