@@ -61,6 +61,8 @@ $ jupyter notebook
 ## Working with MALLET
 MALLET is a Java-based package for statistical natural language processing. The MALLET topic modeling toolkit contains efficient, sampling-based implementations of Latent Dirichlet Allocation, Pachinko Allocation, and Hierarchical LDA.
 
+This library provides a wrapper for MALLET, so you can call this Java-based tool from within the Python environment.
+
 You can download the software [here](http://mallet.cs.umass.edu/download.php). For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
 
 ## Troubleshooting
