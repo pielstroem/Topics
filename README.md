@@ -63,7 +63,7 @@ MALLET is a Java-based package for statistical natural language processing. The 
 
 This library provides a wrapper for MALLET, so you can call this Java-based tool from within the Python environment.
 
-You can download the software [here](http://mallet.cs.umass.edu/download.php). For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
+You can download MALLET [here](http://mallet.cs.umass.edu/download.php). For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
 
 ## Troubleshooting
 (In development...)
