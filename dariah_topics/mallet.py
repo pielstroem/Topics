@@ -18,10 +18,6 @@ Contents
 
 """
 
-__author__ = "DARIAH-DE"
-__authors__ = "Steffen Pielstroem, Sina Bock, Severin Simmler"
-__email__ = "pielstroem@biozentrum.uni-wuerzburg.de"
-
 import itertools
 import logging
 import numpy as np
@@ -61,7 +57,7 @@ def _decode(std):
     return [line.decode('utf-8').replace('\n', '') for line in std]
 
 
-def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=True, logfile=False):
+def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=False, logfile=False):
     """Calls the command-line from within Python.
     
     With this function you can call the command-line with a specific command. Each \
@@ -73,7 +69,7 @@ def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=
         stdout (str), optional: Value for stdout. Defaults to ``pipe``.
         stderr (str), optional: Value for stderr. Defaults to ``pipe``.
         communicate (bool), optioanl: If True, ``stdout`` and ``stderr`` will be
-            processed. Defaults to True.
+            processed. Defaults to False.
         logfile (bool), optional: If True, a logfile (``commandline.log``) will
             be created. Otherwise ``stdout`` (and ``stderr``, respectively) will
             be printed as logging to the console (level: INFO).
@@ -82,7 +78,7 @@ def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=
         :class:`Popen` object of the subprocess.
         
     Example:
-        >>> call_commandline(['mkdir', 'test_dir']) # doctest: +ELLIPSIS
+        >>> call_commandline(['python', '-h']) # doctest: +ELLIPSIS
         <subprocess.Popen object at ...>
     """
     if stdin == 'pipe':
@@ -166,7 +162,7 @@ class Mallet:
     With this class you can call the command-line tool `MALLET <http://mallet.cs.umass.edu/topics.php>`_ \
     from within Python.
     """
-    def __init__(self, executable='mallet', corpus_output=None, logfile=True):
+    def __init__(self, executable='mallet', corpus_output=None, logfile=False):
         self.executable = shutil.which(executable)
         if self.executable is None:
             raise FileNotFoundError(("The executable '{0}' could not be found.\n"
@@ -209,15 +205,16 @@ class Mallet:
             :class:`Popen` object of the MALLET subprocess.
             
         Example:
-            >>> import tempfile # doctest: +SKIP
-            >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile: # doctest: +SKIP
-            ...     tmpfile.write(b"This is a plain text example.")
+            >>> import tempfile
+            >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile:
+            ...     tmpfile.write(b"This is a plain text example.") and True
             ...     tmpfile.flush()
-            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
-            >>> Mallet.call_mallet('import-file', input=tmpfile.name) # doctest: +SKIP
-            >>> os.path.exists('text.vectors') # doctest: +SKIP
+            ...     Mallet = Mallet(corpus_output='.')
+            ...     process = Mallet.call_mallet('import-file', input=tmpfile.name)
+            ...     os.path.exists('text.vectors')
             True
-        """
+            True
+            """
         args = [self.executable, command]
         for option, value in kwargs.items():
             args.append('--' + option.replace('_', '-'))
@@ -227,8 +224,10 @@ class Mallet:
         if not all(_check_whitespace(arg) for arg in args):
             raise ValueError("Whitespaces are not allowed in '{0}'".format(args))
             
-        if self.logfile == True:
+        if self.logfile:
             communicate = True
+        else:
+            communicate = False
         
         return call_commandline(args, communicate=communicate, logfile=self.logfile)
 
@@ -285,9 +284,9 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
-            >>> Mallet.import_tokenized_corpus(tokenized_corpus, document_labels) # doctest: +SKIP
-            >>> os.path.exists('corpus.mallet') # doctest: +SKIP
+            >>> Mallet = Mallet(corpus_output='.')
+            >>> mallet_corpus = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
+            >>> os.path.exists('corpus.mallet')
             True
         """
         corpus_file = os.path.join(self.corpus_output, 'corpus.mallet')
@@ -299,7 +298,7 @@ class Mallet:
         return corpus_file
 
 
-    def train_topics(self, mallet_binary, cleanup=True, **kwargs):
+    def train_topics(self, mallet_binary, cleanup=False, **kwargs):
         """Trains LDA model.
         
         With this function you can train a topic model. The MALLET command for \
@@ -375,7 +374,6 @@ class Mallet:
             alpha (float): Sum over topics of smoothing over doc-topic distributions.
                 ``alpha_k = [this value] / [num topics]``. Defaults to 5.0.
             beta (float): Smoothing parameter for each topic-word. Defaults to 0.01.
-
             
         Returns:
             None.
@@ -383,15 +381,15 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.') # doctest: +SKIP
-            >>> mallet_binary = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels) # doctest: +SKIP
-            >>> Mallet.train_topics(mallet_binary, output_model='model.mallet') # doctest: +SKIP
-            >>> os.path.exists('model.mallet') # doctest: +SKIP
+            >>> Mallet = Mallet(corpus_output='.')
+            >>> mallet_corpus = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
+            >>> mallet_topics = Mallet.train_topics(mallet_corpus, output_model='model.mallet')
+            >>> os.path.exists('model.mallet')
             True
         """
         self.call_mallet('train-topics', input=mallet_binary, **kwargs)
         
-        _check_output('output', kwargs, self.corpus_output)
+        _check_mallet_output('output', kwargs)
 
         if cleanup:
             shutil.rmtree(self.corpus_output)
