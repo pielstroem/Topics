@@ -37,3 +37,6 @@ def jupyter_gensim_test():
 
 def jupyter_MALLET_test():
     run_notebook("IntroducingMallet.ipynb")
+
+def jupyter_Visualizations_test():
+    run_notebook("Visualizations.ipynb")
