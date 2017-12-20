@@ -31,3 +31,6 @@ Topics.iml
 _build
 model.pickle
 IntroducingGensim.html
+.cache
+htmlcov
+tests.xml
