@@ -15,6 +15,14 @@ workon Topics            # if you use virtualenvwrapper
 pip install -r requirement-dev.txt
 ```
 
+### Running the tests
+
+Installing from `requirements-dev.txt` also installs the testing framework `pytest`, which is configured in `setup.cfg`. You can run the tests locally from the command line:
+
+* `pytest` runs all unit tests (functions starting/ending with `test_` or `_test`, respectively) as well as all doctests. At the time of writing, these are 52 tests, taking ~3s in total.
+* `pytest --nbsmoke-run` additionally runs all Jupyter Notebooks and reports errors. This takes significantly longer (~90s).
+
+
 ## Releasing / Pushing to Master
 
 The _testing_ branch is the integration branch for current developments. The _master_ branch should always contain the latest stable version. 
