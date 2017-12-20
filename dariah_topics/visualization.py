@@ -236,7 +236,7 @@ class PlotDocumentTopics:
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
                        labels_fontsize=13, cmap='Blues', ticks_fontsize=12,
                        xlabel='Document', ylabel='Topic', xticks_bottom=0.1,
-                       xticks_rotation=50, xticks_ha='right', colorbar=True):
+                       xticks_rotation=50, xticks_ha='right', colorbar=False):
         """Plots a static heatmap.
     
         Args:
