@@ -1,8 +1,15 @@
 -r requirements.txt
+
+# Testing:
 pytest
 pytest-cov
 pytest-nbsmoke
+
+# Documentation:
 jupyter
 sphinx
 git+https://github.com/spatialaudio/nbsphinx#egg=nbsphinx
 recommonmark
+
+# Building the demonstrator:
+pyinstaller
