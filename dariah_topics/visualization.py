@@ -215,10 +215,10 @@ class PlotDocumentTopics:
     """
     def __init__(self, document_topics, enable_notebook=True):
         self.document_topics = document_topics
+        self.enable_notebook = enable_notebook
         if enable_notebook:
-            self.enable_notebook = enable_notebook
             self.show = self.notebook_handling()
-
+        
     @staticmethod
     def notebook_handling():
         """Runs cell magic for Jupyter notebooks
