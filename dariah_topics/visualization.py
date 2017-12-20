@@ -127,9 +127,8 @@ def plot_key_frequencies(keys=None, overall_freqs=None, within_topic_freqs=None,
                          figsize=(15, 7), dpi=None, overall_edgecolor=None,
                          overall_linewidth=None, overall_alpha=0.9, within_topic_edgecolor=None,
                          within_topic_linewidth=None, within_topic_alpha=0.9,
-                         label_fontsize=15, move_yticks=0.4, num_keys=None,
-                         tick_fontsize=14, legend_fontsize=15, legend=True,
-                         enable_notebook=True):
+                         label_fontsize=15, num_keys=None, tick_fontsize=14, legend_fontsize=15,
+                         legend=True, enable_notebook=True):
     """Plots key frequencies overall and from within topic.
     
     Args:
@@ -157,8 +156,6 @@ def plot_key_frequencies(keys=None, overall_freqs=None, within_topic_freqs=None,
             None.
         within_topic_alpha (int), optional: Alpha for overall frequencies bar. Defaults to 0.9.
         label_fontsize (int), optional: Fontsize of x-axis and y-axis labels. Defaults to 15.
-        move_yticks (float), optional: Adjust this parameter to move ``yticks``. Defaults
-            to 0.4.
         num_keys (int), optional: Number of tokens for y-axis. Defaults to None.
         tick_fontsize (int), optional: Fontsize of x- and y-ticks. Defaults to 14.
         legend_fontsize (int), optional: Fontsize of the legend. Defaults to 15.
@@ -203,9 +200,8 @@ def plot_key_frequencies(keys=None, overall_freqs=None, within_topic_freqs=None,
                      alpha=within_topic_alpha)
     ax.set_xlabel('Frequency', fontsize=label_fontsize)
     ax.set_ylabel('Key', fontsize=label_fontsize)
-    ax.set_yticks(y_axis + move_yticks)
+    ax.set_yticks(y_axis)
     ax.set_yticklabels(keys, fontsize=tick_fontsize)
-    ax.set_ylim([0, len(keys)])
     ax.tick_params(axis='x', labelsize=tick_fontsize)
     if legend:
         ax.legend(handles=[overall, within], labels=['Overall', 'Within Topic'], loc='best',
@@ -276,7 +272,7 @@ class PlotDocumentTopics:
         
     def __static_barchart(self, index, describer, figsize=(11, 7), color='#053967',
                           edgecolor=None, linewidth=None, alpha=None, labels_fontsize=15,
-                          ticks_fontsize=14, move_yticks=0.4, title=True, title_fontsize=17,
+                          ticks_fontsize=14, title=True, title_fontsize=17,
                           dpi=None, transpose_data=False):
         """Plots a static barchart.
     
@@ -330,7 +326,7 @@ class PlotDocumentTopics:
         ax.barh(y_axis, x_axis, color=color, edgecolor=edgecolor, linewidth=linewidth, alpha=alpha)
         ax.set_xlabel('Proportion', fontsize=labels_fontsize)
         ax.set_ylabel(describer, fontsize=labels_fontsize)
-        ax.set_yticks(y_axis + move_yticks)
+        ax.set_yticks(y_axis)
         ax.set_yticklabels(y_ticks_labels, fontsize=ticks_fontsize)
         ax.tick_params(axis='x', labelsize=ticks_fontsize)
         return fig
@@ -396,7 +392,7 @@ class PlotDocumentTopics:
     def interactive_heatmap(self, palette=palettes.Blues[9], reverse_palette=True,
                             tools='hover, pan, reset, save, wheel_zoom, zoom_in, zoom_out',
                             width=1000, height=550, x_axis_location='below', toolbar_location='above',
-                            responsive=True, line_color=None, grid_line_color=None, axis_line_color=None,
+                            sizing_mode='fixed', line_color=None, grid_line_color=None, axis_line_color=None,
                             major_tick_line_color=None, major_label_text_font_size='9pt',
                             major_label_standoff=0, major_label_orientation=3.14/3, colorbar=True):
         """Plots an interactive heatmap.
@@ -413,8 +409,7 @@ class PlotDocumentTopics:
                 ``below``.
             toolbar_location (str), optional: Location of the toolbar. Defaults to
                 ``above``.
-            responsive (bool), optional: If True, ``sizing_mode`` is set to ``width``.
-                False sets ``sizing_mode`` to "fixed". Defaults to True.
+            sizing_mode (str), optional: Size fixed or width oriented. Defaults to ``fixed``.
             line_color (str): Color for lines. Defaults to None.
             grid_line_color (str): Color for grid lines. Defaults to None.
             axis_line_color (str): Color for axis lines. Defaults to None.
@@ -447,7 +442,7 @@ class PlotDocumentTopics:
                      x_axis_location=x_axis_location,
                      plot_width=width, plot_height=height,
                      tools=tools, toolbar_location=toolbar_location,
-                     responsive=responsive,
+                     sizing_mode=sizing_mode,
                      logo=None)
         fig.rect(x='Documents', y='Topics', source=source, width=1, height=1,
                  fill_color={'field': 'Distributions', 'transform': mapper},
@@ -477,7 +472,7 @@ class PlotDocumentTopics:
     
     def __interactive_barchart(self, index, describer, tools='hover, pan, reset, save, wheel_zoom, zoom_in, zoom_out',
                                 width=1000, height=400, toolbar_location='above',
-                                responsive=True, line_color=None, grid_line_color=None, axis_line_color=None,
+                                sizing_mode='fixed', line_color=None, grid_line_color=None, axis_line_color=None,
                                 major_tick_line_color=None, major_label_text_font_size='9pt',
                                 major_label_standoff=0, title=True, bin_height=0.5,
                                 transpose_data=False, bar_color='#053967'):
@@ -501,8 +496,7 @@ class PlotDocumentTopics:
                 ``below``.
             toolbar_location (str), optional: Location of the toolbar. Defaults to
                 ``above``.
-            responsive (bool), optional: If True, ``sizing_mode`` is set to ``width``.
-                False sets ``sizing_mode`` to "fixed". Defaults to True.
+            sizing_mode (str), optional: Size fixed or width oriented. Defaults to ``fixed``.
             line_color (str): Color for lines. Defaults to None.
             grid_line_color (str): Color for grid lines. Defaults to None.
             axis_line_color (str): Color for axis lines. Defaults to None.
@@ -538,7 +532,7 @@ class PlotDocumentTopics:
 
         fig = figure(y_range=y_range, title=plot_title, plot_width=width, plot_height=height,
                    tools=tools, toolbar_location=toolbar_location,
-                   responsive=responsive, logo=None)
+                   sizing_mode=sizing_mode, logo=None)
         fig.hbar(y='Describer', right='Proportion', height=bin_height, source=source,
                line_color=line_color, color=bar_color)
 
@@ -577,8 +571,7 @@ class PlotDocumentTopics:
                 ``below``.
             toolbar_location (str), optional: Location of the toolbar. Defaults to
                 ``above``.
-            responsive (bool), optional: If True, ``sizing_mode`` is set to ``width``.
-                False sets ``sizing_mode`` to "fixed". Defaults to True.
+            sizing_mode (str), optional: Size fixed or width oriented. Defaults to ``fixed``.
             line_color (str): Color for lines. Defaults to None.
             grid_line_color (str): Color for grid lines. Defaults to None.
             axis_line_color (str): Color for axis lines. Defaults to None.
@@ -613,8 +606,7 @@ class PlotDocumentTopics:
                 ``below``.
             toolbar_location (str), optional: Location of the toolbar. Defaults to
                 ``above``.
-            responsive (bool), optional: If True, ``sizing_mode`` is set to ``width``.
-                False sets ``sizing_mode`` to "fixed". Defaults to True.
+            sizing_mode (str), optional: Size fixed or width oriented. Defaults to ``fixed``.
             line_color (str): Color for lines. Defaults to None.
             grid_line_color (str): Color for grid lines. Defaults to None.
             axis_line_color (str): Color for axis lines. Defaults to None.
