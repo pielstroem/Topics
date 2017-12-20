@@ -615,3 +615,29 @@ def _save_matrix_market(document_term_matrix, path):
         file.write(header)
         document_term_matrix.to_csv(file, sep=' ', header=None)
     return None
+
+def show_topic_key_weights(topic_no, num_keys, model=None, vocabulary=None, topic_word_weights_file=None, sort_ascending=None):
+    if vocabulary is not None and topic_word_weights_file is None:
+        key_weights = _show_lda_key_weights(model, vocabulary, topic_no, num_keys)
+    elif vocabulary is None and topic_word_weights_file is None:
+        key_weights = _show_gensim_key_weights(model, topic_no, num_keys)
+    elif topic_word_weights_file is not None:
+        key_weights = _show_mallet_key_weights(topic_word_weights_file, topic_no)
+    if sort_ascending is None:
+        return pd.Series(key_weights)[:num_keys]
+    else:
+        return pd.Series(key_weights).sort_values(ascending=sort_ascending)[:num_keys]
+
+def _show_lda_key_weights(model, vocabulary, topic_no, num_keys):
+    return {key: weight for key, weight in zip(vocabulary[:num_keys], model.components_[topic_no][:num_keys])}
+
+def _show_gensim_key_weights(model, topic_no, num_keys):
+    return dict(model.show_topic(topic_no, num_keys))
+
+def _show_mallet_key_weights(topic_word_weights_file, topic_no):
+    key_weights = pd.read_table(topic_word_weights_file, sep='\t', header=None, names=['topic_id', 'key', 'weight'])
+    key_weights = key_weights[key_weights['topic_id'] == topic_no].drop('topic_id', axis=1)
+    return key_weights.set_index('key')['weight'].to_dict()
+    
+def get_sorted_values_from_distribution(values, distribution, length):
+    return np.array(values)[np.argsort(distribution)][:-length-1:-1]
