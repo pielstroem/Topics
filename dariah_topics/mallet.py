@@ -383,7 +383,9 @@ class Mallet:
             >>> document_labels = ['document_label']
             >>> Mallet = Mallet(corpus_output='.')
             >>> mallet_corpus = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
-            >>> mallet_topics = Mallet.train_topics(mallet_corpus, output_model='model.mallet')
+            >>> mallet_topics = Mallet.train_topics(mallet_corpus,
+            ...                                     output_model='model.mallet',
+            ...                                     num_iterations=10)
             >>> os.path.exists('model.mallet')
             True
         """
