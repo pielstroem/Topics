@@ -169,8 +169,7 @@ class Mallet:
                                      "Either place the executable into the $PATH or call "
                                      "{1}(executable='/path/to/mallet')").format(executable, self.__class__.__name__))
         if corpus_output is None:
-            prefix = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(5)])
-            self.corpus_output = os.path.join(tempfile.gettempdir(), prefix)
+            self.corpus_output = tempfile.mkdtemp()
         else:
             self.corpus_output = corpus_output
         self.logfile = logfile
