@@ -647,6 +647,7 @@ class PlotDocumentTopics:
         years=list(range(starttime,endtime))
         #doc_topicT = doc_topics.T
         topiclabels = []
+        reg = regex.compile(pattern)
         for topiclabel in self.document_topics.index.values:
             for topiclabel in topiclabels:
                 topic_over_threshold_per_year = []
@@ -656,7 +657,6 @@ class PlotDocumentTopics:
                 #print (df)
                 d = defaultdict(int)
                 for item in df.index.values:
-                    reg = regex.compile(pattern)
                     year = reg.findall(item)
                     d[year[0]]+=1
                 for year in years:
