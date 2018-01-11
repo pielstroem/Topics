@@ -647,7 +647,7 @@ class PlotDocumentTopics:
         years=list(range(starttime,endtime))
         #doc_topicT = doc_topics.T
         topiclabels = []
-        for topiclabel in doc_topics.index.values:
+        for topiclabel in self.document_topics.index.values:
             for topiclabel in topiclabels:
                 topic_over_threshold_per_year = []
                 mask = doc_topics.loc[topiclabel] > threshold
