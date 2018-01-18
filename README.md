@@ -76,3 +76,6 @@ If you are confronted with any issues regarding installation or usability, pleas
 ### UNIX-specific Issues
 * In case of `PermissionError: [Errno 13] Permission denied`, try `pip install --user` or `python setup.py install --user`, respectively.
 * Due to several visualization dependencies, you might have to install the distribution packages `libfreetype6-dev` and `libpng-dev` (e.g. using `sudo apt-get install`).
+
+### MacOS-specific Issues
+* Make sure to install Python 3.6 correctly and adjust the selection of the Python interpreter in your editor accordingly. See also: https://docs.python.org/3/using/mac.html
