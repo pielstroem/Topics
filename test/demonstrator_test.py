@@ -3,7 +3,7 @@
 
 import sys
 sys.path.insert(0, 'demonstrator')
-import demonstrator
+import webapp
 from io import BytesIO
 import os
 import tempfile
@@ -34,27 +34,29 @@ that you intended to go into harness."
 
 class DemonstratorTestCase(unittest.TestCase):
     def setUp(self):
-        self.db_fd, demonstrator.app.config['DATABASE'] = tempfile.mkstemp()
-        demonstrator.app.testing = True
-        self.app = demonstrator.app.test_client()
+        self.db_fd, webapp.app.config['DATABASE'] = tempfile.mkstemp()
+        webapp.app.testing = True
+        self.app = webapp.app.test_client()
         self.project_path = Path(__file__).absolute().parent.parent
 
     def tearDown(self):
         os.close(self.db_fd)
-        os.unlink(demonstrator.app.config['DATABASE'])
+        os.unlink(webapp.app.config['DATABASE'])
 
     def test_render_index(self):
         rv = self.app.get('/')
-        assert b'index' in rv.data
+        assert 'Train' in rv.data.decode('utf-8')
 
     def test_topic_modeling(self):
         files = (BytesIO(text_bytes), 'document.txt')
         num_topics = BytesIO(int_bytes)
         num_iterations = BytesIO(int_bytes)
         stopword_list = (BytesIO(stopword_bytes), 'stopwords.txt')
-        data = {'files': files, 'num_topics': num_topics,
-                'num_iterations': num_iterations, 'stopword_list': stopword_list}
-        resp = self.app.post('/upload', data=data)
+        data = {'files': files,
+                'num_topics': num_topics,
+                'num_iterations': num_iterations,
+                'stopword_list': stopword_list}
+        resp = self.app.post('/modeling', data=data)
 
 
 if __name__ == '__main__':
