@@ -75,9 +75,6 @@ import logging
 
 
 log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
-logging.basicConfig(level=logging.WARNING,
-                    format='%(levelname)s %(name)s: %(message)s')
 
 
 def add_token2id(token, token2id):

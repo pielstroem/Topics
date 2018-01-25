@@ -37,9 +37,6 @@ from collections import defaultdict
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
-logging.basicConfig(level = logging.ERROR,
-                    format = '%(levelname)s %(name)s: %(message)s')
 
 
 def plot_wordcloud(weights, enable_notebook=True, **kwargs):

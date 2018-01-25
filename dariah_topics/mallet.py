@@ -33,9 +33,6 @@ from subprocess import Popen, PIPE
 import tempfile
 
 log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s %(name)s: %(message)s')
 
 
 def _decode(std):
