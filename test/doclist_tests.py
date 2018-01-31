@@ -3,7 +3,6 @@
 
 from dariah_topics.doclist import PathDocList
 from pathlib import Path
-from nose.tools import eq_
 
 project_path = Path(__file__).absolute().parent.parent
 
@@ -24,7 +23,7 @@ def setup():
 
 def test_pdl_glob():
     """The glob created list should contain the 30 files from grenzboten_sample"""
-    eq_(len(grenzboten_sample), 30, msg="Not 30 texts: " + str(docs))
+    assert len(grenzboten_sample) == 30
 
 
 def test_pdl_list():

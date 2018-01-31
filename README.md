@@ -1,6 +1,5 @@
 # Topics – Easy Topic Modeling in Python
-
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Text Mining and Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within and which comes with a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](/demonstrator/README.md). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](https://github.com/DARIAH-DE/TopicsExplorer). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/Topics/releases)**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -17,8 +16,7 @@ At the moment, this library supports three LDA implementations:
 * [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
 
 ## Installation
-
-To install the latest stable version:
+To install the latest stable version of the library `dariah_topics`:
 
 ```
 $ pip install git+https://github.com/DARIAH-DE/Topics.git
@@ -30,48 +28,54 @@ To install the latest development version:
 $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 ```
 
-Also, you can clone the repository:
+## Working with Jupyter Notebooks
+If you wish to work through the tutorials, you can clone the repository using [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git):
 
 ```
 $ git clone https://github.com/DARIAH-DE/Topics.git
 ```
 
-or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) and install it from its source code:
+or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) (don't forget to unzip it) and install `dariah_topics` from its source code:
 
 ```
-$ cd Topics
 $ python setup.py install
 ```
 
-## Working with notebooks
-#### Windows
-1.  Download and install the latest version of [WinPython](https://winpython.github.io/).
-2.  Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
-3.  Open the **WinPython PowerShell Prompt.exe** in your **WinPython** folder and type `git clone https://github.com/DARIAH-DE/Topics.git` to clone **Topics** into your WinPython folder.
-4.  Type `cd .\Topics` in **WinPython PowerShell** to navigate to the **Topics** folder. 
-5. Either: Type `pip install .` in **WinPython PowerShell** to install packages required by **Topics** 
-5. Or: Type `pip install -r requirements.txt` in **Winpython PowerShell** to install **Topics** with additional development packages.
-6.  Type `jupyter notebook` in **WinPython PowerShell** to open Jupyter, select one of the files with suffix `.ipynb` and follow the instructions.
-7.  **Note**: For the development packages the Python module **future** is needed. Depending in your WinPython and your Windows version you might have to install **future** manually.
-8.  Therefore, download the latest [future-x.xx.x-py3-none-any.whl](http://www.lfd.uci.edu/~gohlke/pythonlibs/).
-9.  Open the **WinPython Control Panel.exe** in your **WinPython** folder.
-10. Install the **future**-wheel via the **WinPython Control Panel.exe**.
+As a server-client application, Jupyter allows you to edit and run Python code interactively from within so-called notebooks via a web browser.
 
-11. **Troubleshooting**: If the installing process fails and you get the error message: Microsoft Visual C++ 10.0 is required please check if you are using python 3.6. (Type 'python -V')
+To install Jupyter:
 
+```
+$ pip install jupyter
+```
 
-#### macOS and Linux
-1. Download and install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
-2. Open the [command-line interface](https://en.wikipedia.org/wiki/Command-line_interface), type `git clone https://github.com/DARIAH-DE/Topics.git` to clone **Topics** into your working directory.
-3. **Note**: The distribution packages `libfreetype6-dev` and `libpng-dev` and a compiler for C++, e.g. [gcc](https://gcc.gnu.org/) have to be installed.
-4. Open the [command-line interface](https://en.wikipedia.org/wiki/Command-line_interface), navigate to the folder **Topics**  and type `pip install . --user` to install the required packages.
-5. Install [Jupyter](http://jupyter.readthedocs.io/en/latest/install.html) and run it by typing `jupyter notebook` in the command-line.
-5. Access the folder **Topics** through Jupyter in your browser, select one of the files with suffix `.ipynb` and follow the instructions.
+> Python distributions like [Anaconda](https://anaconda.org/anaconda/python) come with Jupyter by default.
 
+You can run Jupyter via:
 
-#### Working with MALLET
-1. Download and unzip [MALLET](http://mallet.cs.umass.edu).
-2. Set the environment variable for MALLET.
+```
+$ jupyter notebook
+```
 
+## Working with MALLET
+[MALLET](http://mallet.cs.umass.edu) is a Java-based package for statistical *natural language processing*. The MALLET Topic Model package includes an extremely fast and highly scalable implementation of Gibbs sampling and tools for inferring topics for new documents given trained models.
 
-For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
+To call MALLET from within the Python environment, `dariah_topics` provides a convenient wrapper.
+
+You can download MALLET [here](http://mallet.cs.umass.edu/download.php). For more detailed instructions, have a look at [this](http://programminghistorian.org/lessons/topic-modeling-and-mallet).
+
+## Troubleshooting
+If you are confronted with any issues regarding installation or usability, please use [GitHub issues](https://github.com/DARIAH-DE/Topics/issues).
+
+**This library requires Python 3.6 or higher.**
+
+### Windows-specific Issues
+* You will have to install `future‑0.16.0‑py3‑none‑any.whl` from [this resource](http://www.lfd.uci.edu/~gohlke/pythonlibs/). Download the appropriate file and run `pip install future‑0.16.0‑py3‑none‑any.whl`.
+* In case of the error `Microsoft Visual C++ 10.0 is required`, check if you are using Python 3.6 or higher with `python -V`. If you do, you have to install Microsoft Windows SDK from [this resource](www.microsoft.com/download/details.aspx?id=8279). If you do not, upgrade to Python 3.6 or higher and try installing the library again.
+
+### UNIX-specific Issues
+* In case of `PermissionError: [Errno 13] Permission denied`, try `pip install --user` or `python setup.py install --user`, respectively.
+* Due to several visualization dependencies, you might have to install the distribution packages `libfreetype6-dev` and `libpng-dev` (e.g. using `sudo apt-get install`).
+
+### MacOS-specific Issues
+* Make sure to install Python 3.6 correctly and adjust the selection of the Python interpreter in your editor accordingly. See also: https://docs.python.org/3/using/mac.html

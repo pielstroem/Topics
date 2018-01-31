@@ -45,9 +45,6 @@ import logging
 
 
 log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
-logging.basicConfig(level=logging.WARNING,
-                    format='%(levelname)s %(name)s: %(message)s')
 
 
 def doc2bow(document_term_matrix):
@@ -221,7 +218,7 @@ def save_tokenized_corpus(tokenized_corpus, document_labels, path):
     return None
 
 
-def show_document_topics(topics=None, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3):
+def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3, easy_file_format=True):
     """Shows topic distribution for each document.
     
     With this function you can show the topic distributions for all documents in a pandas DataFrame. \
@@ -258,7 +255,7 @@ def show_document_topics(topics=None, model=None, document_labels=None, doc_topi
     elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
         return _show_gensim_document_topics(doc2bow, model, document_labels, index)
     elif doc_topics_file is not None:
-        return _show_mallet_document_topics(doc_topics_file, index)
+        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format)
 
 
 def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
@@ -491,7 +488,7 @@ def _show_lda_topics(model, vocabulary, num_keys):
     return pd.DataFrame(topics, index=index, columns=columns)
 
 
-def _show_mallet_document_topics(doc_topics_file, index):
+def _show_mallet_document_topics(doc_topics_file, index, easy_file_format):
     """Shows document-topic-mapping.
     Args:
         outfolder (str): Folder for MALLET output.
@@ -506,7 +503,7 @@ def _show_mallet_document_topics(doc_topics_file, index):
         >>> with tempfile.NamedTemporaryFile(suffix='.txt') as tmpfile:
         ...     tmpfile.write(b'0\\tdocument_one.txt\\t0.1\\t0.2\\n1\\tdocument_two.txt\\t0.4\\t0.5') and True
         ...     tmpfile.flush()
-        ...     _show_mallet_document_topics(tmpfile.name, index) #doctest: +NORMALIZE_WHITESPACE
+        ...     _show_mallet_document_topics(tmpfile.name, index, True) #doctest: +NORMALIZE_WHITESPACE
         True
                       document_one  document_two
         first topic            0.1           0.4
@@ -615,3 +612,29 @@ def _save_matrix_market(document_term_matrix, path):
         file.write(header)
         document_term_matrix.to_csv(file, sep=' ', header=None)
     return None
+
+def show_topic_key_weights(topic_no, num_keys, model=None, vocabulary=None, topic_word_weights_file=None, sort_ascending=None):
+    if vocabulary is not None and topic_word_weights_file is None:
+        key_weights = _show_lda_key_weights(model, vocabulary, topic_no, num_keys)
+    elif vocabulary is None and topic_word_weights_file is None:
+        key_weights = _show_gensim_key_weights(model, topic_no, num_keys)
+    elif topic_word_weights_file is not None:
+        key_weights = _show_mallet_key_weights(topic_word_weights_file, topic_no)
+    if sort_ascending is None:
+        return pd.Series(key_weights)[:num_keys]
+    else:
+        return pd.Series(key_weights).sort_values(ascending=sort_ascending)[:num_keys]
+
+def _show_lda_key_weights(model, vocabulary, topic_no, num_keys):
+    return {key: weight for key, weight in zip(vocabulary[:num_keys], model.components_[topic_no][:num_keys])}
+
+def _show_gensim_key_weights(model, topic_no, num_keys):
+    return dict(model.show_topic(topic_no, num_keys))
+
+def _show_mallet_key_weights(topic_word_weights_file, topic_no):
+    key_weights = pd.read_table(topic_word_weights_file, sep='\t', header=None, names=['topic_id', 'key', 'weight'])
+    key_weights = key_weights[key_weights['topic_id'] == topic_no].drop('topic_id', axis=1)
+    return key_weights.set_index('key')['weight'].to_dict()
+    
+def get_sorted_values_from_distribution(values, distribution, length):
+    return np.array(values)[np.argsort(distribution)][:-length-1:-1]
