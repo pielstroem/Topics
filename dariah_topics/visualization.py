@@ -643,29 +643,28 @@ class PlotDocumentTopics:
         """
         years=list(range(starttime,endtime))
         #doc_topicT = doc_topics.T
-        topiclabels = []
+        #topiclabels = []
         reg = regex.compile(pattern)
         for topiclabel in self.document_topics.index.values:
-            for topiclabel in topiclabels:
-                topic_over_threshold_per_year = []
-                mask = doc_topics.loc[topiclabel] > threshold
-                df = doc_topics.loc[topiclabel].loc[mask]
-                #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
-                #print (df)
-                d = defaultdict(int)
-                for item in df.index.values:
-                    year = reg.findall(item)
-                    d[year[0]]+=1
-                for year in years:
-                    topic_over_threshold_per_year.append(d[str(year)])
-                plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
+            topic_over_threshold_per_year = []
+            mask = self.document_topics.loc[topiclabel] > threshold
+            df = self.document_topics.loc[topiclabel].loc[mask]
+            #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
+            #print (df)
+            d = defaultdict(int)
+            for item in df.index.values:
+                year = reg.findall(item)
+                d[year[0]]+=1
+            for year in years:
+                topic_over_threshold_per_year.append(d[str(year)])
+            plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
 
         plt.xlabel('Year')
         plt.ylabel('count topics over threshold')
         plt.legend()
-        fig = plt.gcf()
-        fig.set_size_inches(18.5, 10.5)
-        return fig
+        #fig.set_size_inches(18.5, 10.5)
+        #fig = plt.figure(figsize=(18, 16))
+        return plt.gcf().set_size_inches(18.5, 10.5)
 
     @staticmethod
     def to_file(fig, filename):
