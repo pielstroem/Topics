@@ -384,7 +384,7 @@ class PlotDocumentTopics:
         Returns:
             Figure object.
         """
-        return self.__static_barchart(**kwargs, transpose_data=True)
+        return self.__static_barchart(transpose_data=True, **kwargs)
 
     def interactive_heatmap(self, palette=palettes.Blues[9], reverse_palette=True,
                             tools='hover, pan, reset, save, wheel_zoom, zoom_in, zoom_out',
@@ -615,7 +615,7 @@ class PlotDocumentTopics:
         Returns:
             Figure object.
         """
-        return self.__interactive_barchart(**kwargs, transpose_data=True)
+        return self.__interactive_barchart(transpose_data=True, **kwargs)
 
     def topic_over_time(self, pattern = r"\d{4}",  threshold=0.1, starttime=1841, endtime=1920):
         """Creates a visualization that shows topics over time.
