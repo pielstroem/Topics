@@ -71,7 +71,7 @@ If you are confronted with any issues regarding installation or usability, pleas
 
 ### Windows-specific Issues
 * You will have to install `future‑0.16.0‑py3‑none‑any.whl` from [this resource](http://www.lfd.uci.edu/~gohlke/pythonlibs/). Download the appropriate file and run `pip install future‑0.16.0‑py3‑none‑any.whl`.
-* In case of the error `Microsoft Visual C++ 10.0 is required`, check if you are using Python 3.6 or higher with `python -V`. If you do, you have to install Microsoft Windows SDK from [this resource](www.microsoft.com/download/details.aspx?id=8279). If you do not, upgrade to Python 3.6 or higher and try installing the library again.
+* In case of the error `Microsoft Visual C++ 10.0 is required`, check if you are using Python 3.6 or higher with `python -V`. If you do, you have to install Microsoft Windows SDK from [this resource](https://www.microsoft.com/download/details.aspx?id=8279). If you do not, upgrade to Python 3.6 or higher and try installing the library again.
 
 ### UNIX-specific Issues
 * In case of `PermissionError: [Errno 13] Permission denied`, try `pip install --user` or `python setup.py install --user`, respectively.
