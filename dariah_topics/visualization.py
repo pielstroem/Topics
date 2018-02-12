@@ -617,7 +617,7 @@ class PlotDocumentTopics:
         """
         return self.__interactive_barchart(transpose_data=True, **kwargs)
 
-    def topic_over_time(self, pattern = r"\d{4}",  threshold=0.1, starttime=1841, endtime=1920):
+    def topic_over_time(self, metadata_df,  threshold=0.1, starttime=1841, endtime=1920):
         """Creates a visualization that shows topics over time.
 
         Description:
@@ -625,7 +625,7 @@ class PlotDocumentTopics:
             Only works with mallet output.
 
         Args:
-            labels(list): first three keys in a topic to select
+            metadata_df(pd.Dataframe()): metadata created by metadata_toolbox
             threshold(float): threshold set to define if a topic in a document is viable
             starttime(int): sets starting point for visualization
             endtime(int): sets ending point for visualization
@@ -644,16 +644,13 @@ class PlotDocumentTopics:
         years=list(range(starttime,endtime))
         #doc_topicT = doc_topics.T
         #topiclabels = []
-        reg = regex.compile(pattern)
         for topiclabel in self.document_topics.index.values:
             topic_over_threshold_per_year = []
             mask = self.document_topics.loc[topiclabel] > threshold
             df = self.document_topics.loc[topiclabel].loc[mask]
-            #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
-            #print (df)
             d = defaultdict(int)
-            for item in df.index.values:
-                year = reg.findall(item)
+            for filtered_topiclabel in df.index.values:
+                year = metadata_df.loc[filtered_topiclabel,'year']
                 d[year[0]]+=1
             for year in years:
                 topic_over_threshold_per_year.append(d[str(year)])
