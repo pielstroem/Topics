@@ -33,7 +33,7 @@ from bokeh.models import (
             )
 
 import regex
-from collections import defaultdict
+from collections import Counter
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
@@ -617,7 +617,7 @@ class PlotDocumentTopics:
         """
         return self.__interactive_barchart(transpose_data=True, **kwargs)
 
-    def topic_over_time(self, metadata_df,  threshold=0.1, starttime=1841, endtime=1920):
+    def topic_over_time(self, metadata_df, threshold=0.1, starttime=1841, endtime=1920):
         """Creates a visualization that shows topics over time.
 
         Description:
@@ -631,7 +631,7 @@ class PlotDocumentTopics:
             endtime(int): sets ending point for visualization
 
 
-        Returns: 
+        Returns:
             matplotlib plot
 
         Note: this function is created for a corpus with filenames that looks like:
@@ -641,26 +641,25 @@ class PlotDocumentTopics:
                 Doctest
 
         """
-        years=list(range(starttime,endtime))
-        #doc_topicT = doc_topics.T
-        #topiclabels = []
+
+        years = list(range(starttime, endtime))
         for topiclabel in self.document_topics.index.values:
             topic_over_threshold_per_year = []
             mask = self.document_topics.loc[topiclabel] > threshold
             df = self.document_topics.loc[topiclabel].loc[mask]
-            d = defaultdict(int)
+            cnt = Counter()
             for filtered_topiclabel in df.index.values:
-                year = metadata_df.loc[filtered_topiclabel,'year']
-                d[year[0]]+=1
+                year = metadata_df.loc[filtered_topiclabel, 'year']
+                print(year)
+                cnt[year] += 1
             for year in years:
-                topic_over_threshold_per_year.append(d[str(year)])
+                topic_over_threshold_per_year.append(cnt[str(year)])
             plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
-
         plt.xlabel('Year')
         plt.ylabel('count topics over threshold')
         plt.legend()
-        #fig.set_size_inches(18.5, 10.5)
-        #fig = plt.figure(figsize=(18, 16))
+        # fig.set_size_inches(18.5, 10.5)
+        # fig = plt.figure(figsize=(18, 16))
         return plt.gcf().set_size_inches(18.5, 10.5)
 
     @staticmethod
