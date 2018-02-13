@@ -641,7 +641,7 @@ class PlotDocumentTopics:
                 Doctest
 
         """
-
+        print(self.document_topics,"__",metadata_df,"__", threshold)
         years = list(range(starttime, endtime))
         for topiclabel in self.document_topics.index.values:
             topic_over_threshold_per_year = []
