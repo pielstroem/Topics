@@ -33,7 +33,7 @@ from bokeh.models import (
             )
 
 import regex
-from collections import Counter
+from collections import defaultdict
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
@@ -384,7 +384,7 @@ class PlotDocumentTopics:
         Returns:
             Figure object.
         """
-        return self.__static_barchart(transpose_data=True, **kwargs )
+        return self.__static_barchart(transpose_data=True, **kwargs)
 
     def interactive_heatmap(self, palette=palettes.Blues[9], reverse_palette=True,
                             tools='hover, pan, reset, save, wheel_zoom, zoom_in, zoom_out',
@@ -617,7 +617,7 @@ class PlotDocumentTopics:
         """
         return self.__interactive_barchart(transpose_data=True, **kwargs)
 
-    def topic_over_time(self, metadata_df, threshold=0.1, starttime=1841, endtime=1920):
+    def topic_over_time(self, pattern = r"\d{4}",  threshold=0.1, starttime=1841, endtime=1920):
         """Creates a visualization that shows topics over time.
 
         Description:
@@ -625,13 +625,13 @@ class PlotDocumentTopics:
             Only works with mallet output.
 
         Args:
-            metadata_df(pd.Dataframe()): metadata created by metadata_toolbox
+            labels(list): first three keys in a topic to select
             threshold(float): threshold set to define if a topic in a document is viable
             starttime(int): sets starting point for visualization
             endtime(int): sets ending point for visualization
 
 
-        Returns:
+        Returns: 
             matplotlib plot
 
         Note: this function is created for a corpus with filenames that looks like:
@@ -641,25 +641,31 @@ class PlotDocumentTopics:
                 Doctest
 
         """
-        years = list(range(starttime, endtime))
+        years=list(range(starttime,endtime))
+        #doc_topicT = doc_topics.T
+        topiclabels = []
+        reg = regex.compile(pattern)
         for topiclabel in self.document_topics.index.values:
-            topic_over_threshold_per_year = []
-            mask = self.document_topics.loc[topiclabel] > threshold
-            df = self.document_topics.loc[topiclabel].loc[mask]
-            cnt = Counter()
-            for filtered_topiclabel in df.index.values:
-                year = metadata_df.loc[filtered_topiclabel, 'year']
-                print(year)
-                cnt[year] += 1
-            for year in years:
-                topic_over_threshold_per_year.append(cnt[str(year)])
-            plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
+            for topiclabel in topiclabels:
+                topic_over_threshold_per_year = []
+                mask = doc_topics.loc[topiclabel] > threshold
+                df = doc_topics.loc[topiclabel].loc[mask]
+                #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
+                #print (df)
+                d = defaultdict(int)
+                for item in df.index.values:
+                    year = reg.findall(item)
+                    d[year[0]]+=1
+                for year in years:
+                    topic_over_threshold_per_year.append(d[str(year)])
+                plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
+
         plt.xlabel('Year')
         plt.ylabel('count topics over threshold')
         plt.legend()
-        # fig.set_size_inches(18.5, 10.5)
-        # fig = plt.figure(figsize=(18, 16))
-        return plt.gcf().set_size_inches(18.5, 10.5)
+        fig = plt.gcf()
+        fig.set_size_inches(18.5, 10.5)
+        return fig
 
     @staticmethod
     def to_file(fig, filename):
