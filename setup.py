@@ -4,8 +4,8 @@
 from setuptools import setup, find_packages
 
 PROJECT = 'DARIAH Topic Modelling'
-VERSION = '0.5'
-REVISION = '0.5.0.dev1'
+VERSION = '0.6'
+REVISION = '0.6.0.dev1'
 AUTHOR = 'DARIAH-DE Wuerzburg Group'
 AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
 
@@ -31,19 +31,11 @@ setup(
         'gensim>=0.13.2',
         'lda>=1.0.5',
         'numpy>=1.3',
-        'lxml>=3.6.4'
+        'lxml>=3.6.4',
+        'matplotlib>=1.5.3',
+        'bokeh>=0.12.6',
+        'wordcloud>=1.3.1'
     ],
-    # pip install -e .[demonstrator, vis]
-    extras_require={
-        'demonstrator': [
-            'flask>=0.11.1'
-        ],
-        'vis': [
-            'matplotlib>=1.5.3',
-            'bokeh>=0.12.6',
-            'wordcloud>=1.3.1'
-        ]
-    },
     command_options={
         'build_sphinx': {
             'project': ('setup.py', PROJECT),
