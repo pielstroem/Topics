@@ -4,8 +4,8 @@
 from setuptools import setup, find_packages
 
 PROJECT = 'DARIAH Topic Modelling'
-VERSION = '0.5'
-REVISION = '0.5.0.dev1'
+VERSION = '0.6'
+REVISION = '0.6.0.dev1'
 AUTHOR = 'DARIAH-DE Wuerzburg Group'
 AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
 
