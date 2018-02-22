@@ -32,8 +32,7 @@ from bokeh.models import (
             ColorBar
             )
 
-import regex
-from collections import defaultdict
+from collections import Counter
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
