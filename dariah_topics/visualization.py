@@ -452,8 +452,8 @@ class PlotDocumentTopics:
         fig.xaxis.major_label_orientation = major_label_orientation
         
         if 'hover' in tools:
-            fig.select_one(HoverTool).tooltips = [('Document', '@Documents'),
-                                                  ('Topic', '@Topics'),
+            fig.select_one(HoverTool).tooltips = [('x-Axis', '@Documents'),
+                                                  ('y-Axis', '@Topics'),
                                                   ('Score', '@Distributions')]
 
         if colorbar:
