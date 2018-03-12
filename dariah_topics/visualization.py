@@ -57,7 +57,7 @@ from wordcloud import WordCloud
 log = logging.getLogger(__name__)
     
     
-def enable_notebook():
+def notebook_handling():
     """Runs cell magic for Jupyter notebooks
     """
     from IPython import get_ipython
@@ -152,7 +152,7 @@ class PlotDocumentTopics:
         self.document_topics = document_topics
         self.enable_notebook = enable_notebook
         if enable_notebook:
-            self.show = enable_notebook()
+            self.show = notebook_handling()
 
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
