@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 Postprocessing Text Data, Saving Matrices, Corpora and LDA Models
 *****************************************************************
@@ -42,7 +39,6 @@ import numpy as np
 import pandas as pd
 import pickle
 import logging
-
 
 log = logging.getLogger(__name__)
 
