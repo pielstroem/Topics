@@ -10,6 +10,3 @@ jupyter
 sphinx
 git+https://github.com/spatialaudio/nbsphinx#egg=nbsphinx
 recommonmark
-
-# Building the demonstrator:
-pyinstaller
