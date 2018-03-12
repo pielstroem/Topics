@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 Visualizing the Output of LDA Models
 ************************************
@@ -115,94 +112,6 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
         ax.axis('off')
         ax.imshow(wordcloud)
     return wordcloud
-
-
-def plot_key_frequencies(keys=None, overall_freqs=None, within_topic_freqs=None,
-                         within_topic_color='#FF1727', document_term_matrix=None,
-                         model=None, vocabulary=None, topic_no=None, overall_color='#053967',
-                         figsize=(15, 7), dpi=None, overall_edgecolor=None,
-                         overall_linewidth=None, overall_alpha=0.9, within_topic_edgecolor=None,
-                         within_topic_linewidth=None, within_topic_alpha=0.9,
-                         label_fontsize=15, num_keys=None, tick_fontsize=14, legend_fontsize=15,
-                         legend=True, enable_notebook=True):
-    """Plots key frequencies overall and from within topic.
-    
-    Args:
-        keys (list): A list of tokens. Defaults to None.
-        overall_freqs (list): A list of frequencies. Defaults to None.
-        within_topic_freqs (list): A list of frequencies. Defaults to None.
-        within_topic_color (str), optional: Color for topic frequencies bar. Defaults to
-            ``#FF1727``.
-        document_term_matrix (pandas DataFrame), optional: A document-term matrix. Defaults
-            to None.
-        model, optional: A LDA model. Defaults to None.
-        vocabulary (list), optional: Vocabulary of the corpus. Defaults to None.
-        topic_no (int), optional: Number of topic. Defaults to None.
-        overall_color (str), optional: Color for overall frequencies bar. Defaults to ``#053967``.
-        figsize (tuple), optional: Size of the figure. Defaults to ``(15, 7)``.
-        dpi (int), optional: Dots per inch. Defaults to None.
-        overall_edgecolor (str), optional: Color for edgecolors of overall frequencies bar.
-            Defaults to None.
-        overall_linewidth (int), optional: Linewidth of overall frequencies bar. Defaults to
-            None.
-        overall_alpha (int), optional: Alpha for overall frequencies bar. Defaults to 0.9.
-        within_topic_edgecolor (str), optional: Color for edgecolors of overall frequencies bar.
-            Defaults to None.
-        within_topic_linewidth (int), optional: Linewidth of overall frequencies bar. Defaults to
-            None.
-        within_topic_alpha (int), optional: Alpha for overall frequencies bar. Defaults to 0.9.
-        label_fontsize (int), optional: Fontsize of x-axis and y-axis labels. Defaults to 15.
-        num_keys (int), optional: Number of tokens for y-axis. Defaults to None.
-        tick_fontsize (int), optional: Fontsize of x- and y-ticks. Defaults to 14.
-        legend_fontsize (int), optional: Fontsize of the legend. Defaults to 15.
-        legend (bool), optional: If True, legend will be displayed. Defaults to True.
-        enable_notebook (bool), optional: If True, enables :module:``matplotlib``
-            to show its figures within a Jupyter notebook.
-
-    Returns:
-        Figure object.
-        
-    Example:
-        >>> keys = ['one', 'example']
-        >>> overall_freqs = [20, 10]
-        >>> within_topic_freqs = [10, 5]
-        >>> plot_key_frequencies(keys=keys,
-        ...                      overall_freqs=overall_freqs,
-        ...                      within_topic_freqs=within_topic_freqs,
-        ...                      enable_notebook=False) # doctest: +ELLIPSIS
-        <matplotlib.figure.Figure object at ...>
-    """
-    if enable_notebook:
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
-    if model:
-        within_topic_freqs = postprocessing.get_sorted_values_from_distribution(model.components_[topic_no],
-                                                                                model.components_[topic_no],
-                                                                                num_keys)
-        within_topic_freqs = [dist * len(vocabulary) for dist in within_topic_freqs]
-        total = [document_term_matrix[token].sum() for token in vocabulary]
-        overall_freqs = postprocessing.get_sorted_values_from_distribution(total,
-                                                                           model.components_[topic_no],
-                                                                           num_keys)
-        keys = postprocessing.get_sorted_values_from_distribution(vocabulary,
-                                                                  model.components_[topic_no],
-                                                                  num_keys)
-    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    y_axis = np.arange(len(keys))
-    overall = ax.barh(y_axis, overall_freqs, color=overall_color, edgecolor=overall_edgecolor,
-                      linewidth=overall_linewidth, alpha=overall_alpha)
-    within = ax.barh(y_axis, within_topic_freqs, color=within_topic_color,
-                     edgecolor=within_topic_edgecolor, linewidth=within_topic_linewidth,
-                     alpha=within_topic_alpha)
-    ax.set_xlabel('Frequency', fontsize=label_fontsize)
-    ax.set_ylabel('Key', fontsize=label_fontsize)
-    ax.set_yticks(y_axis)
-    ax.set_yticklabels(keys, fontsize=tick_fontsize)
-    ax.tick_params(axis='x', labelsize=tick_fontsize)
-    if legend:
-        ax.legend(handles=[overall, within], labels=['Overall', 'Within Topic'], loc='best',
-                  fontsize=legend_fontsize)
-    return fig
 
 
 class PlotDocumentTopics:
