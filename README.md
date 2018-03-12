@@ -79,3 +79,11 @@ If you are confronted with any issues regarding installation or usability, pleas
 
 ### MacOS-specific Issues
 * Make sure to install Python 3.6 correctly and adjust the selection of the Python interpreter in your editor accordingly. See also: https://docs.python.org/3/using/mac.html
+
+<hr>
+
+The library and its tutorials have been developed with support from the [DARIAH-DE](https://de.dariah.eu) initiative, the German branch of [DARIAH-EU](http://dariah.eu/), the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
+
+image:https://raw.githubusercontent.com/DARIAH-DE/Topics/master/docs/images/dariah-de_logo.png[DARIAH-DE]
+image:https://raw.githubusercontent.com/DARIAH-DE/Topics/master/docs/images/bmbf_logo.png[BMBF]
+
