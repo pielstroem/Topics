@@ -2,11 +2,33 @@
 Visualizing the Output of LDA Models
 ************************************
 
-Functions and classes of this module are for visualizing LDA models.
+Functions and classes of this module are for visualizing LDA models. This is, \
+except one function (:func:`plot_wordcloud`), based on the document-topics \
+distribution DataFrame.
 
 Contents
 ********
-    * 
+    * :func:`plot_wordcloud` plots the top ``n`` words for a specific topic. \
+        The higher their weight, the bigger the word.
+    * :clas:`PlotDocumentTopics` is basically the core of this module. Construct \
+        this class, if you want to plot the content of the document-topics DataFrame.
+    * :meth:`static_heatmap` plots a static, :module:`matplotlib`-based heatmap of \
+        the document-topics distribution.
+    * :meth:`interactive_heatmap` plots an interactive, :module:`bokeh`-based \
+        heatmap of the document-topics distribution.
+    * :meth:`static_barchart_per_topic` plots a static, :module:`matplotlib`-based  \
+        barchart of the document proportions for a specific topic.
+    * :meth:`interactive_barchart_per_topic` plots an interactive, :module:`bokeh`-based  \
+        barchart of the document proportions for a specific topic.
+    * :meth:`static_barchart_per_document` plots a static, :module:`matplotlib`-based  \
+        barchart of the topic proportions for a specific document.
+    * :meth:`interactive_barchart_per_document` plots an interactive, :module:`bokeh`-based  \
+        barchart of the topic proportions for a specific document.
+    * :meth:`topic_over_time` plots a static, :module:`matplotlib`-based  \
+        line diagram of the development of a topic over time, based on metadata.
+    * :meth:`to_file` saves either a :module:`matplotlib` or a :module:`bokeh` figure \
+        object to disk.
+
 """
 
 
