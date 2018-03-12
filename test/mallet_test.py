@@ -1,5 +1,5 @@
 from pytest import raises
-from dariah_topics.mallet import Mallet
+from dariah_topics.utils import Mallet
 
 def command_not_found_test():
     """When the mallet executable was not found, raise an exception."""

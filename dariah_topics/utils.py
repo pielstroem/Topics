@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
-Handling MALLET in Python
-*************************
-
-Functions and classes of this module are for **handling `MALLET <http://mallet.cs.umass.edu/topics.php>`_ \
-in Python**.
-
 Contents
 ********
     * :func:`call_commandline()`
