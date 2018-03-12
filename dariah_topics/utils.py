@@ -1,20 +1,24 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
-Handling MALLET in Python
-*************************
+Utilizing the Command-Line from Within the Python Environment
+*************************************************************
 
-Functions and classes of this module are for **handling `MALLET <http://mallet.cs.umass.edu/topics.php>`_ \
-in Python**.
+Functions of this module are for **utilizing the command-line**. You can call \
+the command-line from within Python using :func:`call_commandline()`, e.g. the \
+`DARIAH-DKPro-Wrapper <https://github.com/DARIAH-DE/DARIAH-DKPro-Wrapper>`_ for \
+processing and annotating text corpora. Using :class:`Mallet`, you can call the \
+NLP-tool MALLET.
 
 Contents
 ********
-    * :func:`call_commandline()`
-    * :class:`Mallet`
-    * :func:`call_mallet()`
-    * :func:`import_corpus()`
-    * :func:`train_topics()`
+    * :func:`call_commandline()` calls based on the elements of a list the command-\
+        line.
+    * :class:`Mallet` is a class containing methods to call the NLP-tool MALLET.
+    * :meth:`call_mallet()` calls MALLET with a specific executable and additional \
+        parameteres.
+    * :meth:`import_corpus()` imports a text corpus to the specific MALLET corpus \
+        format. Uses the executable ``import-dir``.
+    * :meth:`train_topics()` creates a topic model with the imported text corpus. \
+        Uses the executable ``train-topics``.
 
 """
 
@@ -153,6 +157,7 @@ def _check_mallet_output(keyword, kwargs=None):
     if not all(os.path.exists(file) for file in output_files):
         raise OSError("MALLET did not produce any output files. Maybe check your args?")
 
+
 class Mallet:
     """Python wrapper for MALLET.
     
@@ -170,7 +175,6 @@ class Mallet:
         else:
             self.corpus_output = corpus_output
         self.logfile = logfile
-
 
     def call_mallet(self, command, **kwargs):
         """Calls the command-line tool MALLET.
@@ -226,7 +230,6 @@ class Mallet:
             communicate = False
         
         return call_commandline(args, communicate=communicate, logfile=self.logfile)
-
 
     def import_tokenized_corpus(self, tokenized_corpus, document_labels, **kwargs):
         """Creates MALLET corpus model.
@@ -292,7 +295,6 @@ class Mallet:
         _check_mallet_output(os.path.join(self.corpus_output, 'corpus.mallet'))  
         
         return corpus_file
-
 
     def train_topics(self, mallet_binary, cleanup=False, **kwargs):
         """Trains LDA model.

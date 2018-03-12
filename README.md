@@ -1,5 +1,6 @@
 # Topics – Easy Topic Modeling in Python
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a [Flask](http://flask.pocoo.org/)-based [GUI demonstrator](https://github.com/DARIAH-DE/TopicsExplorer). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/TopicsExplorer/releases)**.
+
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a standalone [GUI demonstrator](https://github.com/DARIAH-DE/TopicsExplorer). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/TopicsExplorer/releases)**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -79,3 +80,11 @@ If you are confronted with any issues regarding installation or usability, pleas
 
 ### MacOS-specific Issues
 * Make sure to install Python 3.6 correctly and adjust the selection of the Python interpreter in your editor accordingly. See also: https://docs.python.org/3/using/mac.html
+
+<hr>
+
+The library and its tutorials have been developed with support from the [DARIAH-DE](https://de.dariah.eu) initiative, the German branch of [DARIAH-EU](http://dariah.eu/), the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
+
+![DARIAH-DE](https://raw.githubusercontent.com/DARIAH-DE/Topics/testing/docs/images/dariah-de_logo.png)
+![BMBF](https://raw.githubusercontent.com/DARIAH-DE/Topics/testing/docs/images/bmbf_logo.png)
+

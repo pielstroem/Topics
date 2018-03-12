@@ -1,15 +1,34 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 Visualizing the Output of LDA Models
 ************************************
 
-Functions and classes of this module are for visualizing LDA models.
+Functions and classes of this module are for visualizing LDA models. This is, \
+except one function (:func:`plot_wordcloud`), based on the document-topics \
+distribution DataFrame.
 
 Contents
 ********
-    * 
+    * :func:`plot_wordcloud` plots the top ``n`` words for a specific topic. \
+        The higher their weight, the bigger the word.
+    * :clas:`PlotDocumentTopics` is basically the core of this module. Construct \
+        this class, if you want to plot the content of the document-topics DataFrame.
+    * :meth:`static_heatmap` plots a static, :module:`matplotlib`-based heatmap of \
+        the document-topics distribution.
+    * :meth:`interactive_heatmap` plots an interactive, :module:`bokeh`-based \
+        heatmap of the document-topics distribution.
+    * :meth:`static_barchart_per_topic` plots a static, :module:`matplotlib`-based  \
+        barchart of the document proportions for a specific topic.
+    * :meth:`interactive_barchart_per_topic` plots an interactive, :module:`bokeh`-based  \
+        barchart of the document proportions for a specific topic.
+    * :meth:`static_barchart_per_document` plots a static, :module:`matplotlib`-based  \
+        barchart of the topic proportions for a specific document.
+    * :meth:`interactive_barchart_per_document` plots an interactive, :module:`bokeh`-based  \
+        barchart of the topic proportions for a specific document.
+    * :meth:`topic_over_time` plots a static, :module:`matplotlib`-based  \
+        line diagram of the development of a topic over time, based on metadata.
+    * :meth:`to_file` saves either a :module:`matplotlib` or a :module:`bokeh` figure \
+        object to disk.
+
 """
 
 
@@ -32,11 +51,20 @@ from bokeh.models import (
             ColorBar
             )
 
-import regex
-from collections import defaultdict
+from collections import Counter
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
+    
+    
+def notebook_handling():
+    """Runs cell magic for Jupyter notebooks
+    """
+    from IPython import get_ipython
+    get_ipython().run_line_magic('matplotlib', 'inline')
+    from bokeh.io import output_notebook, show
+    output_notebook()
+    return show
 
 
 def plot_wordcloud(weights, enable_notebook=True, **kwargs):
@@ -45,7 +73,7 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
     Args:
         weights (dict): A dictionary (or :module:``pandas`` Series) with tokens
             as keys and frequencies as values.
-        enable_notebook (bool), optional: If True, enables :module:``matplotlib``
+        enable_notebook (bool), optional: If True, uses :module:``matplotlib``
             to show its figures within a Jupyter notebook.
         font_path (str), optional: Font path to the font that will be used (OTF or TTF).
             Defaults to DroidSansMono path on a Linux machine. If you are on
@@ -107,8 +135,6 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
     """
     wordcloud = WordCloud(**kwargs).fit_words(weights)
     if enable_notebook:
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
         try:
             fig, ax = plt.subplots(figsize=(kwargs['width'] / 96, kwargs['height'] / 96))
         except KeyError:
@@ -116,94 +142,6 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
         ax.axis('off')
         ax.imshow(wordcloud)
     return wordcloud
-
-
-def plot_key_frequencies(keys=None, overall_freqs=None, within_topic_freqs=None,
-                         within_topic_color='#FF1727', document_term_matrix=None,
-                         model=None, vocabulary=None, topic_no=None, overall_color='#053967',
-                         figsize=(15, 7), dpi=None, overall_edgecolor=None,
-                         overall_linewidth=None, overall_alpha=0.9, within_topic_edgecolor=None,
-                         within_topic_linewidth=None, within_topic_alpha=0.9,
-                         label_fontsize=15, num_keys=None, tick_fontsize=14, legend_fontsize=15,
-                         legend=True, enable_notebook=True):
-    """Plots key frequencies overall and from within topic.
-    
-    Args:
-        keys (list): A list of tokens. Defaults to None.
-        overall_freqs (list): A list of frequencies. Defaults to None.
-        within_topic_freqs (list): A list of frequencies. Defaults to None.
-        within_topic_color (str), optional: Color for topic frequencies bar. Defaults to
-            ``#FF1727``.
-        document_term_matrix (pandas DataFrame), optional: A document-term matrix. Defaults
-            to None.
-        model, optional: A LDA model. Defaults to None.
-        vocabulary (list), optional: Vocabulary of the corpus. Defaults to None.
-        topic_no (int), optional: Number of topic. Defaults to None.
-        overall_color (str), optional: Color for overall frequencies bar. Defaults to ``#053967``.
-        figsize (tuple), optional: Size of the figure. Defaults to ``(15, 7)``.
-        dpi (int), optional: Dots per inch. Defaults to None.
-        overall_edgecolor (str), optional: Color for edgecolors of overall frequencies bar.
-            Defaults to None.
-        overall_linewidth (int), optional: Linewidth of overall frequencies bar. Defaults to
-            None.
-        overall_alpha (int), optional: Alpha for overall frequencies bar. Defaults to 0.9.
-        within_topic_edgecolor (str), optional: Color for edgecolors of overall frequencies bar.
-            Defaults to None.
-        within_topic_linewidth (int), optional: Linewidth of overall frequencies bar. Defaults to
-            None.
-        within_topic_alpha (int), optional: Alpha for overall frequencies bar. Defaults to 0.9.
-        label_fontsize (int), optional: Fontsize of x-axis and y-axis labels. Defaults to 15.
-        num_keys (int), optional: Number of tokens for y-axis. Defaults to None.
-        tick_fontsize (int), optional: Fontsize of x- and y-ticks. Defaults to 14.
-        legend_fontsize (int), optional: Fontsize of the legend. Defaults to 15.
-        legend (bool), optional: If True, legend will be displayed. Defaults to True.
-        enable_notebook (bool), optional: If True, enables :module:``matplotlib``
-            to show its figures within a Jupyter notebook.
-
-    Returns:
-        Figure object.
-        
-    Example:
-        >>> keys = ['one', 'example']
-        >>> overall_freqs = [20, 10]
-        >>> within_topic_freqs = [10, 5]
-        >>> plot_key_frequencies(keys=keys,
-        ...                      overall_freqs=overall_freqs,
-        ...                      within_topic_freqs=within_topic_freqs,
-        ...                      enable_notebook=False) # doctest: +ELLIPSIS
-        <matplotlib.figure.Figure object at ...>
-    """
-    if enable_notebook:
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
-    if model:
-        within_topic_freqs = postprocessing.get_sorted_values_from_distribution(model.components_[topic_no],
-                                                                                model.components_[topic_no],
-                                                                                num_keys)
-        within_topic_freqs = [dist * len(vocabulary) for dist in within_topic_freqs]
-        total = [document_term_matrix[token].sum() for token in vocabulary]
-        overall_freqs = postprocessing.get_sorted_values_from_distribution(total,
-                                                                           model.components_[topic_no],
-                                                                           num_keys)
-        keys = postprocessing.get_sorted_values_from_distribution(vocabulary,
-                                                                  model.components_[topic_no],
-                                                                  num_keys)
-    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    y_axis = np.arange(len(keys))
-    overall = ax.barh(y_axis, overall_freqs, color=overall_color, edgecolor=overall_edgecolor,
-                      linewidth=overall_linewidth, alpha=overall_alpha)
-    within = ax.barh(y_axis, within_topic_freqs, color=within_topic_color,
-                     edgecolor=within_topic_edgecolor, linewidth=within_topic_linewidth,
-                     alpha=within_topic_alpha)
-    ax.set_xlabel('Frequency', fontsize=label_fontsize)
-    ax.set_ylabel('Key', fontsize=label_fontsize)
-    ax.set_yticks(y_axis)
-    ax.set_yticklabels(keys, fontsize=tick_fontsize)
-    ax.tick_params(axis='x', labelsize=tick_fontsize)
-    if legend:
-        ax.legend(handles=[overall, within], labels=['Overall', 'Within Topic'], loc='best',
-                  fontsize=legend_fontsize)
-    return fig
 
 
 class PlotDocumentTopics:
@@ -214,17 +152,8 @@ class PlotDocumentTopics:
         self.document_topics = document_topics
         self.enable_notebook = enable_notebook
         if enable_notebook:
-            self.show = self.notebook_handling()
-        
-    @staticmethod
-    def notebook_handling():
-        """Runs cell magic for Jupyter notebooks
-        """
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
-        from bokeh.io import output_notebook, show
-        output_notebook()
-        return show
+            self.show = notebook_handling()
+
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
                        labels_fontsize=13, cmap='Blues', ticks_fontsize=12,
@@ -453,8 +382,8 @@ class PlotDocumentTopics:
         fig.xaxis.major_label_orientation = major_label_orientation
         
         if 'hover' in tools:
-            fig.select_one(HoverTool).tooltips = [('Document', '@Documents'),
-                                                  ('Topic', '@Topics'),
+            fig.select_one(HoverTool).tooltips = [('x-Axis', '@Documents'),
+                                                  ('y-Axis', '@Topics'),
                                                   ('Score', '@Distributions')]
 
         if colorbar:
@@ -617,7 +546,7 @@ class PlotDocumentTopics:
         """
         return self.__interactive_barchart(transpose_data=True, **kwargs)
 
-    def topic_over_time(self, pattern = r"\d{4}",  threshold=0.1, starttime=1841, endtime=1920):
+    def topic_over_time(self, metadata_df, threshold=0.1, starttime=1841, endtime=1920):
         """Creates a visualization that shows topics over time.
 
         Description:
@@ -625,7 +554,7 @@ class PlotDocumentTopics:
             Only works with mallet output.
 
         Args:
-            labels(list): first three keys in a topic to select
+            metadata_df(pd.Dataframe()): metadata created by metadata_toolbox
             threshold(float): threshold set to define if a topic in a document is viable
             starttime(int): sets starting point for visualization
             endtime(int): sets ending point for visualization
@@ -641,31 +570,27 @@ class PlotDocumentTopics:
                 Doctest
 
         """
-        years=list(range(starttime,endtime))
-        #doc_topicT = doc_topics.T
-        topiclabels = []
-        reg = regex.compile(pattern)
+        years = list(range(starttime, endtime))
+
         for topiclabel in self.document_topics.index.values:
-            for topiclabel in topiclabels:
-                topic_over_threshold_per_year = []
-                mask = doc_topics.loc[topiclabel] > threshold
-                df = doc_topics.loc[topiclabel].loc[mask]
-                #df = doc_topics.loc[doc_topics.loc[topiclabel] >  threshold]
-                #print (df)
-                d = defaultdict(int)
-                for item in df.index.values:
-                    year = reg.findall(item)
-                    d[year[0]]+=1
-                for year in years:
-                    topic_over_threshold_per_year.append(d[str(year)])
-                plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
+            topic_over_threshold_per_year = []
+            mask = self.document_topics.loc[topiclabel] > threshold
+            df = self.document_topics.loc[topiclabel].loc[mask]
+            cnt = Counter()
+            for filtered_topiclabel in df.index.values:
+                year = metadata_df.loc[filtered_topiclabel, 'year']
+                print(year)
+                cnt[year] += 1
+            for year in years:
+                topic_over_threshold_per_year.append(cnt[str(year)])
+            plt.plot(years, topic_over_threshold_per_year, label=topiclabel)
 
         plt.xlabel('Year')
         plt.ylabel('count topics over threshold')
         plt.legend()
-        fig = plt.gcf()
-        fig.set_size_inches(18.5, 10.5)
-        return fig
+        # fig.set_size_inches(18.5, 10.5)
+        # fig = plt.figure(figsize=(18, 16))
+        return plt.gcf().set_size_inches(18.5, 10.5)
 
     @staticmethod
     def to_file(fig, filename):
@@ -693,6 +618,4 @@ class PlotDocumentTopics:
         elif isinstance(fig, matplotlib.figure.Figure):
             fig.savefig(filename)
         return None
-
-
 
