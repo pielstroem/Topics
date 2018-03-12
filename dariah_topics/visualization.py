@@ -33,6 +33,16 @@ from collections import Counter
 from wordcloud import WordCloud
 
 log = logging.getLogger(__name__)
+    
+    
+def enable_notebook():
+    """Runs cell magic for Jupyter notebooks
+    """
+    from IPython import get_ipython
+    get_ipython().run_line_magic('matplotlib', 'inline')
+    from bokeh.io import output_notebook, show
+    output_notebook()
+    return show
 
 
 def plot_wordcloud(weights, enable_notebook=True, **kwargs):
@@ -41,7 +51,7 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
     Args:
         weights (dict): A dictionary (or :module:``pandas`` Series) with tokens
             as keys and frequencies as values.
-        enable_notebook (bool), optional: If True, enables :module:``matplotlib``
+        enable_notebook (bool), optional: If True, uses :module:``matplotlib``
             to show its figures within a Jupyter notebook.
         font_path (str), optional: Font path to the font that will be used (OTF or TTF).
             Defaults to DroidSansMono path on a Linux machine. If you are on
@@ -103,8 +113,6 @@ def plot_wordcloud(weights, enable_notebook=True, **kwargs):
     """
     wordcloud = WordCloud(**kwargs).fit_words(weights)
     if enable_notebook:
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
         try:
             fig, ax = plt.subplots(figsize=(kwargs['width'] / 96, kwargs['height'] / 96))
         except KeyError:
@@ -122,17 +130,8 @@ class PlotDocumentTopics:
         self.document_topics = document_topics
         self.enable_notebook = enable_notebook
         if enable_notebook:
-            self.show = self.notebook_handling()
-        
-    @staticmethod
-    def notebook_handling():
-        """Runs cell magic for Jupyter notebooks
-        """
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'inline')
-        from bokeh.io import output_notebook, show
-        output_notebook()
-        return show
+            self.show = enable_notebook()
+
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
                        labels_fontsize=13, cmap='Blues', ticks_fontsize=12,
@@ -597,6 +596,4 @@ class PlotDocumentTopics:
         elif isinstance(fig, matplotlib.figure.Figure):
             fig.savefig(filename)
         return None
-
-
 
