@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 Preprocessing Text Data, Creating Matrices and Cleaning Corpora
 ***************************************************************
@@ -72,7 +69,6 @@ import pandas as pd
 import pickle
 import regex
 import logging
-
 
 log = logging.getLogger(__name__)
 
