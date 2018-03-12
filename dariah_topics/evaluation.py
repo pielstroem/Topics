@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Measuring and Evaluating Semantic Coherence of Topics
 =====================================================
@@ -11,81 +9,14 @@ This module provides a method to evaluate the topics quantitatively by semantic
 coherence.
 """
 
-__author__ = "DARIAH-DE"
-__email__ = "severin.simmler@stud-mail.uni-wuerzburg.de"
-
 from itertools import permutations, combinations
 import numpy as np
 import pandas as pd
 
 
-def read_sparse_bow(path):
-    """Opens sparse_bow from CSV-file.
-
-    Description:
-        With this function you can read a CSV-file containing a sparse_bow.
-        Use the function `create_sparse_bow()` of the `preprocessing`-module
-        to create a sparse_bow.
-
-    Args:
-        path (str): Path to CSV-file.
-
-    Returns:
-        DataFrame.
-    """
-    sparse_bow = pd.read_csv(path)
-    sparse_bow = sparse_bow.set_index(['doc_id', 'token_id'])
-    return sparse_bow
-
-
-def read_dictionary(path):
-    """Opens type dictionary from CSV-file.
-
-    Description:
-        With this function you can read a CSV-file containing a a type dictionary.
-        Use the function `create_dictionary()` of the `preprocessing`-module
-        to create a type dictionary.
-
-    Args:
-        path (str): Path to CSV-file.
-
-    Returns:
-        DataFrame.
-    """
-    dictionary = pd.read_csv(path, header=None)
-    dictionary.index = dictionary[0]
-    dictionary = dictionary[1]
-    return dictionary.to_dict()
-
-
-def token2bow(token, type_dictionary):
-    """Adds token to type dictionary.
-
-    Description:
-        With this function you can
-            * get the ID for a token in an existing type dictionary, if token is
-                is already in type dictionary
-            * get the ID for a token after adding the token to type dictionary,
-                if token was not part of the dictionary
-
-    Args:
-        token (str): Token.
-        type_dictionary (dict): Dictionary containing tokens as keys and integers
-            as values.
-
-    Returns:
-        ID (int) of token.
-    """
-    try:
-        return type_dictionary[token]
-    except KeyError:
-        type_dictionary[token] = len(type_dictionary) + 1
-        return type_dictionary[token]
-
-
 class Preparation:
     """
-    Preparation for coherence measures
+    Preparation for coherence measures.
     """
 
     def __init__(self, topics, sparse_bow, type_dictionary):
@@ -192,11 +123,11 @@ class Measures(Preparation):
         try:
             k1 = occurences[str(pair[0])]
         except KeyError:
-            print("%s nicht" % pair[0])
+            pass
         try:
             k2 = occurences[str(pair[1])]
         except KeyError:
-            print("%s nicht" % pair[1])
+            pass
         try:
             k1k2 = k1.intersection(k2)
             numerator = (len(k1k2) + e) / n
@@ -225,11 +156,11 @@ class Measures(Preparation):
         try:
             k1 = occurences[str(pair[0])]
         except KeyError:
-            print("%s nicht" % pair[0])
+            pass
         try:
             k2 = occurences[str(pair[1])]
         except KeyError:
-            print("%s nicht" % pair[1])
+            pass
         try:
             k1k2 = k1.intersection(k2)
             numerator = (len(k1k2) + e) / n
