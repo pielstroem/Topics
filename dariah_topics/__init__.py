@@ -8,11 +8,11 @@ The :mod:`dariah_topics` package currently offers seven modules:
 * :mod:`dariah_topics.visualization` for visualizing the output of LDA models.
 """
 
-import evaluation
-import postprocessing
-import preprocessing
-import utils
-import visualization
+from dariah_topics import evaluation
+from dariah_topics import postprocessing
+from dariah_topics import preprocessing
+from dariah_topics import utils
+from dariah_topics import visualization
 
 __author__ = "Sina Bock, Philip Dürholt, Michael Huber, Thora Hagen, Severin Simmler, Thorsten Vitt"
 __version__ = "0.3.0dev1"
