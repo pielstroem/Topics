@@ -1,6 +1,5 @@
 # Topics – Easy Topic Modeling in Python
-
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a standalone [GUI demonstrator](https://github.com/DARIAH-DE/TopicsExplorer). **For a standalone application**, which does not require a Python interpreter or any extra installations, **have a look at the [release-section](https://github.com/DARIAH-DE/TopicsExplorer/releases)**.
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -28,6 +27,30 @@ To install the latest development version:
 ```
 $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 ```
+
+## Example code
+In only 15 lines of code from plain text files to a visualization of the topic model output.
+
+```python
+>>> from dariah_topics import preprocessing, modeling, postprocessing, visualization
+>>> pathlist = ['corpus/dickens_bleak.txt', 'corpus/thackeray_vanity.txt']
+>>> labels = ['dickens_bleak', 'thackeray_vanity']
+>>> corpus = preprocessing.read_from_pathlist(pathlist)
+>>> tokens = [preprocessing.tokenize(document) for document in corpus]
+>>> matrix = preprocessing.create_document_term_matrix(tokens, labels)
+>>> stopwords = preprocessing.find_stopwords(matrix)
+>>> clean_matrix = preprocessing.remove_features(stopwords, matrix)
+>>> vocabulary = clean_matrix.columns
+>>> model = modeling.lda(topics=10, iterations=1000, implementation='mallet')
+>>> topics = postprocessing.show_topics(model, vocabulary)
+>>> document_topics = postprocessing.show_document_topics(model, topics, labels)
+>>> PlotDocumentTopics = visualization.PlotDocumentTopics(document_topics)
+>>> static_heatmap = PlotDocumentTopics.static_heatmap()
+>>> static_heatmap.show()
+```
+<p align="center">
+  <img src="docs/images/heatmap.png"/>
+</p>
 
 ## Working with Jupyter Notebooks
 If you wish to work through the tutorials, you can clone the repository using [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git):
@@ -77,14 +100,13 @@ If you are confronted with any issues regarding installation or usability, pleas
 ### UNIX-specific Issues
 * In case of `PermissionError: [Errno 13] Permission denied`, try `pip install --user` or `python setup.py install --user`, respectively.
 * Due to several visualization dependencies, you might have to install the distribution packages `libfreetype6-dev` and `libpng-dev` (e.g. using `sudo apt-get install`).
-
-### MacOS-specific Issues
 * Make sure to install Python 3.6 correctly and adjust the selection of the Python interpreter in your editor accordingly. See also: https://docs.python.org/3/using/mac.html
 
-<hr>
 
-The library and its tutorials have been developed with support from the [DARIAH-DE](https://de.dariah.eu) initiative, the German branch of [DARIAH-EU](http://dariah.eu/), the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
+## About DARIAH-DE
+[DARIAH-DE](https://de.dariah.eu) supports research in the humanities and cultural sciences with digital methods and procedures. The research infrastructure of DARIAH-DE consists of four pillars: teaching, research, research data and technical components. As a partner in [DARIAH-EU](http://dariah.eu/), DARIAH-DE helps to bundle and network state-of-the-art activities of the digital humanities. Scientists use DARIAH, for example, to make research data available across Europe. The exchange of knowledge and expertise is thus promoted across disciplines and the possibility of discovering new scientific discourses is encouraged.
 
-![DARIAH-DE](https://raw.githubusercontent.com/DARIAH-DE/Topics/testing/docs/images/dariah-de_logo.png)
-![BMBF](https://raw.githubusercontent.com/DARIAH-DE/Topics/testing/docs/images/bmbf_logo.png)
+This application has been developed with support from the DARIAH-DE initiative, the German branch of DARIAH-EU, the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
 
+![DARIAH-DE](docs/images/dariah-de_logo.png)
+![BMBF](docs/images/bmbf_logo.png)
