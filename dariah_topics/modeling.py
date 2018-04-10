@@ -19,6 +19,7 @@ def lda(document_term_matrix, topics, iterations=1000, implementation='lda', gen
                             output_topic_keys=output_topic_keys,
                             output_doc_topics=output_topic_keys,
                             num_topics=topics,
-                            num_iterations=iterations)
+                            num_iterations=iterations,
+                            **kwargs)
     else:
         raise ValueError("{} is no supported LDA implementation".fromat(implementation))
