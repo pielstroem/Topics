@@ -1,5 +1,5 @@
 import lda
-import utils
+from dariah_topics import utils
 import gensim
 
 def lda(document_term_matrix, topics, iterations=1000, implementation='lda', gensim_corpus=None,
