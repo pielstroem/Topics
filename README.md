@@ -62,7 +62,7 @@ $ git clone https://github.com/DARIAH-DE/Topics.git
 or download the [ZIP-archive](https://github.com/DARIAH-DE/Topics/archive/master.zip) (don't forget to unzip it) and install `dariah_topics` from its source code:
 
 ```
-$ python setup.py install
+$ pip install -r requirements.txt
 ```
 
 As a server-client application, Jupyter allows you to edit and run Python code interactively from within so-called notebooks via a web browser.
