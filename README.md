@@ -1,5 +1,5 @@
 # Topics – Easy Topic Modeling in Python
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for Topic Modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic Topic Modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
+[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for topic modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic topic modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -11,9 +11,9 @@ At the moment, this library supports three LDA implementations:
 * [Topics API documentation](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/docs/gen/modules.html)
 * [Topics paper](https://dh2017.adho.org/abstracts/411/411.pdf)
 * **[Standalone Demonstrator releases](https://github.com/DARIAH-DE/TopicsExplorer/releases/latest)**
-* [An introduction to Topic Modeling using lda](IntroducingLda.ipynb)
-* [An introduction to Topic Modeling using MALLET](IntroducingMallet.ipynb)
-* [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
+* [An introduction to topic modeling using lda](IntroducingLda.ipynb)
+* [An introduction to topic modeling using MALLET](IntroducingMallet.ipynb)
+* [An introduction to topic modeling using Gensim](IntroducingGensim.ipynb)
 
 ## Installation
 To install the latest stable version of the library `dariah_topics`:
