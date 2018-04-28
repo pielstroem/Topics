@@ -10,7 +10,7 @@ At the moment, this library supports three LDA implementations:
 * [Topics website](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/)
 * [Topics API documentation](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/docs/gen/modules.html)
 * [Topics paper](https://dh2017.adho.org/abstracts/411/411.pdf)
-* **[Standalone Demonstrator releases](https://github.com/DARIAH-DE/TopicsExplorer/releases)**
+* **[Standalone Demonstrator releases](https://github.com/DARIAH-DE/TopicsExplorer/releases/latest)**
 * [An introduction to Topic Modeling using lda](IntroducingLda.ipynb)
 * [An introduction to Topic Modeling using MALLET](IntroducingMallet.ipynb)
 * [An introduction to Topic Modeling using Gensim](IntroducingGensim.ipynb)
