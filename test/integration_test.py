@@ -15,7 +15,7 @@ def run_notebook(notebook_name):
                      "--log-level=ERROR",
                      "--ExecutePreprocessor.iopub_timeout=30",
                       "--ExecutePreprocessor.timeout=None",
-                    str(Path(project_path, notebook_name))],
+                    str(Path(project_path, 'notebooks', notebook_name))],
                      stderr=STDOUT, universal_newlines=True)
     except FileNotFoundError as e:
         raise SkipTest("jupyter-nbconvert not found. Cannot run integration test. "

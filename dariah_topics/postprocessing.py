@@ -40,7 +40,7 @@ import pandas as pd
 import pickle
 import logging
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('dariah_topics')
 
 
 def doc2bow(document_term_matrix):

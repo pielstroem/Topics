@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
 
-PROJECT = 'DARIAH Topic Modelling'
-VERSION = '0.7'
-REVISION = '0.7.1.dev1'
+PROJECT = 'DARIAH Topic Modeling'
+VERSION = '1.0'
+REVISION = '1.0.0.dev'
 AUTHOR = 'DARIAH-DE Wuerzburg Group'
 AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
+URL = 'https://dariah-de.github.io/Topics'
 
 setup(
     name='dariah_topics',
     version=REVISION,
     description=PROJECT,
-    # url
+    url=URL,
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
-    # license
+    license='Apache 2.0',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6'
     ],
-    # keywords
-    packages=find_packages(exclude=['docs', 'demonstrator', 'grenzboten_sample', 'test', 'tutorial_supplementals']),
+    keywords=['topic modeling', 'lda', 'natural language processing', 'digital humanities'],
+    packages=find_packages(exclude=['docs', 'test', 'notebooks']),
     install_requires=[
         'pandas>=0.19.2',
         'regex>=2017.01.14',
@@ -34,7 +34,7 @@ setup(
         'lxml>=3.6.4',
         'matplotlib>=1.5.3',
         'bokeh>=0.12.6',
-        'wordcloud>=1.3.1'
+        'metadata_toolbox'
     ],
     command_options={
         'build_sphinx': {

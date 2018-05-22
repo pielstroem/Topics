@@ -70,7 +70,7 @@ import pickle
 import regex
 import logging
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('dariah_topics')
 
 
 def add_token2id(token, token2id):

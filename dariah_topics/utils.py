@@ -36,7 +36,7 @@ from platform import system
 from subprocess import Popen, PIPE
 import tempfile
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('dariah_topics')
 
 
 def _decode(std):

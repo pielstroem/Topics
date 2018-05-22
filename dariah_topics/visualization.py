@@ -52,107 +52,17 @@ from bokeh.models import (
             )
 
 from collections import Counter
-from wordcloud import WordCloud
-
-log = logging.getLogger(__name__)
-    
-    
-def notebook_handling():
-    """Runs cell magic for Jupyter notebooks
-    """
-    from IPython import get_ipython
-    get_ipython().run_line_magic('matplotlib', 'inline')
-    from bokeh.io import output_notebook, show
-    output_notebook()
-    return show
 
 
-def plot_wordcloud(weights, enable_notebook=True, **kwargs):
-    """Plots a wordcloud based on tokens and frequencies.
-    
-    Args:
-        weights (dict): A dictionary (or :module:``pandas`` Series) with tokens
-            as keys and frequencies as values.
-        enable_notebook (bool), optional: If True, uses :module:``matplotlib``
-            to show its figures within a Jupyter notebook.
-        font_path (str), optional: Font path to the font that will be used (OTF or TTF).
-            Defaults to DroidSansMono path on a Linux machine. If you are on
-            another OS or don't have this font, you need to adjust this path.
-        width (int), optional: Width of the canvas. Defaults to 400.
-        height (int), optional: Height of the canvas. Defaults to 200.
-        prefer_horizontal (float): The ratio of times to try horizontal fitting
-            as opposed to vertical. If ``prefer_horizontal < 1``, the algorithm
-            will try rotating the word if it doesn't fit. (There is currently no
-            built-in way to get only vertical words. Defaults to 0.90.
-        mask (nd-array), optional: If not None, gives a binary mask on where to draw words.
-            If mask is not None, width and height will be ignored and the shape
-            of mask will be used instead. All white (#FF or #FFFFFF) entries
-            will be considerd 'masked out' while other entries will be free to
-            draw on. Defaults to None.
-        scale (float), optional: Scaling between computation and drawing. For large word-cloud
-            images, using scale instead of larger canvas size is significantly
-            faster, but might lead to a coarser fit for the words. Defaults to 1.
-        min_font_size (int), optional: Smallest font size to use. Will stop when there is
-            no more room in this size. Defaults to 4.
-        font_step (int), optional: Step size for the font. ``font_step > 1`` might speed
-            up computation but give a worse fit. Defaults to 1.
-        max_words (int), optional: The maximum number of words. Defaults to 200.
-        stopwords (set), optional: The words that will be eliminated. If None, the build-in
-            stopwords list will be used.
-        background_color (str), optional: Background color for the word cloud image.
-            Defaults to ``black``.
-        max_font_size (int), optional: Maximum font size for the largest word. If None,
-            height of the image is used.
-        mode (str), optional: Transparent background will be generated when mode is ``RGBA``
-            and background_color is None. Defaults to ``RGB``.
-        relative_scaling (float), optional: Importance of relative word frequencies for
-            font-size. With ``relative_scaling=0``, only word-ranks are considered.
-            With ``relative_scaling=1``, a word that is twice as frequent will
-            have twice the size. If you want to consider the word frequencies and
-            not only their rank, ``relative_scaling`` around .5 often looks good.
-            Defaults to 0.5.
-        color_func (callable), optional: Callable with parameters ``word``, ``font_size``,
-            ``position``, ``orientation``, ``font_path``, ``random_state`` that
-            returns a PIL color for each word. Overwrites ``colormap``. See ``colormap``
-            for specifying a :module:``matplotlib`` colormap instead.
-        collocations (bool), optional: Whether to include collocations (bigrams) of two words.
-            Defaults to True.
-        colormap (str), optional: :module:``matplotlib`` colormap to randomly draw colors
-            from for each word. Ignored if ``color_func`` is specified. Defaults to
-            ``viridis``.
-        normalize_plurals (bool), optional: Whether to remove trailing 's' from words. If
-            True and a word appears with and without a trailing 's', the one with
-            trailing 's' is removed and its counts are added to the version without
-            trailing 's' -- unless the word ends with 'ss'. Defaults to True.
-
-    Returns:
-        WordCloud object.
-        
-    Example:
-        >>> weights = {'an': 2, 'example': 1}
-        >>> plot_wordcloud(weights, enable_notebook=False) # doctest: +ELLIPSIS
-        <wordcloud.wordcloud.WordCloud object at ...>
-    """
-    wordcloud = WordCloud(**kwargs).fit_words(weights)
-    if enable_notebook:
-        try:
-            fig, ax = plt.subplots(figsize=(kwargs['width'] / 96, kwargs['height'] / 96))
-        except KeyError:
-            fig, ax = plt.subplots(figsize=(400 / 96, 200 / 96))
-        ax.axis('off')
-        ax.imshow(wordcloud)
-    return wordcloud
+log = logging.getLogger('dariah_topics')
 
 
 class PlotDocumentTopics:
     """
     Class to visualize document-topic matrix.
     """
-    def __init__(self, document_topics, enable_notebook=True):
+    def __init__(self, document_topics):
         self.document_topics = document_topics
-        self.enable_notebook = enable_notebook
-        if enable_notebook:
-            self.show = notebook_handling()
 
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
@@ -391,8 +301,6 @@ class PlotDocumentTopics:
                                ticker=BasicTicker(desired_num_ticks=len(palette)),
                                label_standoff=6, border_line_color=None, location=(0, 0))
             fig.add_layout(feature, 'right')
-        if self.enable_notebook:
-            self.show(fig, notebook_handle=True)
         return fig
 
     
@@ -472,8 +380,6 @@ class PlotDocumentTopics:
         
         if 'hover' in tools:
             fig.select_one(HoverTool).tooltips = [('Proportion', '@Proportion')]
-        if self.enable_notebook:
-            self.show(fig, notebook_handle=True)
         return fig    
     
     def interactive_barchart_per_topic(self, **kwargs):
