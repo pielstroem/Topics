@@ -54,18 +54,8 @@ from bokeh.models import (
 from collections import Counter
 from wordcloud import WordCloud
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('dariah_topics')
     
-    
-def notebook_handling():
-    """Runs cell magic for Jupyter notebooks
-    """
-    from IPython import get_ipython
-    get_ipython().run_line_magic('matplotlib', 'inline')
-    from bokeh.io import output_notebook, show
-    output_notebook()
-    return show
-
 
 def plot_wordcloud(weights, enable_notebook=True, **kwargs):
     """Plots a wordcloud based on tokens and frequencies.
@@ -148,11 +138,9 @@ class PlotDocumentTopics:
     """
     Class to visualize document-topic matrix.
     """
-    def __init__(self, document_topics, enable_notebook=True):
+    def __init__(self, document_topics):
         self.document_topics = document_topics
         self.enable_notebook = enable_notebook
-        if enable_notebook:
-            self.show = notebook_handling()
 
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
@@ -391,8 +379,6 @@ class PlotDocumentTopics:
                                ticker=BasicTicker(desired_num_ticks=len(palette)),
                                label_standoff=6, border_line_color=None, location=(0, 0))
             fig.add_layout(feature, 'right')
-        if self.enable_notebook:
-            self.show(fig, notebook_handle=True)
         return fig
 
     
@@ -472,8 +458,6 @@ class PlotDocumentTopics:
         
         if 'hover' in tools:
             fig.select_one(HoverTool).tooltips = [('Proportion', '@Proportion')]
-        if self.enable_notebook:
-            self.show(fig, notebook_handle=True)
         return fig    
     
     def interactive_barchart_per_topic(self, **kwargs):
