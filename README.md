@@ -1,5 +1,5 @@
 # Topics – Easy Topic Modeling in Python
-[Topics](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/) is a Python library for topic modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic topic modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
+[Topics](https://dariah-de.github.io/Topics/) is a Python library for topic modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic topic modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
 
 At the moment, this library supports three LDA implementations:
 * [lda](http://pythonhosted.org/lda/index.html), which is lightweight and provides basic LDA.
@@ -7,19 +7,20 @@ At the moment, this library supports three LDA implementations:
 * [Gensim](https://radimrehurek.com/gensim/), which is attractive because of its multi-core support.
 
 ## Resources
-* [Topics website](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/)
-* [Topics API documentation](http://dev.digital-humanities.de/ci/job/DARIAH-Topics/doclinks/1/docs/gen/modules.html)
+* [Topics website](https://dariah-de.github.io/Topics/)
+* [Topics API documentation](https://dariah-de.github.io/Topics/docs/gen/modules.html)
 * [Topics paper](https://dh2017.adho.org/abstracts/411/411.pdf)
 * **[Standalone Demonstrator releases](https://github.com/DARIAH-DE/TopicsExplorer/releases/latest)**
-* [An introduction to topic modeling using lda](IntroducingLda.ipynb)
-* [An introduction to topic modeling using MALLET](IntroducingMallet.ipynb)
-* [An introduction to topic modeling using Gensim](IntroducingGensim.ipynb)
+* [An introduction to topic modeling using lda](notebooks/IntroducingLda.ipynb)
+* [An introduction to topic modeling using MALLET](notebooks/IntroducingMallet.ipynb)
+* [An introduction to topic modeling using Gensim](notebooks/IntroducingGensim.ipynb)
+* [A demonstration of all available visualizations](notebooks/Visualization.ipynb)
 
 ## Installation
 To install the latest stable version of the library `dariah_topics`:
 
 ```
-$ pip install git+https://github.com/DARIAH-DE/Topics.git
+$ pip install dariah_topics
 ```
 
 To install the latest development version:
@@ -91,7 +92,7 @@ You can download MALLET [here](http://mallet.cs.umass.edu/download.php). For mor
 ## Troubleshooting
 If you are confronted with any issues regarding installation or usability, please use [GitHub issues](https://github.com/DARIAH-DE/Topics/issues).
 
-**This library requires Python 3.6 or higher.**
+**This library requires Python 3.4 or higher.**
 
 ### Windows-specific Issues
 * You will have to install `future‑0.16.0‑py3‑none‑any.whl` from [this resource](http://www.lfd.uci.edu/~gohlke/pythonlibs/). Download the appropriate file and run `pip install future‑0.16.0‑py3‑none‑any.whl`.
