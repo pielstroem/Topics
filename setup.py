@@ -34,7 +34,7 @@ setup(
         'lxml>=3.6.4',
         'matplotlib>=1.5.3',
         'bokeh>=0.12.6',
-        'metadata_toolbox>=0.1'
+        'metadata_toolbox'
     ],
     command_options={
         'build_sphinx': {
