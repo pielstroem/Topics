@@ -247,11 +247,11 @@ def show_document_topics(topics, model=None, document_labels=None, doc_topics_fi
   
     index = [' '.join(keys[:num_keys]) for keys in topics.values]
     if isinstance(model, LDA):
-        return _show_lda_document_topics(model, document_labels, index)
+        return _show_lda_document_topics(model, document_labels, index).round(4)
     elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
-        return _show_gensim_document_topics(doc2bow, model, document_labels, index)
+        return _show_gensim_document_topics(doc2bow, model, document_labels, index).round(4)
     elif doc_topics_file is not None:
-        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format)
+        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format).round(4)
 
 
 def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
