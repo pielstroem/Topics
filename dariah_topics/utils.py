@@ -108,7 +108,7 @@ def call_commandline(cmd, stdin=None, stdout='pipe', stderr='pipe', communicate=
         else:
             for line_stdout in decoded_stdout:
                 log.info(line_stdout)
-            for line_stdout in decoded_stderr:
+            for line_stderr in decoded_stderr:
                 log.info(line_stderr)
     return process
 
@@ -283,8 +283,8 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.')
-            >>> mallet_corpus = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
+            >>> mallet = Mallet(corpus_output='.')
+            >>> mallet_corpus = mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
             >>> os.path.exists('corpus.mallet')
             True
         """
@@ -379,9 +379,9 @@ class Mallet:
         Example:
             >>> tokenized_corpus = [['this', 'is', 'a', 'tokenized', 'document']]
             >>> document_labels = ['document_label']
-            >>> Mallet = Mallet(corpus_output='.')
-            >>> mallet_corpus = Mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
-            >>> mallet_topics = Mallet.train_topics(mallet_corpus,
+            >>> mallet = Mallet(corpus_output='.')
+            >>> mallet_corpus = mallet.import_tokenized_corpus(tokenized_corpus, document_labels)
+            >>> mallet_topics = mallet.train_topics(mallet_corpus,
             ...                                     output_model='model.mallet',
             ...                                     num_iterations=10)
             >>> os.path.exists('model.mallet')
