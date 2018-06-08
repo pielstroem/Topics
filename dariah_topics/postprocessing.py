@@ -214,7 +214,7 @@ def save_tokenized_corpus(tokenized_corpus, document_labels, path):
     return None
 
 
-def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3, easy_file_format=True):
+def show_document_topics(topics, model=None, document_labels=None, doc_topics_file=None, doc2bow=None, num_keys=3, easy_file_format=True, dec=4):
     """Shows topic distribution for each document.
     
     With this function you can show the topic distributions for all documents in a pandas DataFrame. \
@@ -235,6 +235,7 @@ def show_document_topics(topics, model=None, document_labels=None, doc_topics_fi
         doc2bow (list, optional): A list of lists containing tuples of ``type_id`` and
             frequency.
         num_keys (int, optional): Number of top keys for each topic.
+        dec (int, optional): Number of decimal places in the document-topics-value
     
     Returns:
         A pandas DataFrame with rows corresponding to topics and columns corresponding
@@ -247,11 +248,11 @@ def show_document_topics(topics, model=None, document_labels=None, doc_topics_fi
   
     index = [' '.join(keys[:num_keys]) for keys in topics.values]
     if isinstance(model, LDA):
-        return _show_lda_document_topics(model, document_labels, index).round(4)
+        return _show_lda_document_topics(model, document_labels, index).round(dec)
     elif isinstance(model, LdaModel) or isinstance(model, LdaMulticore):
-        return _show_gensim_document_topics(doc2bow, model, document_labels, index).round(4)
+        return _show_gensim_document_topics(doc2bow, model, document_labels, index).round(dec)
     elif doc_topics_file is not None:
-        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format).round(4)
+        return _show_mallet_document_topics(doc_topics_file, index, easy_file_format).round(dec)
 
 
 def show_topics(model=None, vocabulary=None, topic_keys_file=None, num_keys=10):
