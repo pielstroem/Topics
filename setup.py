@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 PROJECT = 'DARIAH Topic Modeling'
 VERSION = '1.0'
-REVISION = '1.0.0.dev'
+REVISION = '1.0.1.dev'
 AUTHOR = 'DARIAH-DE Wuerzburg Group'
 AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
 URL = 'https://dariah-de.github.io/Topics'
