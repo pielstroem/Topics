@@ -61,7 +61,7 @@ def doc2bow(document_term_matrix):
         * Improve efficiency.
 
     Example:
-        >>> from dariah_topics import preprocessing
+        >>> from cophi_toolbox import preprocessing
         >>> tokenized_corpus = [['this', 'is', 'document', 'one'], ['this', 'is', 'document', 'two']]
         >>> document_labels = ['document_one', 'document_two']
         >>> document_term_matrix, _, _ = preprocessing.create_document_term_matrix(tokenized_corpus, document_labels, True)
@@ -110,7 +110,7 @@ def save_document_term_matrix(document_term_matrix, path, document_ids=None, typ
         None.
 
     Example:
-        >>> from dariah_topics import preprocessing
+        >>> from cophi_toolbox import preprocessing
         >>> import os
         >>> path = 'tmp'
         >>> tokenized_corpus = [['this', 'is', 'document', 'one'], ['this', 'is', 'document', 'two']]
@@ -162,7 +162,7 @@ def save_model(model, filepath):
     Example:
         >>> from lda import LDA
         >>> from gensim.models import LdaModel
-        >>> from dariah_topics import preprocessing
+        >>> from cophi_toolbox import preprocessing
         >>> save_model(LDA, 'model.pickle')
         >>> preprocessing.read_model('model.pickle') == LDA
         True
@@ -431,7 +431,7 @@ def _show_lda_document_topics(model, document_labels, index):
 
     Example:
         >>> import lda
-        >>> from dariah_topics import preprocessing
+        >>> from cophi_toolbox import preprocessing
         >>> tokenized_corpus = [['this', 'is', 'the', 'first', 'document'], ['this', 'is', 'the', 'second', 'document']]
         >>> document_labels = ['document_one', 'document_two']
         >>> document_term_matrix = preprocessing.create_document_term_matrix(tokenized_corpus, document_labels)
@@ -465,7 +465,7 @@ def _show_lda_topics(model, vocabulary, num_keys):
 
     Example:
         >>> import lda
-        >>> from dariah_topics import preprocessing
+        >>> from cophi_toolbox import preprocessing
         >>> tokenized_corpus = [['this', 'is', 'the', 'first', 'document'], ['this', 'is', 'the', 'second', 'document']]
         >>> document_labels = ['document_one', 'document_two']
         >>> document_term_matrix = preprocessing.create_document_term_matrix(tokenized_corpus, document_labels)
