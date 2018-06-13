@@ -35,7 +35,7 @@ setup(
         'matplotlib>=1.5.3',
         'bokeh>=0.12.6',
         'metadata_toolbox',
-        'cophi_toolbox'
+        'cophi_toolbox>=0.1.1.dev0'
     ],
     command_options={
         'build_sphinx': {
