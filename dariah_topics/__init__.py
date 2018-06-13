@@ -11,7 +11,7 @@ The :mod:`dariah_topics` package currently offers seven modules:
 
 from dariah_topics import evaluation
 from dariah_topics import postprocessing
-from dariah_topics import preprocessing
+from cophi_toolbox import preprocessing
 from dariah_topics import utils
 from dariah_topics import visualization
 from dariah_topics import modeling

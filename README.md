@@ -33,13 +33,13 @@ $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 In only 15 lines of code from plain text files to a visualization of the topic model output.
 
 ```python
->>> from dariah_topics import preprocessing, modeling, postprocessing, visualization
+>>> from cophi_toolbox import preprocessing, modeling, postprocessing, visualization
 >>> pathlist = ['corpus/dickens_bleak.txt', 'corpus/thackeray_vanity.txt']
 >>> labels = ['dickens_bleak', 'thackeray_vanity']
->>> corpus = preprocessing.read_from_pathlist(pathlist)
+>>> corpus = preprocessing.read_files(pathlist)
 >>> tokens = [preprocessing.tokenize(document) for document in corpus]
 >>> matrix = preprocessing.create_document_term_matrix(tokens, labels)
->>> stopwords = preprocessing.find_stopwords(matrix)
+>>> stopwords = preprocessing.list_mfw(matrix)
 >>> clean_matrix = preprocessing.remove_features(stopwords, matrix)
 >>> vocabulary = clean_matrix.columns
 >>> model = modeling.lda(topics=10, iterations=1000, implementation='mallet')

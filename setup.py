@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 PROJECT = 'DARIAH Topic Modeling'
 VERSION = '1.0'
-REVISION = '1.0.0.dev'
+REVISION = '1.0.1.dev'
 AUTHOR = 'DARIAH-DE Wuerzburg Group'
 AUTHOR_EMAIL = 'pielstroem@biozentrum.uni-wuerzburg.de'
 URL = 'https://dariah-de.github.io/Topics'
@@ -34,7 +34,8 @@ setup(
         'lxml>=3.6.4',
         'matplotlib>=1.5.3',
         'bokeh>=0.12.6',
-        'metadata_toolbox'
+        'metadata_toolbox',
+        'cophi_toolbox>=0.1.1.dev0'
     ],
     command_options={
         'build_sphinx': {

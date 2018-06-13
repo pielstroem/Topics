@@ -3,7 +3,7 @@
 # Testing:
 pytest
 pytest-cov
-pytest-nbsmoke
+nbsmoke
 
 # Documentation:
 jupyter
