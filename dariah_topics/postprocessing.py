@@ -162,7 +162,7 @@ def save_model(model, filepath):
     Example:
         >>> from lda import LDA
         >>> from gensim.models import LdaModel
-        >>> from cophi_toolbox import preprocessing
+        >>> from dariah_topics import preprocessing
         >>> save_model(LDA, 'model.pickle')
         >>> preprocessing.read_model('model.pickle') == LDA
         True
