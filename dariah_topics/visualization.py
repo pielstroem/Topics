@@ -146,7 +146,7 @@ class PlotDocumentTopics:
                 plot_title = '{0}: {1}'.format(describer, proportions.name)
                 ax.set_title(plot_title, fontsize=title_fontsize)
         elif isinstance(index, str):
-            if transpose:
+            if transpose_data:
                 proportions = self.document_topics.T.loc[index]
             else:
                 proportions = self.document_topics.loc[index]
