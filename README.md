@@ -33,7 +33,8 @@ $ pip install --upgrade git+https://github.com/DARIAH-DE/Topics.git@testing
 In only 15 lines of code from plain text files to a visualization of the topic model output.
 
 ```python
->>> from cophi_toolbox import preprocessing, modeling, postprocessing, visualization
+>>> from cophi_toolbox import preprocessing
+>>> from dariah_topics import modeling, postprocessing, visualization
 >>> pathlist = ['corpus/dickens_bleak.txt', 'corpus/thackeray_vanity.txt']
 >>> labels = ['dickens_bleak', 'thackeray_vanity']
 >>> corpus = preprocessing.read_files(pathlist)
@@ -46,8 +47,7 @@ In only 15 lines of code from plain text files to a visualization of the topic m
 >>> topics = postprocessing.show_topics(model, vocabulary)
 >>> document_topics = postprocessing.show_document_topics(model, topics, labels)
 >>> PlotDocumentTopics = visualization.PlotDocumentTopics(document_topics)
->>> static_heatmap = PlotDocumentTopics.static_heatmap()
->>> static_heatmap.show()
+>>> PlotDocumentTopics.static_heatmap().show()
 ```
 <p align="center">
   <img src="docs/images/heatmap.png"/>
