@@ -60,9 +60,12 @@ log = logging.getLogger('dariah_topics')
 class PlotDocumentTopics:
     """
     Class to visualize document-topic matrix.
+        Args:
+            document_topics (pandas.Dataframe): document-topics matrix. Produced by postprocessing.show_document_topics
     """
     def __init__(self, document_topics):
         self.document_topics = document_topics
+
 
 
     def static_heatmap(self, figsize=(1000 / 96, 600 / 96), dpi=None,
