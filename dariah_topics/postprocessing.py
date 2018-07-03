@@ -239,7 +239,7 @@ def show_document_topics(topics, model=None, document_labels=None, doc_topics_fi
     
     Returns:
         A pandas DataFrame with rows corresponding to topics and columns corresponding
-            to keys.
+            to documents.
 
     Example:
     """
