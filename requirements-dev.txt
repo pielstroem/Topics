@@ -3,10 +3,10 @@
 # Testing:
 pytest
 pytest-cov
-pytest-nbsmoke
+nbsmoke
 
 # Documentation:
-sphinx
 jupyter
+sphinx
 git+https://github.com/spatialaudio/nbsphinx#egg=nbsphinx
 recommonmark
