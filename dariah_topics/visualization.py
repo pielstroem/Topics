@@ -281,8 +281,7 @@ class PlotDocumentTopics:
                      x_axis_location=x_axis_location,
                      plot_width=width, plot_height=height,
                      tools=tools, toolbar_location=toolbar_location,
-                     sizing_mode=sizing_mode,
-                     logo=None)
+                     sizing_mode=sizing_mode)
         fig.rect(x='Documents', y='Topics', source=source, width=1, height=1,
                  fill_color={'field': 'Distributions', 'transform': mapper},
                  line_color=line_color)
@@ -369,7 +368,7 @@ class PlotDocumentTopics:
 
         fig = figure(y_range=y_range, title=plot_title, plot_width=width, plot_height=height,
                    tools=tools, toolbar_location=toolbar_location,
-                   sizing_mode=sizing_mode, logo=None)
+                   sizing_mode=sizing_mode)
         fig.hbar(y='Describer', right='Proportion', height=bin_height, source=source,
                line_color=line_color, color=bar_color)
 
