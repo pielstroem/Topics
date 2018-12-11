@@ -29,7 +29,7 @@ def _process(args):
                              universal_newlines=True)
     # Yield every line of stdout:
     for line in iter(popen.stdout.readline, ""):
-        yield line
+        yield line.strip()
     popen.stdout.close()
     code = popen.wait()
     if code:
