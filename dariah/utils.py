@@ -1,8 +1,11 @@
-import logging
+r"""
+dariah.utils
+~~~~~~~~~~~
+
+This module implements general helper functions.
+"""
+
 import subprocess
-
-
-logger = logging.getLogger(__name__)
 
 
 def call(args):
@@ -26,6 +29,7 @@ def _process(args):
     """
     popen = subprocess.Popen(args,
                              stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
                              universal_newlines=True)
     # Yield every line of stdout:
     for line in iter(popen.stdout.readline, ""):

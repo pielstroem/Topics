@@ -27,7 +27,7 @@ def call(jar, xms="4g", **parameters):
     # Append additional parameters:
     for parameter, value in parameters.items():
         # Support synonyms for `-input` parameter:
-        if parameter in {"filepath", "directory", "path"}:
+        if parameter in {"filepath", "directory", "path", "corpus"}:
             args.append("-input")
         else:
             args.append("-{}".format(parameter))

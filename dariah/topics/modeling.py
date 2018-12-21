@@ -1,3 +1,45 @@
+"""
+dariah.topics.modeling
+~~~~~~~~~~~~~~~~~~~~~~
+
+This module implements low-level LDA modeling functions.
+"""
+
+import lda
+
+from ..mallet import MALLET
+
+
+class LDA:
+    def __init__(self, num_topics, num_iterations=1000, alpha=0.1, eta=0.01,  
+                 random_state=None, implementation="riddell"):
+        self.num_topics = num_topics
+        self.num_iterations = num_iterations
+        self.alpha = alpha
+        self.eta = eta
+        self.implementation = implementation
+
+    def _riddell(self, dtm):
+        model = lda.LDA(n_topics=self.num_topics,
+                        n_iter=self.num_iterations,
+                        alpha=self.alpha,
+                        eta=self.eta)
+        model.fit(dtm)
+        return model
+    
+    def _mallet(self, dtm, executable):
+        # 
+        mallet = MALLET(executable)
+        mallet.import_svmlight()
+    
+    def fit(self, dtm):
+        if self.implementation in {"riddell"}:
+            self._riddell(dtm)
+        elif self.implementation in {"mallet"}:
+            self._mallet(dtm)
+
+        
+        
 import lda
 from dariah_topics import utils
 import gensim

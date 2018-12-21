@@ -70,3 +70,5 @@ class DKPro:
             filename = Path(path.stem)
             document.name = filename.stem
             return document
+
+    # TODO: filter pos tags

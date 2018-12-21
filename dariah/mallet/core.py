@@ -1,12 +1,14 @@
-import logging
+r"""
+dariah.mallet.core
+~~~~~~~~~
+
+This module implements the core functions of the MALLET module.
+"""
 
 from .. import utils
 
 
-logger = logging.getLogger(__name__)
-
-
-def call(command, executable="mallet", **parameters):
+def call(command, executable, **parameters):
     """Call MALLET.
 
     Parameter:
@@ -22,7 +24,11 @@ def call(command, executable="mallet", **parameters):
 
     # Append additional parameters:
     for parameter, value in parameters.items():
-        args.append("--{}".format(parameter.replace("_", "-")))
+        # Support synonyms for `-input` parameter:
+        if parameter in {"filepath", "directory", "path", "corpus"}:
+            args.append("--input")
+        else:
+            args.append("--{}".format(parameter.replace("_", "-")))
         if value and value != True:
-            args.append(value)
+            args.append(str(value))
     return utils.call(args)
