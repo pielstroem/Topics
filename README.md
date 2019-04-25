@@ -1,3 +1,41 @@
+# A Python library for topic modeling and visualization
+
+
+## Installation
+```
+$ pip install dariah
+```
+
+
+## Example
+
+Using the high-level API is easy:
+
+```python
+>>> lda, vis = dariah.topicmodel(directory="corpus",
+                                 stopwords=100,
+                                 num_topics=10,
+                                 num_iterations=1000)
+>>> lda.topics
+
+>>> vis.topic_document()
+```
+
+
+## About DARIAH-DE
+[DARIAH-DE](https://de.dariah.eu) supports research in the humanities and cultural sciences with digital methods and procedures. The research infrastructure of DARIAH-DE consists of four pillars: teaching, research, research data and technical components. As a partner in [DARIAH-EU](http://dariah.eu/), DARIAH-DE helps to bundle and network state-of-the-art activities of the digital humanities. Scientists use DARIAH, for example, to make research data available across Europe. The exchange of knowledge and expertise is thus promoted across disciplines and the possibility of discovering new scientific discourses is encouraged.
+
+This software library has been developed with support from the DARIAH-DE initiative, the German branch of DARIAH-EU, the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
+
+![DARIAH-DE](docs/images/dariah-de_logo.png)
+![BMBF](docs/images/bmbf_logo.png)
+
+
+
+
+
+
+
 # Topics – Easy Topic Modeling in Python
 [Topics](https://dariah-de.github.io/Topics/) is a Python library for topic modeling. Furthermore, this repository provides a convenient, modular workflow that can be entirely controlled from within a well documented [Jupyter](http://jupyter.org/) notebook. Users not yet familiar with programming in Python can test basic topic modeling in a standalone [GUI demonstrator](https://dariah-de.github.io/TopicsExplorer/), which **does not require a Python interpreter or any extra installations**.
 

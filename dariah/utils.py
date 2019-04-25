@@ -1,6 +1,6 @@
-r"""
+"""
 dariah.utils
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 This module implements general helper functions.
 """
@@ -8,7 +8,7 @@ This module implements general helper functions.
 import subprocess
 
 
-def call(args):
+def call(args: list) -> bool:
     """Call a subprocess.
 
     Parameter:
@@ -24,7 +24,7 @@ def call(args):
     return True
 
 
-def _process(args):
+def _process(args: list):
     """Construct a process.
     """
     popen = subprocess.Popen(args,

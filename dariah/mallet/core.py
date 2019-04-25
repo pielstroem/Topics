@@ -1,4 +1,4 @@
-r"""
+"""
 dariah.mallet.core
 ~~~~~~~~~
 

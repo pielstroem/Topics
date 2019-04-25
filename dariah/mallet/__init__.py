@@ -1,4 +1,4 @@
-r"""
+"""
 This module allows you to communicate with the Java CLI tool
 MALLET:
 
@@ -9,3 +9,6 @@ MALLET:
 """
 
 from .api import MALLET
+
+
+# TODO ABSOLUTE PFADE FÜR DATEIEN

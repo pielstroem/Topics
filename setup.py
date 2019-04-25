@@ -1,50 +1,35 @@
-#!/usr/bin/env python3
-
-import io
 import os
+import shutil
 import sys
-from shutil import rmtree
+import setuptools
 
-from setuptools import find_packages, setup, Command
 
 NAME = "dariah"
-DESCRIPTION = "A library for natural language processing, topic modeling, and visualization."
-AUTHOR = "DARIAH-DE"
-EMAIL = "pielstroem@biozentrum.uni-wuerzburg.de"
+DESCRIPTION = "A library for natural language processing, topic modeling and visualization."
 URL = "https://dariah-de.github.io/Topics"
-REQUIRES_PYTHON = ">=3.4.0"
-VERSION = None
-REQUIRED = [
-    ""
-]
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-try:
-    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
-        long_description = "\n" + f.read()
-except FileNotFoundError:
-    long_description = DESCRIPTION
-
-about = {}
-if not VERSION:
-    with open(os.path.join(here, NAME, "__version__.py")) as f:
-        exec(f.read(), about)
-else:
-    about["__version__"] = VERSION
+AUTHOR = "DARIAH-DE"
+REQUIRES_PYTHON = ">=3.6.0"
+VERSION = "2.0.0"
+REQUIRED = ["regex>=2019.4.12",
+            "pandas>=0.24.2",
+            "numpy>=1.16.2",
+            "lda>=1.1.0",
+            "matplotlib>=3.0.3",
+            "cophi>=1.2.3",
+            "seaborn>=0.9.0"]
 
 
-class UploadCommand(Command):
-    """Support setup.py upload.
-    """
+with open("README.md", "r", encoding="utf-8") as readme:
+    long_description = f"\n{readme.read()}"
 
+
+class UploadCommand(setuptools.Command):
     description = "Build and publish the package."
-    user_options = []
+    user_options = list()
 
     @staticmethod
     def status(s):
-        """Prints things in bold."""
-        print("\033[1m{0}\033[0m".format(s))
+        print(f"\033[1m{s}\033[0m")
 
     def initialize_options(self):
         pass
@@ -54,44 +39,44 @@ class UploadCommand(Command):
 
     def run(self):
         try:
-            self.status("Removing previous builds ...")
-            rmtree(os.path.join(here, "dist"))
+            self.status("Removing previous builds...")
+            shutil.rmtree("dist")
         except OSError:
             pass
 
-        self.status("Building source and wheel distribution ...")
-        os.system("{0} setup.py sdist bdist_wheel".format(sys.executable))
+        self.status("Building source and wheel distribution...")
+        os.system(f"{sys.executable} setup.py sdist bdist_wheel")
 
-        self.status("Uploading the package to PyPI via Twine ...")
-        os.system("twine upload --repository-url https://upload.pypi.org/legacy/ dist/*")
+        self.status("Uploading the package to PyPI via Twine...")
+        os.system("twine upload dist/*")
 
-        self.status("Pushing git tags ...")
-        os.system("git tag v{0}".format(about["__version__"]))
+        self.status("Pushing git tags...")
+        os.system(f"git tag v{VERSION}")
         os.system("git push --tags")
-        
+
         sys.exit()
 
-setup(
+
+setuptools.setup(
     name=NAME,
-    version=about["__version__"],
+    version=VERSION,
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
     author=AUTHOR,
-    author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=["docs", "test", "notebooks"]),
+    packages=setuptools.find_packages(exclude=("tests",)),
     install_requires=REQUIRED,
     include_package_data=True,
     license="Apache 2.0",
     classifiers=[
+        "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7"
     ],
     cmdclass={
         "upload": UploadCommand,
-    }
+    },
 )

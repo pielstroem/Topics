@@ -1,11 +1,6 @@
-r"""
-**dariah** is a Python library for natural language processing, topic modeling, 
-and visualization.
-
-.. code-block:: python
-   #TODO
-
+"""
+A library for natural language processing, topic modeling and visualization.
 """
 
-from dariah.dkpro import DKPro
-from dariah.mallet import MALLET
+from .api import lda
+from . import dkpro
