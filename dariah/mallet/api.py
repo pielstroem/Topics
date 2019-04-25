@@ -9,7 +9,7 @@ General information:
 http://mallet.cs.umass.edu/index.php
 """
 
-from . import core
+from dariah.mallet import core
 
 
 class MALLET:

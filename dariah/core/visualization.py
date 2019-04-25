@@ -15,13 +15,6 @@ class Vis:
         self.document_similarities_ = model.document_similarities.copy()
         self.topic_similarities_ = model.topic_similarities.copy()
 
-    def __repr__(self):
-        return f"<Visualization: LDA, "\
-               f"{self._model.num_topics} topics, "\
-               f"{self._model.num_iterations} iterations, "\
-               f"alpha={self._model.alpha}, "\
-               f"eta={self._model.eta}>"
-
     def topic_document(self, cmap="Blues", annot=False, fmt=".2g",
                        cbar=True, **kwargs):
         fig, ax = plt.subplots(**kwargs)
@@ -38,7 +31,7 @@ class Vis:
         return ax
 
     def topic_word(self, words, cmap="Blues", annot=False, fmt=".2g",
-                       cbar=True, **kwargs):
+                   cbar=True, **kwargs):
         fig, ax = plt.subplots(**kwargs)
         topic_word_ = self.topic_word_.copy().loc[:, words]
         if topic_word_.shape[0] < topic_word_.shape[1]:
@@ -51,14 +44,14 @@ class Vis:
                     fmt=fmt,
                     cbar=cbar)
 
-    def topic(self, name: str, num_words: int = 10, color: str = "grey", **kwargs):
+    def topic(self, name, num_words=10, color="grey", **kwargs):
         fig, ax = plt.subplots(**kwargs)
         data = self.topic_word_.loc[name, :].sort_values(ascending=False)
         data = data[:num_words].sort_values()
         data.plot.barh(ax=ax, color=color)
         return ax
 
-    def document(self, name: str, color: str = "grey", **kwargs):
+    def document(self, name, color="grey", **kwargs):
         fig, ax = plt.subplots(**kwargs)
         data = self.topic_document_.loc[:, name].sort_values()
         data.plot.barh(ax=ax, color=color)
@@ -99,3 +92,10 @@ class Vis:
                     fmt=fmt,
                     cbar=cbar)
         return ax
+
+    def __repr__(self):
+        return f"<Visualization: LDA, "\
+               f"{self._model.num_topics} topics, "\
+               f"{self._model.num_iterations} iterations, "\
+               f"alpha={self._model.alpha}, "\
+               f"eta={self._model.eta}>"

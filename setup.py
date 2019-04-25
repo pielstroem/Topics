@@ -5,7 +5,7 @@ import setuptools
 
 
 NAME = "dariah"
-DESCRIPTION = "A library for natural language processing, topic modeling and visualization."
+DESCRIPTION = "A library for topic modeling and visualization."
 URL = "https://dariah-de.github.io/Topics"
 AUTHOR = "DARIAH-DE"
 REQUIRES_PYTHON = ">=3.6.0"
@@ -15,7 +15,7 @@ REQUIRED = ["regex>=2019.4.12",
             "numpy>=1.16.2",
             "lda>=1.1.0",
             "matplotlib>=3.0.3",
-            "cophi>=1.2.3",
+            "cophi>=1.3.2",
             "seaborn>=0.9.0"]
 
 
@@ -73,6 +73,8 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7"
     ],

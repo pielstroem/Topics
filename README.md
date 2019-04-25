@@ -1,4 +1,4 @@
-# A Python library for topic modeling and visualization
+# A library for topic modeling and visualization
 
 
 ## Installation

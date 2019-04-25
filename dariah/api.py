@@ -6,40 +6,33 @@ This module implements the high-level API.
 """
 
 from pathlib import Path
-from typing import Union, List
 
 import cophi
 
-from . import topics
+from dariah import core
 
 
-def lda(path: Union[Path, str],
-        stopwords: Union[int, List[str]],
-        num_topics: int,
-        num_iterations: int):
-    c = cophi.corpus(path, metadata=False)
+def topics(directory, stopwords, num_topics, num_iterations, **kwargs):
+    """Train a topic model.
+
+    Parameters:
+        directory (str): Path to corpus directory.
+        stopwords (str, list): Either a threshold for most frequent words,
+            or a list of stopwords.
+        num_topics (int): Number of topics.
+        num_iterations (int): Number of iterations.
+
+    Returns:
+        A topic model.
+    """
+    corpus = cophi.corpus(directory, metadata=False)
     if isinstance(stopwords, int):
-        stopwords = c.mfw(stopwords)
-    stopwords = stopwords + c.hapax
-    dtm = c.drop(c.dtm, stopwords)
-    model = topics.LDA(num_topics=num_topics,
-                       num_iterations=num_iterations)
+        stopwords = corpus.mfw(stopwords)
+    stopwords = stopwords + corpus.hapax
+    dtm = corpus.drop(corpus.dtm, stopwords)
+    model = core.LDA(num_topics=num_topics,
+                     num_iterations=num_iterations,
+                     **kwargs)
     model.fit(dtm)
-    return model
-
-
-def nlp(path):
-    pass
-
-
-def vis(model):
-    if isinstance(model, topics.LDA):
-        return topics.visualization.Vis(model)
-    elif isinstance(model, dkpro.DKPro):
-        return dkpro.visualization.Vis(model)
-
-
-def pipe(path, features=["nouns", "lemma"]):
-    corpus = nlp(path)
-    model = lda()
-    return vis
+    vis = core.visualization.Vis(model)
+    return model, vis

@@ -5,7 +5,7 @@ dariah.mallet.core
 This module implements the core functions of the MALLET module.
 """
 
-from .. import utils
+from dariah.mallet import utils
 
 
 def call(command, executable, **parameters):

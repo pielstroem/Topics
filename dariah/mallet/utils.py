@@ -5,7 +5,15 @@ dariah.utils
 This module implements general helper functions.
 """
 
+import logging
 import subprocess
+
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter("%(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def call(args: list) -> bool:
@@ -18,9 +26,8 @@ def call(args: list) -> bool:
         True, if call was successful.
     """
     for message in _process(args):
-        # No logging, just printing, because this is
-        # not related to Python.
-        print(message)
+        if len(message) < 100 and len(message) > 5:
+            logger.info(message)
     return True
 
 
@@ -32,7 +39,7 @@ def _process(args: list):
                              stderr=subprocess.PIPE,
                              universal_newlines=True)
     # Yield every line of stdout:
-    for line in iter(popen.stdout.readline, ""):
+    for line in iter(popen.stderr.readline, ""):
         yield line.strip()
     popen.stdout.close()
     code = popen.wait()
