@@ -1,5 +1,7 @@
 # A library for topic modeling and visualization
 
+`dariah` is an easy-to-use Python library for topic modeling and visualization.
+
 
 ## Installation
 ```
@@ -8,18 +10,57 @@ $ pip install dariah
 
 
 ## Example
-
-Using the high-level API is easy:
-
 ```python
->>> lda, vis = dariah.topicmodel(directory="corpus",
-                                 stopwords=100,
-                                 num_topics=10,
-                                 num_iterations=1000)
->>> lda.topics
-
->>> vis.topic_document()
+>>> import dariah
 ```
+
+## Developing
+[Poetry](https://poetry.eustace.io/) automatically creates a virtual environment, builds and uploads the project to [PyPI](https://pypi.org/). Install dependencies with:
+```
+$ poetry install
+```
+
+run tests:
+```
+$ poetry run pytest
+```
+
+format code:
+```
+$ poetry run black
+```
+
+build the project:
+```
+$ poetry build
+```
+
+and upload it to [PyPI](https://pypi.org/):
+```
+$ poetry upload
+```
+
+> Save your credentials with `poetry config http-basic.pypi username password`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## About DARIAH-DE
