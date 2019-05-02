@@ -7,6 +7,7 @@ This module implements helper functions for topic modeling.
 
 import cophi
 
+
 def read_topics_file(path):
     """Read a MALLET topics file.
     """

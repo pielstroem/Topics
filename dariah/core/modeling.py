@@ -20,13 +20,20 @@ from dariah.mallet import MALLET
 from dariah.core import utils
 
 
-logging.getLogger('lda').setLevel(logging.WARNING)
+logging.getLogger("lda").setLevel(logging.WARNING)
 
 
 class LDA:
-    def __init__(self, num_topics, num_iterations=1000, alpha=0.1, eta=0.01,
-                 random_state=None, implementation="riddell",
-                 executable="mallet"):
+    def __init__(
+        self,
+        num_topics,
+        num_iterations=1000,
+        alpha=0.1,
+        eta=0.01,
+        random_state=None,
+        implementation="riddell",
+        executable="mallet",
+    ):
         self.num_topics = num_topics
         self.num_iterations = num_iterations
         self.alpha = alpha
@@ -34,21 +41,29 @@ class LDA:
         self.implementation = implementation
         if self.implementation in {"mallet", "robust"}:
             if not executable:
-                raise AttributeError("If you choose MALLET, you have to pass "
-                                     "its executable as an argument.")
+                raise AttributeError(
+                    "If you choose MALLET, you have to pass "
+                    "its executable as an argument."
+                )
             if not Path(executable).exists():
                 if not os.environ.get(executable):
-                    raise OSError("MALLET executable was not found. "
-                                  "'{}' does not exist".format(executable))
+                    raise OSError(
+                        "MALLET executable was not found. "
+                        "'{}' does not exist".format(executable)
+                    )
             if not Path(executable).is_file():
-                raise OSError("'{}' is a directory and not a file. "
-                              "Point to the 'mallet/bin/mallet' file.".format(executable))
+                raise OSError(
+                    "'{}' is a directory and not a file. "
+                    "Point to the 'mallet/bin/mallet' file.".format(executable)
+                )
             self.executable = executable
         if self.implementation in {"riddell", "lightweight"}:
-            self._model = lda.LDA(n_topics=self.num_topics,
-                                  n_iter=self.num_iterations,
-                                  alpha=self.alpha,
-                                  eta=self.eta)
+            self._model = lda.LDA(
+                n_topics=self.num_topics,
+                n_iter=self.num_iterations,
+                alpha=self.alpha,
+                eta=self.eta,
+            )
 
     def fit(self, dtm):
         """Fit the LDA model.
@@ -108,11 +123,9 @@ class LDA:
         """
         descriptors = data.columns
         d = data.T @ data
-        norm = (data * data).sum(0) ** .5
+        norm = (data * data).sum(0) ** 0.5
         similarities = d / norm / norm.T
-        return pd.DataFrame(similarities,
-                            index=descriptors,
-                            columns=descriptors)
+        return pd.DataFrame(similarities, index=descriptors, columns=descriptors)
 
     def _riddell_lda(self, dtm):
         self._model.fit(dtm)
@@ -120,21 +133,23 @@ class LDA:
     def _riddell_topics(self):
         index = [f"topic{n}" for n in range(self.num_topics)]
         columns = [f"word{n}" for n in range(200)]
-        topics = [np.array(self._vocabulary)[np.argsort(dist)][:-200-1:-1]
-                  for dist in self._model.topic_word_]
+        topics = [
+            np.array(self._vocabulary)[np.argsort(dist)][: -200 - 1 : -1]
+            for dist in self._model.topic_word_
+        ]
         return pd.DataFrame(topics, index=index, columns=columns)
 
     def _riddell_topic_word(self):
         index = [f"topic{n}" for n in range(self.num_topics)]
-        return pd.DataFrame(self._model.topic_word_,
-                            index=index,
-                            columns=self._vocabulary)
+        return pd.DataFrame(
+            self._model.topic_word_, index=index, columns=self._vocabulary
+        )
 
     def _riddell_topic_document(self) -> pd.DataFrame:
         index = [f"topic{n}" for n in range(self.num_topics)]
-        return pd.DataFrame(self._model.doc_topic_,
-                            index=self._documents,
-                            columns=index).T
+        return pd.DataFrame(
+            self._model.doc_topic_, index=self._documents, columns=index
+        ).T
 
     def _mallet_lda(self, dtm):
         # Get number of CPUs for threaded processing:
@@ -154,9 +169,9 @@ class LDA:
 
         # Create a MALLET corpus file:
         corpus_mallet = Path(self._tempdir, "corpus.mallet")
-        mallet.import_file(input=str(corpus_sequence),
-                           output=str(corpus_mallet),
-                           keep_sequence=True)
+        mallet.import_file(
+            input=str(corpus_sequence), output=str(corpus_mallet), keep_sequence=True
+        )
 
         # Construct paths to MALLET output files:
         self._topic_document_file = Path(self._tempdir, "topic-document.txt")
@@ -164,16 +179,18 @@ class LDA:
         self._topics_file = Path(self._tempdir, "topics.txt")
 
         # Train topics:
-        mallet.train_topics(input=str(corpus_mallet),
-                            num_topics=self.num_topics,
-                            num_iterations=self.num_iterations,
-                            output_doc_topics=self._topic_document_file,
-                            output_topic_keys=self._topics_file,
-                            topic_word_weights_file=self._topic_word_file,
-                            alpha=self.alpha,
-                            beta=self.eta,
-                            num_top_words=200,
-                            num_threads=cpu)
+        mallet.train_topics(
+            input=str(corpus_mallet),
+            num_topics=self.num_topics,
+            num_iterations=self.num_iterations,
+            output_doc_topics=self._topic_document_file,
+            output_topic_keys=self._topics_file,
+            topic_word_weights_file=self._topic_word_file,
+            alpha=self.alpha,
+            beta=self.eta,
+            num_top_words=200,
+            num_threads=cpu,
+        )
 
     def _mallet_topics(self):
         index = [f"topic{n}" for n in range(self.num_topics)]
@@ -200,8 +217,10 @@ class LDA:
         return data
 
     def __repr__(self):
-        return f"<Model: LDA, "\
-               f"{self.num_topics} topics, "\
-               f"{self.num_iterations} iterations, "\
-               f"alpha={self.alpha}, "\
-               f"eta={self.eta}>"
+        return (
+            f"<Model: LDA, "
+            f"{self.num_topics} topics, "
+            f"{self.num_iterations} iterations, "
+            f"alpha={self.alpha}, "
+            f"eta={self.eta}>"
+        )

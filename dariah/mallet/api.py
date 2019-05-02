@@ -15,6 +15,7 @@ from dariah.mallet import core
 class MALLET:
     """Machine Learning for Language Toolkit (MALLET).
     """
+
     def __init__(self, executable):
         self.executable = executable
 

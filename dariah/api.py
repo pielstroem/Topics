@@ -30,9 +30,7 @@ def topics(directory, stopwords, num_topics, num_iterations, **kwargs):
         stopwords = corpus.mfw(stopwords)
     stopwords = stopwords + corpus.hapax
     dtm = corpus.drop(corpus.dtm, stopwords)
-    model = core.LDA(num_topics=num_topics,
-                     num_iterations=num_iterations,
-                     **kwargs)
+    model = core.LDA(num_topics=num_topics, num_iterations=num_iterations, **kwargs)
     model.fit(dtm)
     vis = core.visualization.Vis(model)
     return model, vis

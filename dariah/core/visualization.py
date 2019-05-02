@@ -15,34 +15,38 @@ class Vis:
         self.document_similarities_ = model.document_similarities.copy()
         self.topic_similarities_ = model.topic_similarities.copy()
 
-    def topic_document(self, cmap="Blues", annot=False, fmt=".2g",
-                       cbar=True, **kwargs):
+    def topic_document(self, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs):
         fig, ax = plt.subplots(**kwargs)
         topic_document_ = self.topic_document_.copy()
         if topic_document_.shape[0] < topic_document_.shape[1]:
             topic_document_ = topic_document_.T
-        sns.heatmap(topic_document_,
-                    linewidth=.5,
-                    ax=ax,
-                    cmap=cmap,
-                    annot=annot,
-                    fmt=fmt,
-                    cbar=cbar)
+        sns.heatmap(
+            topic_document_,
+            linewidth=0.5,
+            ax=ax,
+            cmap=cmap,
+            annot=annot,
+            fmt=fmt,
+            cbar=cbar,
+        )
         return ax
 
-    def topic_word(self, words, cmap="Blues", annot=False, fmt=".2g",
-                   cbar=True, **kwargs):
+    def topic_word(
+        self, words, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs
+    ):
         fig, ax = plt.subplots(**kwargs)
         topic_word_ = self.topic_word_.copy().loc[:, words]
         if topic_word_.shape[0] < topic_word_.shape[1]:
             topic_word_ = topic_word_.T
-        sns.heatmap(topic_word_,
-                    linewidth=.5,
-                    ax=ax,
-                    cmap=cmap,
-                    annot=annot,
-                    fmt=fmt,
-                    cbar=cbar)
+        sns.heatmap(
+            topic_word_,
+            linewidth=0.5,
+            ax=ax,
+            cmap=cmap,
+            annot=annot,
+            fmt=fmt,
+            cbar=cbar,
+        )
 
     def topic(self, name, num_words=10, color="grey", **kwargs):
         fig, ax = plt.subplots(**kwargs)
@@ -57,45 +61,56 @@ class Vis:
         data.plot.barh(ax=ax, color=color)
         return ax
 
-    def document_similarities(self, cmap="Blues", annot=False, fmt=".2g",
-                              cbar=True, **kwargs):
+    def document_similarities(
+        self, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs
+    ):
         fig, ax = plt.subplots(**kwargs)
-        sns.heatmap(self.document_similarities_,
-                    linewidth=.5,
-                    ax=ax,
-                    cmap=cmap,
-                    annot=annot,
-                    fmt=fmt,
-                    cbar=cbar)
+        sns.heatmap(
+            self.document_similarities_,
+            linewidth=0.5,
+            ax=ax,
+            cmap=cmap,
+            annot=annot,
+            fmt=fmt,
+            cbar=cbar,
+        )
         return ax
 
-    def document_similarities(self, cmap="Blues", annot=False, fmt=".2g",
-                              cbar=True, **kwargs):
+    def document_similarities(
+        self, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs
+    ):
         fig, ax = plt.subplots(**kwargs)
-        sns.heatmap(self.document_similarities_,
-                    linewidth=.5,
-                    ax=ax,
-                    cmap=cmap,
-                    annot=annot,
-                    fmt=fmt,
-                    cbar=cbar)
+        sns.heatmap(
+            self.document_similarities_,
+            linewidth=0.5,
+            ax=ax,
+            cmap=cmap,
+            annot=annot,
+            fmt=fmt,
+            cbar=cbar,
+        )
         return ax
 
-    def topic_similarities(self, cmap="Blues", annot=False, fmt=".2g",
-                           cbar=True, **kwargs):
+    def topic_similarities(
+        self, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs
+    ):
         fig, ax = plt.subplots(**kwargs)
-        sns.heatmap(self.topic_similarities_,
-                    linewidth=.5,
-                    ax=ax,
-                    cmap=cmap,
-                    annot=annot,
-                    fmt=fmt,
-                    cbar=cbar)
+        sns.heatmap(
+            self.topic_similarities_,
+            linewidth=0.5,
+            ax=ax,
+            cmap=cmap,
+            annot=annot,
+            fmt=fmt,
+            cbar=cbar,
+        )
         return ax
 
     def __repr__(self):
-        return f"<Visualization: LDA, "\
-               f"{self._model.num_topics} topics, "\
-               f"{self._model.num_iterations} iterations, "\
-               f"alpha={self._model.alpha}, "\
-               f"eta={self._model.eta}>"
+        return (
+            f"<Visualization: LDA, "
+            f"{self._model.num_topics} topics, "
+            f"{self._model.num_iterations} iterations, "
+            f"alpha={self._model.alpha}, "
+            f"eta={self._model.eta}>"
+        )

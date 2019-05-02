@@ -34,10 +34,9 @@ def call(args: list) -> bool:
 def _process(args: list):
     """Construct a process.
     """
-    popen = subprocess.Popen(args,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
-                             universal_newlines=True)
+    popen = subprocess.Popen(
+        args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
+    )
     # Yield every line of stdout:
     for line in iter(popen.stderr.readline, ""):
         yield line.strip()
