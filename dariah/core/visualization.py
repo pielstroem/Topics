@@ -17,7 +17,7 @@ class Vis:
 
     def topic_document(self, cmap="Blues", annot=False, fmt=".2g", cbar=True, **kwargs):
         fig, ax = plt.subplots(**kwargs)
-        topic_document_ = self.topic_document_.copy()
+        topic_document_ = self.topic_document_.copy().sort_index()
         if topic_document_.shape[0] < topic_document_.shape[1]:
             topic_document_ = topic_document_.T
         sns.heatmap(
