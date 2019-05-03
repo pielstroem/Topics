@@ -37,7 +37,7 @@ $ poetry run pytest
 
 format code:
 ```
-$ poetry run black
+$ poetry run black dariah
 ```
 
 build the project:
