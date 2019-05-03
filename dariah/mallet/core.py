@@ -1,8 +1,8 @@
 """
 dariah.mallet.core
-~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
-This module implements the core functions of the MALLET module.
+This module implements the core functions of the MALLET sub-package.
 """
 
 from dariah.mallet import utils

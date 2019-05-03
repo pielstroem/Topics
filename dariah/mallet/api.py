@@ -3,10 +3,7 @@ dariah.mallet.api
 ~~~~~~~~~~~~~~~~
 
 This module implements the high-level API to communicate with
-the Java CLI tool MALLET.
-
-General information:
-http://mallet.cs.umass.edu/index.php
+the CLI interface of MALLET.
 """
 
 from dariah.mallet import core

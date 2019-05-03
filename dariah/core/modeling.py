@@ -31,33 +31,27 @@ class LDA:
         alpha=0.1,
         eta=0.01,
         random_state=None,
-        implementation="riddell",
-        executable="mallet",
+        mallet=None,
     ):
         self.num_topics = num_topics
         self.num_iterations = num_iterations
         self.alpha = alpha
         self.eta = eta
-        self.implementation = implementation
-        if self.implementation in {"mallet", "robust"}:
-            if not executable:
-                raise AttributeError(
-                    "If you choose MALLET, you have to pass "
-                    "its executable as an argument."
+        self.mallet = mallet
+        if self.mallet:
+            if not Path(self.mallet).is_file():
+                raise OSError(
+                    "'{}' is not a file. "
+                    "Point to the 'mallet/bin/mallet' file.".format(self.mallet)
                 )
-            if not Path(executable).exists():
-                if not os.environ.get(executable):
+            if not Path(self.mallet).exists():
+                # Check if MALLET is in environment variable:
+                if not os.environ.get(self.mallet):
                     raise OSError(
                         "MALLET executable was not found. "
-                        "'{}' does not exist".format(executable)
+                        "'{}' does not exist".format(self.mallet)
                     )
-            if not Path(executable).is_file():
-                raise OSError(
-                    "'{}' is a directory and not a file. "
-                    "Point to the 'mallet/bin/mallet' file.".format(executable)
-                )
-            self.executable = executable
-        if self.implementation in {"riddell", "lightweight"}:
+        else:
             self._model = lda.LDA(
                 n_topics=self.num_topics,
                 n_iter=self.num_iterations,
@@ -71,37 +65,37 @@ class LDA:
         self._vocabulary = list(dtm.columns)
         self._documents = list(dtm.index)
         dtm = dtm.fillna(0).astype(int)
-        if self.implementation in {"riddell"}:
-            self._riddell_lda(dtm.values)
-        elif self.implementation in {"mallet"}:
+        if self.mallet:
             self._mallet_lda(dtm)
+        else:
+            self._riddell_lda(dtm.values)
 
     @property
     def topics(self):
         """Topics with 200 top words.
         """
-        if self.implementation in {"riddell"}:
-            return self._riddell_topics()
-        elif self.implementation in {"mallet"}:
+        if self.mallet:
             return self._mallet_topics()
+        else:
+            return self._riddell_topics()
 
     @property
     def topic_word(self):
         """Topic-word distributions.
         """
-        if self.implementation in {"riddell"}:
-            return self._riddell_topic_word()
-        elif self.implementation in {"mallet"}:
+        if self.mallet:
             return self._mallet_topic_word()
+        else:
+            return self._riddell_topic_word()
 
     @property
-    def topic_document(self) -> pd.DataFrame:
+    def topic_document(self):
         """Topic-document distributions.
         """
-        if self.implementation in {"riddell"}:
-            return self._riddell_topic_document()
-        elif self.implementation in {"mallet"}:
+        if self.mallet:
             return self._mallet_topic_document()
+        else:
+            return self._riddell_topic_document()
 
     @property
     def topic_similarities(self):
@@ -165,7 +159,7 @@ class LDA:
         cophi.text.utils.export(dtm, corpus_sequence, "plaintext")
 
         # Construct MALLET object:
-        mallet = MALLET(self.executable)
+        mallet = MALLET(self.mallet)
 
         # Create a MALLET corpus file:
         corpus_mallet = Path(self._tempdir, "corpus.mallet")

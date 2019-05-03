@@ -1,1 +1,1 @@
-from .api import MALLET
+from dariah.mallet.api import MALLET

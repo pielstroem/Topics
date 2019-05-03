@@ -8,10 +8,13 @@
 $ pip install dariah
 ```
 
-
 ## Example
 ```python
 >>> import dariah
+>>> dariah.topics(directory="british-fiction-corpus",
+...               stopwords=100,
+...               num_topics=10,
+...               num_iterations=1000)
 ```
 
 ## Developing

@@ -32,7 +32,7 @@ def call(args: list) -> bool:
 
 
 def _process(args: list):
-    """Construct a process.
+    """Construct a process object.
     """
     popen = subprocess.Popen(
         args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
