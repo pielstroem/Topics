@@ -1,5 +1,7 @@
 # A library for topic modeling and visualization
-`dariah` is an easy-to-use Python library for topic modeling and visualization. Getting started is _really easy_. All you have to do is import the library – you can train a model straightaway from raw textfiles. It provides two implementations of [latent Dirichlet allocation](http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf):
+`dariah` is an easy-to-use Python library for topic modeling and visualization. Getting started is _really easy_. All you have to do is import the library – you can train a model straightaway from raw textfiles.
+
+It provides two implementations of [latent Dirichlet allocation](http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf):
 - The lightweight, Cython-based package [lda](https://pypi.org/project/lda/)
 - The more robust, Java-based package [MALLET](http://mallet.cs.umass.edu/topics.php)
 
