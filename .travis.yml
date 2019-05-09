@@ -1,0 +1,14 @@
+language:
+  - python
+
+dist:
+  - xenial
+
+python:
+  - 3.7
+
+install:
+  - echo "OK"
+
+script:
+  - echo "OK"
