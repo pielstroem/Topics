@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'DARIAH Topics'
-copyright = '2019, DARIAH-DE'
+copyright = '2017–2019, DARIAH-DE'
 author = 'DARIAH-DE'
 
 # The full version, including alpha/beta/rc tags
@@ -45,7 +45,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
+# a list of builtin themes.file:///home/severin/git/Topics/docs/_build/html/index.html
 #
 html_theme = 'alabaster'
 
