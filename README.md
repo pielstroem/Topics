@@ -45,9 +45,9 @@ build the project:
 $ poetry build
 ```
 
-and upload it to [PyPI](https://pypi.org/):
+and publish it on [PyPI](https://pypi.org/):
 ```
-$ poetry upload
+$ poetry publish
 ```
 
 > Save your credentials with `poetry config http-basic.pypi username password`.
@@ -58,5 +58,5 @@ $ poetry upload
 
 This software library has been developed with support from the DARIAH-DE initiative, the German branch of DARIAH-EU, the European Digital Research Infrastructure for the Arts and Humanities consortium. Funding has been provided by the German Federal Ministry for Research and Education (BMBF) under the identifier 01UG1610J.
 
-![DARIAH-DE](docs/images/dariah-de_logo.png)
-![BMBF](docs/images/bmbf_logo.png)
+![DARIAH-DE](https://raw.githubusercontent.com/DARIAH-DE/Topics/master/docs/images/dariah-de_logo.png)
+![BMBF](https://raw.githubusercontent.com/DARIAH-DE/Topics/master/docs/images/bmbf_logo.png)
