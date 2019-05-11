@@ -34,6 +34,7 @@ topic3      tom    adam   maggie     it's  tulliver
 topic4  crawley  george  osborne  rebecca    amelia
 
 With the `vis` object, you can visualize the model’s probability distributions, e.g. for topic-document:
+
 .. image:: https://raw.githubusercontent.com/DARIAH-DE/Topics/master/docs/images/topic-document.png
 
 
